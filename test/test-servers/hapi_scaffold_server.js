@@ -19,37 +19,35 @@ var hapi = require('hapi');
 var errorHandler = require('../../src/index.js')();
 
 var server = new hapi.Server();
-server.connection({ port: 3000 });
+server.connection({port: 3000});
 
-server.start(
-  (err) => {
-    if (err) {
-      throw err;
-    }
-    console.log(
-      'Server running at', server.info.uri);
+server.start(err => {
+  if (err) {
+    throw err;
   }
-);
+  console.log('Server running at', server.info.uri);
+});
 
 server.route({
-  method: 'GET', path: '/get', handler: function(request, reply) {
+  method: 'GET',
+  path: '/get',
+  handler: function(request, reply) {
     console.log('Got a GET');
     throw new Error('an error');
-  }
+  },
 });
 
 server.route({
-  method: 'POST', path: '/post', handler: function(request, reply) {
+  method: 'POST',
+  path: '/post',
+  handler: function(request, reply) {
     console.log('Got a POST', request.payload);
     throw new Error('An error on the hapi post route');
-  }
+  },
 });
 
-
-server.register(
-  { register: errorHandler.hapi }, (err) => {
-    if (err) {
-      console.error('There was an error in registering the plugin', err);
-    }
+server.register({register: errorHandler.hapi}, err => {
+  if (err) {
+    console.error('There was an error in registering the plugin', err);
   }
-);
+});

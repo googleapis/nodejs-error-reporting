@@ -25,7 +25,9 @@ describe('logger', function() {
       oldEnv = process.env.GCLOUD_ERRORS_LOGLEVEL;
       delete process.env.GCLOUD_ERRORS_LOGLEVEL;
     });
-    after(function() {process.env.GCLOUD_ERRORS_LOGLEVEL = oldEnv;});
+    after(function() {
+      process.env.GCLOUD_ERRORS_LOGLEVEL = oldEnv;
+    });
     describe('Exception handling', function() {
       it('Should not throw given undefined', function() {
         assert.doesNotThrow(createLogger, createLogger());
@@ -34,12 +36,16 @@ describe('logger', function() {
         assert.doesNotThrow(createLogger.bind(null, {}), createLogger());
       });
       it('Should not throw given logLevel as a number', function() {
-        assert.doesNotThrow(createLogger.bind(null, {logLevel: 3}),
-          createLogger({logLevel: 3}));
+        assert.doesNotThrow(
+          createLogger.bind(null, {logLevel: 3}),
+          createLogger({logLevel: 3})
+        );
       });
       it('Should not throw given logLevel as a string', function() {
-        assert.doesNotThrow(createLogger.bind(null, {logLevel: '3'}),
-          createLogger({logLevel: 3}));
+        assert.doesNotThrow(
+          createLogger.bind(null, {logLevel: '3'}),
+          createLogger({logLevel: 3})
+        );
       });
       it('Should not throw given an env variable to use', function() {
         process.env.GCLOUD_ERRORS_LOGLEVEL = 4;
@@ -47,8 +53,7 @@ describe('logger', function() {
         delete process.env.GCLOUD_ERRORS_LOGLEVEL;
       });
       it('Should thow given logLevel as null', function() {
-        assert.throws(createLogger.bind(null, {logLevel: null}),
-          undefined);
+        assert.throws(createLogger.bind(null, {logLevel: null}), undefined);
       });
     });
     describe('Default log level', function() {
@@ -59,7 +64,7 @@ describe('logger', function() {
         text = '';
         console.log = function() {
           oldLog.apply(this, arguments);
-          for (var i=0; i<arguments.length; i++) {
+          for (var i = 0; i < arguments.length; i++) {
             text += arguments[i];
           }
         };
@@ -71,14 +76,18 @@ describe('logger', function() {
       it('Should print WARN logs by default', function() {
         var logger = createLogger();
         logger.warn('test warning message');
-        assert.strictEqual(text,
-          'WARN:@google-cloud/error-reporting: test warning message');
+        assert.strictEqual(
+          text,
+          'WARN:@google-cloud/error-reporting: test warning message'
+        );
       });
       it('Should print ERROR logs by default', function() {
         var logger = createLogger();
         logger.error('test error message');
-        assert.strictEqual(text,
-          'ERROR:@google-cloud/error-reporting: test error message');
+        assert.strictEqual(
+          text,
+          'ERROR:@google-cloud/error-reporting: test error message'
+        );
       });
     });
   });

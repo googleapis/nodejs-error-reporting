@@ -18,21 +18,20 @@
 'use strict';
 
 var errorHandler = require('../../src/index.js')({
-  onUncaughtException: 'report'
+  onUncaughtException: 'report',
 });
 var koa = require('koa');
 var app = koa();
 
 app.use(errorHandler.koa);
 
-app.use(function *(next) {
+app.use(function*(next) {
   //This will set status and message
   this.throw('Error Message', 500);
   yield next;
 });
 
-
-app.use(function *(next){
+app.use(function*(next) {
   var start = new Date();
   yield next;
   var ms = new Date() - start;
@@ -41,7 +40,7 @@ app.use(function *(next){
 
 // logger
 
-app.use(function *(next){
+app.use(function*(next) {
   var start = new Date();
   yield next;
   var ms = new Date() - start;
@@ -49,7 +48,7 @@ app.use(function *(next){
 });
 
 // response
-app.use(function *(next){
+app.use(function*(next) {
   this.body = 'Hello World';
   yield next;
 });

@@ -19,7 +19,9 @@ const errors = require('../../src/index.js')();
 errors.report('Sample test string', (err, response, body) => {
   console.log(
     'Callback from report:\n',
-    '\tError: ', err, '\n',
+    '\tError: ',
+    err,
+    '\n',
     '\tResponse Body:'
- );
+  );
 });
