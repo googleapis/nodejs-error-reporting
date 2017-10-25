@@ -4,16 +4,11 @@
   "private": true,
   "license": "Apache-2.0",
   "author": "Google Inc.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git"
-  },
+  "repository": "googleapis/nodejs-error-reporting",
   "engines": {
     "node": ">=4.3.2"
   },
   "scripts": {
-    "lint": "samples lint",
-    "pretest": "npm run lint",
     "error-test": "samples test app --msg \"Something broke!\" --url \"http://localhost:33332/error\" --port 33332  -- snippets.js express",
     "exception-test": "samples test app --code 500 --msg SyntaxError --url \"http://localhost:33333/exception\" --port 33333  -- snippets.js express",
     "system-test": "ava -T 1m --verbose system-test/*.test.js",
@@ -30,19 +25,5 @@
     "ava": "0.21.0",
     "proxyquire": "1.8.0",
     "sinon": "3.2.0"
-  },
-  "cloud-repo-tools": {
-    "requiresKeyFile": true,
-    "requiresProjectId": true,
-    "product": "error_reporting",
-    "samples": [
-      {
-        "id": "snippets",
-        "name": "Examples",
-        "file": "snippets.js",
-        "docs_link": "https://cloud.google.com/error-reporting/docs",
-        "usage": "node snippets.js --help"
-      }
-    ]
   }
 }
