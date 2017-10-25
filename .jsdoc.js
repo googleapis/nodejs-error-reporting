@@ -23,23 +23,19 @@ module.exports = {
     template: './node_modules/ink-docstrap/template',
     recurse: true,
     verbose: true,
-    destination: './docs/'
+    destination: './docs/',
   },
-  plugins: [
-    'plugins/markdown'
-  ],
+  plugins: ['plugins/markdown'],
   source: {
     excludePattern: '(^|\\/|\\\\)[._]',
-    include: [
-      'src'
-    ],
-    includePattern: '\\.js$'
+    include: ['src'],
+    includePattern: '\\.js$',
   },
   templates: {
     copyright: 'Copyright 2017 Google, Inc.',
     includeDate: false,
     sourceFiles: false,
     systemName: '@google-cloud/error-reporting',
-    theme: 'lumen'
-  }
+    theme: 'lumen',
+  },
 };
