@@ -3,9 +3,9 @@
 # Stackdriver Error Reporting: Node.js Client
 
 [![release level](https://img.shields.io/badge/release%20level-beta-yellow.svg?style&#x3D;flat)](https://cloud.google.com/terms/launch-stages)
-[![CircleCI](https://img.shields.io/circleci/project/github/GoogleCloudPlatform/google-cloud-node.svg?style=flat)](https://circleci.com/gh/GoogleCloudPlatform/google-cloud-node)
-[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/GoogleCloudPlatform/google-cloud-node?branch=master&svg=true)](https://ci.appveyor.com/project/GoogleCloudPlatform/google-cloud-node)
-[![codecov](https://img.shields.io/codecov/c/github/GoogleCloudPlatform/google-cloud-node/master.svg?style=flat)](https://codecov.io/gh/GoogleCloudPlatform/google-cloud-node)
+[![CircleCI](https://img.shields.io/circleci/project/github/googleapis/nodejs-error-reporting.svg?style=flat)](https://circleci.com/gh/googleapis/nodejs-error-reporting)
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/googleapis/nodejs-error-reporting?branch=master&svg=true)](https://ci.appveyor.com/project/googleapis/nodejs-error-reporting)
+[![codecov](https://img.shields.io/codecov/c/github/googleapis/nodejs-error-reporting/master.svg?style=flat)](https://codecov.io/gh/googleapis/nodejs-error-reporting)
 
 > Node.js idiomatic client for [Error Reporting][product-docs].
 
@@ -73,12 +73,12 @@ Google APIs Client Libraries, in [Client Libraries Explained][explained].
 
 ## Samples
 
-Samples are in the [`samples/`](https://github.com/GoogleCloudPlatform/google-cloud-node/blob/master/samples) directory. The samples' `README.md`
+Samples are in the [`samples/`](https://github.com/googleapis/nodejs-error-reporting/blob/master/samples) directory. The samples' `README.md`
 has instructions for running the samples.
 
 | Sample                      | Source Code                       |
 | --------------------------- | --------------------------------- |
-| Examples | [source code](https://github.com/GoogleCloudPlatform/google-cloud-node/blob/master/samples/snippets.js) |
+| Examples | [source code](https://github.com/googleapis/nodejs-error-reporting/blob/master/samples/snippets.js) |
 
 The [Error Reporting Node.js Client API Reference][client-docs] documentation
 also contains samples.
