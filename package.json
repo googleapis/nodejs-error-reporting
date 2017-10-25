@@ -12,6 +12,7 @@
   "author": "Google Inc.",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@google-cloud/nodejs-repo-tools": "^2.0.11",
     "body-parser": "^1.15.1",
     "express": "^4.13.4",
     "hapi": "^16.1.0",
