@@ -78,7 +78,7 @@ class RequestHandler extends common.Service {
    * @returns {Null}
    * @static
    */
-  static noOp(err, response, body) {
+  static noOp() {
     return null;
   }
   /**
@@ -106,7 +106,7 @@ class RequestHandler extends common.Service {
 
     var that = this;
     if (tryAuthenticate) {
-      this.authClient.getToken(function(err, token) {
+      this.authClient.getToken(function(err) {
         if (err) {
           that._logger.error(
             [
@@ -157,7 +157,6 @@ class RequestHandler extends common.Service {
    * @instance
    */
   sendError(errorMessage, userCb) {
-    var self = this;
     var cb = isFunction(userCb) ? userCb : RequestHandler.noOp;
     if (this._config.getShouldReportErrorsToAPI()) {
       this.request(

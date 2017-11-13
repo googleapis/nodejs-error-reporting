@@ -182,7 +182,7 @@ describe('Configuration class', function() {
     });
     describe('project number from configuration instance', function() {
       var pn = 1234;
-      var serve, c;
+      var c;
       before(function() {
         sterilizeEnv();
         c = new Configuration({projectId: pn}, logger);
@@ -198,10 +198,10 @@ describe('Configuration class', function() {
   });
   describe('Exception behaviour', function() {
     describe('While lacking a project id', function() {
-      var serve, c;
+      var c;
       before(function() {
         sterilizeEnv();
-        serve = createDeadMetadataService();
+        createDeadMetadataService();
         c = new Configuration(undefined, logger);
       });
       after(function() {
@@ -213,10 +213,10 @@ describe('Configuration class', function() {
       });
     });
     describe('Invalid type for projectId in runtime config', function() {
-      var serve, c;
+      var c;
       before(function() {
         sterilizeEnv();
-        serve = createDeadMetadataService();
+        createDeadMetadataService();
         c = new Configuration({projectId: null}, logger);
       });
       after(function() {

@@ -31,6 +31,7 @@ var forEach = require('lodash.foreach');
 var assign = require('lodash.assign');
 var pick = require('lodash.pick');
 var omitBy = require('lodash.omitby');
+// eslint-disable-next-line node/no-extraneous-require
 var request = require('request');
 var util = require('util');
 var path = require('path');
@@ -98,6 +99,7 @@ class InstancedEnv {
   }
 }
 
+// eslint-disable-next-line node/no-missing-require
 const env = new InstancedEnv(require('../../../system-test/env.js'));
 
 function shouldRun() {
@@ -127,6 +129,7 @@ function shouldRun() {
 
 if (!shouldRun()) {
   console.log('Skipping error-reporting system tests');
+  // eslint-disable-next-line no-process-exit
   process.exit(1);
 }
 
@@ -167,11 +170,7 @@ describe('Request/Response lifecycle mocking', function() {
 
   it('Should fail when receiving non-retryable errors', function(done) {
     this.timeout(5000);
-    client.sendError({}, function(
-      err,
-      response,
-      /* jshint unused:false */ body
-    ) {
+    client.sendError({}, function(err, response) {
       assert(err instanceof Error);
       assert.strictEqual(err.message.toLowerCase(), 'message cannot be empty.');
       assert(isObject(response));
@@ -189,11 +188,7 @@ describe('Request/Response lifecycle mocking', function() {
       console.log('Mock Server Received Request:', tries + '/' + intendedTries);
       return {error: 'Please try again later'};
     });
-    client.sendError(errorMessage, function(
-      err,
-      response,
-      /* jshint unused:false */ body
-    ) {
+    client.sendError(errorMessage, function() {
       assert.strictEqual(tries, intendedTries);
       done();
     });
@@ -380,11 +375,7 @@ describe('Expected Behavior', function() {
       new Configuration(undefined, logger),
       logger
     );
-    client.sendError({}, function(
-      err,
-      response,
-      /* jshint unused:false */ body
-    ) {
+    client.sendError({}, function(err, response) {
       assert(err instanceof Error);
       assert.strictEqual(err.message, ERROR_STRING);
       assert.strictEqual(response, null);

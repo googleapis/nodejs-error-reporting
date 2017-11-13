@@ -20,7 +20,7 @@ var proxyquire = require('proxyquire');
 
 var Configuration = require('../../../src/configuration.js');
 
-function verifyReportedMessage(config, errToReturn, expectedLogs) {
+function verifyReportedMessage(config1, errToReturn, expectedLogs) {
   class ServiceStub {
     constructor() {
       this.authClient = {
@@ -53,8 +53,8 @@ function verifyReportedMessage(config, errToReturn, expectedLogs) {
       logs.info += text;
     },
   };
-  var config = new Configuration(config, logger);
-  new RequestHandler(config, logger);
+  var config2 = new Configuration(config1, logger);
+  new RequestHandler(config2, logger);
   assert.deepStrictEqual(logs, expectedLogs);
 }
 describe('RequestHandler', function() {

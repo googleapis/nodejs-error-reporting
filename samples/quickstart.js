@@ -15,6 +15,7 @@
 
 'use strict';
 
+// eslint-disable-next-line no-unused-vars
 function quickstart() {
   // [START error_reporting_quickstart]
   // Imports the Google Cloud client library

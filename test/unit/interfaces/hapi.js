@@ -166,7 +166,7 @@ describe('Hapi interface', function() {
       fakeServer.emit('onPreResponse', {response: {isBoom: true}});
     });
     it('Should call next when completing a request', function(done) {
-      plugin.register(fakeServer, null, function(err) {
+      plugin.register(fakeServer, null, function() {
         // The next function should be called
         done();
       });

@@ -158,7 +158,7 @@ function Errors(initConfiguration) {
   if (this._config.getReportUnhandledRejections()) {
     var that = this;
     process.on('unhandledRejection', function(reason) {
-      console.log(
+      that._logger.log(
         'UnhandledPromiseRejectionWarning: ' +
           'Unhandled promise rejection: ' +
           reason +

@@ -16,7 +16,8 @@
 'use strict';
 
 const errors = require('../../src/index.js')();
-errors.report('Sample test string', (err, response, body) => {
+errors.report('Sample test string', err => {
+  // eslint-disable-next-line no-console
   console.log(
     'Callback from report:\n',
     '\tError: ',
