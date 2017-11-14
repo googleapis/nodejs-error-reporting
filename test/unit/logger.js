@@ -60,8 +60,10 @@ describe('logger', function() {
       var oldLog;
       var text;
       beforeEach(function() {
+        // eslint-disable-next-line no-console
         oldLog = console.log;
         text = '';
+        // eslint-disable-next-line no-console
         console.log = function() {
           oldLog.apply(this, arguments);
           for (var i = 0; i < arguments.length; i++) {
@@ -71,6 +73,7 @@ describe('logger', function() {
       });
       afterEach(function() {
         text = undefined;
+        // eslint-disable-next-line no-console
         console.log = oldLog;
       });
       it('Should print WARN logs by default', function() {

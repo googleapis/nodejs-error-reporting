@@ -23,6 +23,7 @@ var restifyInterface = require('../../../src/interfaces/restify.js');
 // node v0.12 compatibility
 if (!EventEmitter.prototype.listenerCount) {
   EventEmitter.prototype.listenerCount = function(eventName) {
+    // eslint-disable-next-line node/no-deprecated-api
     return EventEmitter.listenerCount(this, eventName);
   };
 }
@@ -85,7 +86,7 @@ describe('restifyInterface', function() {
         });
       });
     });
-    describe('default path with req/res error', function(done) {
+    describe('default path with req/res error', function() {
       ee.removeAllListeners();
       var client = {
         sendError: function() {

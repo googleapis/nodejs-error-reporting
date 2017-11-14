@@ -71,7 +71,7 @@ describe('Manual handler', function() {
     });
     it('Should allow a function as a malformed error input', function(done) {
       this.timeout(2000);
-      var r = report(function(err, res) {
+      var r = report(function() {
         assert(false, 'callback should not be called');
         done();
       });
@@ -81,13 +81,13 @@ describe('Manual handler', function() {
       }, 1000);
     });
     it('Should callback to the supplied function', function(done) {
-      var r = report('malarkey', function(err, res) {
+      var r = report('malarkey', function() {
         done();
       });
       assert(r.message.match(/malarkey/), 'string error should propagate');
     });
     it('replace the error string with the additional message', function(done) {
-      var r = report('monkey', 'wrench', function(err, res) {
+      var r = report('monkey', 'wrench', function() {
         done();
       });
       assert.strictEqual(
@@ -97,7 +97,7 @@ describe('Manual handler', function() {
       );
     });
     it('Should allow a full array of optional arguments', function(done) {
-      var r = report('donkey', {method: 'FETCH'}, 'cart', function(err, res) {
+      var r = report('donkey', {method: 'FETCH'}, 'cart', function() {
         done();
       });
       assert.strictEqual(r.message, 'cart', 'additional message replace');
@@ -109,7 +109,7 @@ describe('Manual handler', function() {
       assert.strictEqual(r.context.httpRequest.method, 'SIP');
     });
     it('Should allow a lack of additional message', function(done) {
-      var r = report('ticky', {method: 'TACKEY'}, function(err, res) {
+      var r = report('ticky', {method: 'TACKEY'}, function() {
         done();
       });
       assert(
@@ -121,7 +121,7 @@ describe('Manual handler', function() {
     it('Should ignore arguments', function(done) {
       var r = report(
         'hockey',
-        function(err, res) {
+        function() {
           done();
         },
         'field'
@@ -134,7 +134,7 @@ describe('Manual handler', function() {
     it('Should ignore arguments', function(done) {
       var r = report(
         'passkey',
-        function(err, res) {
+        function() {
           done();
         },
         {method: 'HONK'}
@@ -142,28 +142,25 @@ describe('Manual handler', function() {
       assert.notEqual(r.context.httpRequest.method, 'HONK');
     });
     it('Should allow null arguments as placeholders', function(done) {
-      var r = report('pokey', null, null, function(err, res) {
+      var r = report('pokey', null, null, function() {
         done();
       });
       assert(r.message.match(/pokey/), 'string error should propagate');
     });
     it('Should allow explicit undefined', function(done) {
-      var r = report('Turkey', undefined, undefined, function(err, res) {
+      var r = report('Turkey', undefined, undefined, function() {
         done();
       });
       assert(r.message.match(/Turkey/), 'string error should propagate');
     });
     it('Should allow request to be supplied as undefined', function(done) {
-      var r = report('turnkey', undefined, 'solution', function(err, res) {
+      var r = report('turnkey', undefined, 'solution', function() {
         done();
       });
       assert.strictEqual(r.message, 'solution', 'error should propagate');
     });
     it('Should allow additional message', function(done) {
-      var r = report('Mickey', {method: 'SNIFF'}, undefined, function(
-        err,
-        res
-      ) {
+      var r = report('Mickey', {method: 'SNIFF'}, undefined, function() {
         done();
       });
       assert(
