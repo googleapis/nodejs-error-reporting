@@ -100,7 +100,12 @@ class InstancedEnv {
 }
 
 // eslint-disable-next-line node/no-missing-require
-const env = new InstancedEnv(require('../../../system-test/env.js'));
+const env = new InstancedEnv({
+  projectId: process.env.GCLOUD_TESTS_PROJECT_ID,
+  keyFilename: process.env.GCLOUD_TESTS_KEY,
+  apiKey: process.env.GCLOUD_TESTS_API_KEY,
+  projectNumber: process.env.GCLOUD_TESTS_PROJECT_NUMBER
+});
 
 function shouldRun() {
   var shouldRun = true;
@@ -203,11 +208,13 @@ describe('Request/Response lifecycle mocking', function() {
         .setProjectId()
         .setProduction();
       var key = env.apiKey;
+      var logger = createLogger({logLevel: 5});
       var client = new RequestHandler(
         new Configuration(
           {key: key, ignoreEnvironmentCheck: true},
-          createLogger({logLevel: 5})
-        )
+          logger
+        ),
+        logger
       );
       fakeService.query({key: key}).reply(200, function(uri) {
         assert(uri.indexOf('key=' + key) > -1);
@@ -433,19 +440,22 @@ describe('Error Reporting API', function() {
       name: 'when a valid API key is given',
       getKey: () => env.apiKey,
       message: 'Message cannot be empty.',
+      statusCode: 400
     },
     {
       name: 'when an empty API key is given',
       getKey: () => '',
       message: 'The request is missing a valid API key.',
+      statusCode: 403
     },
     {
       name: 'when an invalid API key is given',
       getKey: () => env.apiKey.slice(1) + env.apiKey[0],
       message: 'API key not valid. Please pass a valid API key.',
+      statusCode: 400
     },
   ].forEach(function(testCase) {
-    it(`should return an expected message ${testCase.name}`, function(done) {
+    it.only(`should return an expected message ${testCase.name}`, function(done) {
       this.timeout(30000);
       const API = 'https://clouderrorreporting.googleapis.com/v1beta1';
       const key = testCase.getKey();
@@ -456,7 +466,7 @@ describe('Error Reporting API', function() {
         },
         (err, response, body) => {
           assert.ok(!err && body.error);
-          assert.strictEqual(response.statusCode, 400);
+          assert.strictEqual(response.statusCode, testCase.statusCode);
           assert.strictEqual(body.error.message, testCase.message);
           done();
         }
