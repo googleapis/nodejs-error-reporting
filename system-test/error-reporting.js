@@ -455,7 +455,7 @@ describe('Error Reporting API', function() {
       statusCode: 400
     },
   ].forEach(function(testCase) {
-    it.only(`should return an expected message ${testCase.name}`, function(done) {
+    it(`should return an expected message ${testCase.name}`, function(done) {
       this.timeout(30000);
       const API = 'https://clouderrorreporting.googleapis.com/v1beta1';
       const key = testCase.getKey();
