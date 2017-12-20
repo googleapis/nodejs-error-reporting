@@ -446,6 +446,9 @@ describe('Error Reporting API', function() {
       name: 'when an empty API key is given',
       getKey: () => '',
       message: 'The request is missing a valid API key.',
+      // TODO: Determine if 403 is the correct expected status code.
+      //       Prior to the code migration, the expected status code
+      //       was 400.  However, the service is now reporting 403.
       statusCode: 403
     },
     {
