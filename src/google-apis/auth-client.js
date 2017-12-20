@@ -129,7 +129,7 @@ class RequestHandler extends common.Service {
           if (
             err &&
             err.message !== 'Message cannot be empty.' &&
-            response.statusCode === 400
+            response && response.statusCode === 400
           ) {
             this._logger.error(
               [
