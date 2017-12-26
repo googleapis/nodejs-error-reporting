@@ -106,7 +106,7 @@ function Errors(initConfiguration) {
    *  console.log('done!');
    * });
    */
-  this.report = manual(this._client, this._config, this._logger);
+  this.report = manual.handlerSetup(this._client, this._config, this._logger);
   /**
    * @example
    * // Use to create and report errors manually with a high-degree
@@ -118,7 +118,7 @@ function Errors(initConfiguration) {
    *  console.log('done!');
    * });
    */
-  this.event = messageBuilder(this._config);
+  this.event = messageBuilder.handlerSetup(this._config);
   /**
    * @example
    * var hapi = require('hapi');
