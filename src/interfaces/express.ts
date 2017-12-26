@@ -19,7 +19,7 @@ var is = require('is');
 var isObject = is.object;
 var isFunction = is.fn;
 var ErrorMessage1 = require('../classes/error-message.js');
-var expressRequestInformationExtractor = require('../request-extractors/express.js');
+import {expressRequestInformationExtractor} from '../request-extractors/express';
 var populateErrorMessage = require('../populate-error-message.js');
 
 /**
