@@ -68,7 +68,7 @@ function restifyRequestFinishHandler(client, config, req, res) {
     (res.statusCode > 309 && res.statusCode < 512)
   ) {
     em = new ErrorMessage1().consumeRequestInformation(
-      expressRequestInformationExtractor(req, res)
+      expressRequestInformationExtractor.expressRequestInformationExtractor(req, res)
     );
 
     restifyErrorHandler(client, config, res._body, em);
@@ -128,7 +128,7 @@ function restifyRequestHandler(client, config, req, res, next) {
 function serverErrorHandler(client, config, server) {
   server.on('uncaughtException', function(req, res, reqConfig, err) {
     var em = new ErrorMessage1().consumeRequestInformation(
-      expressRequestInformationExtractor(req, res)
+      expressRequestInformationExtractor.expressRequestInformationExtractor(req, res)
     );
 
     restifyErrorHandler(client, config, err, em);
