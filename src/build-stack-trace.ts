@@ -35,7 +35,7 @@ function buildStackTrace(message) {
   var prefix = message ? message + '\n' : '';
   return (
     prefix +
-    target.stack
+    (target as any).stack
       .split('\n')
       .slice(1)
       .filter(function(line) {
