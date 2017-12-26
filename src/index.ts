@@ -20,7 +20,7 @@
 
 'use strict';
 
-var Configuration = require('./configuration.js');
+var Configuration = require('./configuration.js') as {(givenConfig: any, logger: any): void};
 var AuthClient = require('./google-apis/auth-client.js');
 // Begin error reporting interfaces
 
@@ -30,7 +30,7 @@ var manual = require('./interfaces/manual.js');
 var express = require('./interfaces/express.js');
 var restify = require('./interfaces/restify');
 var messageBuilder = require('./interfaces/message-builder.js');
-var createLogger = require('./logger.js');
+var createLogger1 = require('./logger.js');
 
 /**
  * @typedef ConfigurationOptions
@@ -89,12 +89,12 @@ var createLogger = require('./logger.js');
  * @param {ConfigurationOptions} initConfiguration - The desired project/error
  *     reporting configuration.
  */
-function Errors(initConfiguration) {
+function Errors(initConfiguration): void {
   if (!(this instanceof Errors)) {
     return new Errors(initConfiguration);
   }
 
-  this._logger = createLogger(initConfiguration);
+  this._logger = createLogger1(initConfiguration);
   this._config = new Configuration(initConfiguration, this._logger);
   this._client = new AuthClient(this._config, this._logger);
 
