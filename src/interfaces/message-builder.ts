@@ -16,7 +16,7 @@
 
 'use strict';
 var ErrorMessage1 = require('../classes/error-message.js');
-var buildStackTrace = require('../build-stack-trace.js');
+import {buildStackTrace} from '../build-stack-trace';
 
 /**
  * The handler setup function serves to produce a bound instance of the
