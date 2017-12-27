@@ -20,7 +20,7 @@
 
 'use strict';
 
-var Configuration = require('./configuration.js') as {(givenConfig: any, logger: any): void};
+import {Configuration} from './configuration';
 import {RequestHandler as AuthClient} from './google-apis/auth-client';
 // Begin error reporting interfaces
 
