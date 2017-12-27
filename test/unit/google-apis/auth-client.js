@@ -36,7 +36,7 @@ function verifyReportedMessage(config1, errToReturn, expectedLogs) {
     '@google-cloud/common': {
       Service: ServiceStub,
     },
-  });
+  }).RequestHandler;
 
   var logs = {};
   var logger = {
