@@ -24,6 +24,7 @@ import {populateErrorMessage} from '../populate-error-message';
 import { RequestHandler } from '../google-apis/auth-client';
 import { Configuration } from '../configuration';
 import { Logger } from '@google-cloud/common';
+import * as http from 'http';
 
 /**
  * The handler setup function serves to produce a bound instance of the
@@ -40,6 +41,7 @@ import { Logger } from '@google-cloud/common';
  *  function
  */
 export function handlerSetup(client: RequestHandler, config: Configuration, logger: Logger) {
+  type Callback = (err: Error|null, response: http.ServerResponse|null, body: any) => void;
   /**
    * The interface for manually reporting errors to the Google Error API in
    * application code.
@@ -57,7 +59,7 @@ export function handlerSetup(client: RequestHandler, config: Configuration, logg
    * @returns {ErrorMessage} - returns the error message created through with
    * the parameters given.
    */
-  function reportManualError(err, request, additionalMessage, callback) {
+  function reportManualError(err: {}, request: {}|undefined, additionalMessage: string|{}|undefined, callback: Callback|{}|string|undefined) {
     var em;
     if (isString(request)) {
       // no request given
@@ -113,7 +115,8 @@ export function handlerSetup(client: RequestHandler, config: Configuration, logg
       em.setMessage(additionalMessage);
     }
 
-    client.sendError(em, callback);
+    // TODO: Address this type cast
+    client.sendError(em, callback as Callback);
     return em;
   }
 
