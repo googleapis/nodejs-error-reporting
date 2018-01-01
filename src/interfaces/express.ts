@@ -23,6 +23,7 @@ import {populateErrorMessage} from '../populate-error-message';
 
 import {RequestHandler} from '../google-apis/auth-client';
 import {Configuration} from '../configuration';
+import * as express from 'express';
 
 /**
  * Returns a function that can be used as an express error handling middleware.
@@ -45,7 +46,7 @@ export function makeExpressHandler(client: RequestHandler, config: Configuration
    * @param {Function} next - an Express continuation callback
    * @returns {ErrorMessage} - Returns the ErrorMessage instance
    */
-  function expressErrorHandler(err, req, res, next) {
+  function expressErrorHandler(err: {}, req: express.Request, res: express.Response, next: Function) {
     var ctxService = '';
     var ctxVersion: string|undefined = '';
 

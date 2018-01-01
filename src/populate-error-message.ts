@@ -43,11 +43,11 @@ export interface PopulatedObject {
  *  information into
  * @returns {Undefined} - does not return a value
  */
-export function populateErrorMessage(ob: any, em: ErrorMessage) {
+export function populateErrorMessage(ob: {}, em: ErrorMessage) {
   if (ob === null || ob === undefined) {
     em.setMessage(buildStackTrace('' + ob));
-  } else if (ob.stack) {
-    populateFromError(ob, em);
+  } else if ((ob as {stack: {}}).stack) {
+    populateFromError(ob as Error, em);
   } else if (typeof ob === 'object' && isObject(ob)) {
     populateFromObject(ob, em);
   } else {

@@ -85,8 +85,8 @@ export class RequestInformationContainer {
    * @param {String} referrer - the referrer of the request
    * @returns {this} - returns the instance for chaining
    */
-  setReferrer(referrer: string) {
-    this.referrer = isString(referrer) ? referrer : '';
+  setReferrer(referrer?: string) {
+    this.referrer = (isString(referrer) ? referrer : '')!;
 
     return this;
   };
@@ -97,8 +97,8 @@ export class RequestInformationContainer {
    * @param {String} userAgent - the user agent committing the request
    * @returns {this} - returns the instance for chaining
    */
-  setUserAgent(userAgent: string) {
-    this.userAgent = isString(userAgent) ? userAgent : '';
+  setUserAgent(userAgent?: string) {
+    this.userAgent = (isString(userAgent) ? userAgent : '')!;
 
     return this;
   };
@@ -109,8 +109,8 @@ export class RequestInformationContainer {
    * @param {String} remoteIp - the remote IP of the requester
    * @returns {this} - returns the instance for chaining
    */
-  setRemoteAddress(remoteIp: string) {
-    this.remoteAddress = isString(remoteIp) ? remoteIp : '';
+  setRemoteAddress(remoteIp?: string) {
+    this.remoteAddress = (isString(remoteIp) ? remoteIp : '')!;
 
     return this;
   };
