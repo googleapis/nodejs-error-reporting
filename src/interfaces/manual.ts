@@ -17,7 +17,8 @@
 import * as is from 'is';
 var isString = is.string;
 var isObject = is.object;
-var isFunction = is.fn;
+// TODO: Address the error where `is` does not have a `fn` property
+var isFunction = (is as {} as {fn: Function}).fn;
 import {ErrorMessage} from '../classes/error-message';
 import {manualRequestInformationExtractor} from '../request-extractors/manual';
 import {populateErrorMessage} from '../populate-error-message';
@@ -114,7 +115,7 @@ export function handlerSetup(client: RequestHandler, config: Configuration, logg
     }
 
     if (isString(additionalMessage)) {
-      em.setMessage(additionalMessage);
+      em.setMessage(additionalMessage as string);
     }
 
     // TODO: Address this type cast
