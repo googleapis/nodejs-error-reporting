@@ -25,6 +25,7 @@ import { RequestHandler } from '../google-apis/auth-client';
 import { Configuration } from '../configuration';
 import { Logger } from '@google-cloud/common';
 import * as http from 'http';
+import {Request} from '../request-extractors/manual';
 
 /**
  * The handler setup function serves to produce a bound instance of the
@@ -59,7 +60,7 @@ export function handlerSetup(client: RequestHandler, config: Configuration, logg
    * @returns {ErrorMessage} - returns the error message created through with
    * the parameters given.
    */
-  function reportManualError(err: {}, request: {}|undefined, additionalMessage: string|{}|undefined, callback: Callback|{}|string|undefined) {
+  function reportManualError(err: {}, request: Request|undefined, additionalMessage: string|{}|undefined, callback: Callback|{}|string|undefined) {
     var em;
     if (isString(request)) {
       // no request given
@@ -108,7 +109,8 @@ export function handlerSetup(client: RequestHandler, config: Configuration, logg
     }
 
     if (isObject(request)) {
-      em.consumeRequestInformation(manualRequestInformationExtractor(request));
+      // TODO: Address this explicit cast
+      em.consumeRequestInformation(manualRequestInformationExtractor(request as Request));
     }
 
     if (isString(additionalMessage)) {
