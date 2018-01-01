@@ -59,7 +59,8 @@ var API = 'https://clouderrorreporting.googleapis.com/v1beta1';
 export class RequestHandler extends common.Service {
   private _config: Configuration;
   private _logger: common.Logger;
-  private authClient: any;
+  // TODO: Make this more precise
+  private authClient: {getToken: (err: {}) => void;};
 
   /**
    * Returns a query-string request object if a string key is given, otherwise
