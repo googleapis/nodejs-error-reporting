@@ -22,6 +22,8 @@ import * as expressRequestInformationExtractor from '../request-extractors/expre
 import {populateErrorMessage} from '../populate-error-message';
 import { RequestHandler } from '../google-apis/auth-client';
 import { Configuration } from '../configuration';
+import * as restify from 'restify';
+import * as express from 'express';
 
 /**
  * The restifyErrorHandler is responsible for taking the captured error, setting
@@ -37,7 +39,7 @@ import { Configuration } from '../configuration';
  * @param {ErrorMessage} - the error message instance container
  * @returns {Undefined} - does not return anything
  */
-function restifyErrorHandler(client: RequestHandler, config: Configuration, err: any, em: ErrorMessage) {
+function restifyErrorHandler(client: RequestHandler, config: Configuration, err: {}, em: ErrorMessage) {
   var svc = config.getServiceContext();
   em.setServiceContext(svc.service, svc.version);
 
@@ -61,18 +63,21 @@ function restifyErrorHandler(client: RequestHandler, config: Configuration, err:
  * @param {Object} res - the restify response
  * @returns {Undefined} - does not return anything
  */
-function restifyRequestFinishHandler(client: RequestHandler, config: Configuration, req, res) {
+function restifyRequestFinishHandler(client: RequestHandler, config: Configuration, req: restify.Request, res: restify.Response) {
   var em;
 
+  // TODO: Address the fact that `_body` does not exist in `res`
   if (
-    res._body instanceof Error ||
+    (res as {} as {_body: {}})._body instanceof Error ||
     (res.statusCode > 309 && res.statusCode < 512)
   ) {
     em = new ErrorMessage().consumeRequestInformation(
-      expressRequestInformationExtractor.expressRequestInformationExtractor(req, res)
+      // TODO: Address the type conflict with `req` and `res` and the types
+      //       expected for `expressRequestInformationExtractor`
+      expressRequestInformationExtractor.expressRequestInformationExtractor(req as {} as express.Request, res as {} as express.Response)
     );
 
-    restifyErrorHandler(client, config, res._body, em);
+    restifyErrorHandler(client, config, (res as {} as {_body: {}})._body, em);
   }
 }
 
@@ -94,16 +99,17 @@ function restifyRequestFinishHandler(client: RequestHandler, config: Configurati
  *  downstream request handlers
  * @returns {Any} - the result of the next function
  */
-function restifyRequestHandler(client: RequestHandler, config: Configuration, req, res, next: Function) {
+function restifyRequestHandler(client: RequestHandler, config: Configuration, req: restify.Request, res: restify.Response, next: Function) {
+  // TODO: Address the fact that a cast is needed to use `listener`
   var listener = {};
 
   if (isObject(res) && isFunction(res.on) && isFunction(res.removeListener)) {
     listener = function() {
       restifyRequestFinishHandler(client, config, req, res);
-      res.removeListener('finish', listener);
+      res.removeListener('finish', listener as {} as (...args: {}[]) => void);
     };
 
-    res.on('finish', listener);
+    res.on('finish', listener as {} as (...args: {}[]) => void);
   }
 
   return next();
@@ -126,7 +132,7 @@ function restifyRequestHandler(client: RequestHandler, config: Configuration, re
  * @param {Object} server - the restify server instance
  * @returns {Function} - the actual request error handler
  */
-function serverErrorHandler(client: RequestHandler, config: Configuration, server) {
+function serverErrorHandler(client: RequestHandler, config: Configuration, server: restify.Server) {
   server.on('uncaughtException', function(req, res, reqConfig, err) {
     var em = new ErrorMessage().consumeRequestInformation(
       expressRequestInformationExtractor.expressRequestInformationExtractor(req, res)
