@@ -40,7 +40,7 @@ export function koaErrorHandler(client: RequestHandler, config: Configuration) {
    * @param {Function} next - the result of the request handlers to yield
    * @returns {Undefined} does not return anything
    */
-  return function*(next) {
+  return function*(next: Function) {
     var svc = config.getServiceContext();
 
     try {
