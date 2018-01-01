@@ -24,6 +24,7 @@ var packageJson = require('../../../package.json');
 
 import {RequestHandler} from '../google-apis/auth-client';
 import {Configuration} from '../configuration';
+import * as hapi from 'hapi';
 
 /**
  * The Hapi error handler function serves simply to create an error message
@@ -35,9 +36,9 @@ import {Configuration} from '../configuration';
  * @returns {ErrorMessage} - a partially or fully populated instance of
  *  ErrorMessage
  */
-function hapiErrorHandler(req, err, config) {
+function hapiErrorHandler(req: hapi.Request, err: {}, config: Configuration) {
   var service = '';
-  var version = '';
+  var version: string|undefined = '';
 
   if (isObject(config)) {
     service = config.getServiceContext().service;
@@ -75,7 +76,7 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
    *  plugin
    * @returns {Undefined} - returns the execution of the next callback
    */
-  function hapiRegisterFunction(server, options, next) {
+  function hapiRegisterFunction(server: hapi.Server, options: {}, next: Function) {
     if (isObject(server)) {
       if (isFunction(server.on)) {
         server.on('request-error', function(req, err) {
@@ -88,11 +89,14 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
           if (
             isObject(request) &&
             isObject(request.response) &&
-            request.response.isBoom
+            // TODO: Handle the case when `request.response` is null
+            request.response!.isBoom
           ) {
             var em = hapiErrorHandler(
               request,
-              new Error(request.response.message),
+              // TODO: Handle the case when `request.response` is null
+              // TODO: Handle the type conflict that requires a cast to string
+              new Error(request.response!.message as {} as string),
               config
             );
             client.sendError(em);
