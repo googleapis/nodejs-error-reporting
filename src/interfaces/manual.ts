@@ -21,6 +21,9 @@ var isFunction = is.fn;
 import {ErrorMessage} from '../classes/error-message';
 import {manualRequestInformationExtractor} from '../request-extractors/manual';
 import {populateErrorMessage} from '../populate-error-message';
+import { RequestHandler } from '../google-apis/auth-client';
+import { Configuration } from '../configuration';
+import { Logger } from '@google-cloud/common';
 
 /**
  * The handler setup function serves to produce a bound instance of the
@@ -36,7 +39,7 @@ import {populateErrorMessage} from '../populate-error-message';
  * @returns {reportManualError} - a bound version of the reportManualError
  *  function
  */
-export function handlerSetup(client, config, logger) {
+export function handlerSetup(client: RequestHandler, config: Configuration, logger: Logger) {
   /**
    * The interface for manually reporting errors to the Google Error API in
    * application code.
