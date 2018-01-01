@@ -21,6 +21,9 @@ import {ErrorMessage} from '../classes/error-message';
 import {expressRequestInformationExtractor} from '../request-extractors/express';
 import {populateErrorMessage} from '../populate-error-message';
 
+import {RequestHandler} from '../google-apis/auth-client';
+import {Configuration} from '../configuration';
+
 /**
  * Returns a function that can be used as an express error handling middleware.
  * @function makeExpressHandler
@@ -30,7 +33,7 @@ import {populateErrorMessage} from '../populate-error-message';
  * @returns {expressErrorHandler} - a function that can be used as an express
  *  error handling middleware.
  */
-export function makeExpressHandler(client, config) {
+export function makeExpressHandler(client: RequestHandler, config: Configuration) {
   /**
    * The Express Error Handler function is an interface for the error handler
    * stack into the Express architecture.
@@ -44,7 +47,7 @@ export function makeExpressHandler(client, config) {
    */
   function expressErrorHandler(err, req, res, next) {
     var ctxService = '';
-    var ctxVersion = '';
+    var ctxVersion: string|undefined = '';
 
     if (isObject(config)) {
       ctxService = config.getServiceContext().service;

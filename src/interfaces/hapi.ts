@@ -22,6 +22,9 @@ import {hapiRequestInformationExtractor} from '../request-extractors/hapi';
 import {populateErrorMessage} from '../populate-error-message';
 var packageJson = require('../../../package.json');
 
+import {RequestHandler} from '../google-apis/auth-client';
+import {Configuration} from '../configuration';
+
 /**
  * The Hapi error handler function serves simply to create an error message
  * and begin that error message on the path of correct population.
@@ -57,7 +60,7 @@ function hapiErrorHandler(req, err, config) {
  *  configuration
  * @returns {Object} - the actual Hapi plugin
  */
-export function makeHapiPlugin(client, config) {
+export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
   /**
    * The register function serves to attach the hapiErrorHandler to specific
    * points in the hapi request-response lifecycle. Namely: it attaches to the
