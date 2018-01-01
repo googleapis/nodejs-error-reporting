@@ -4,7 +4,6 @@
     "rootDir": ".",
     "outDir": "build",
     "declaration": false,
-    "allowJs": true,
     "noImplicitAny": false,
     "noImplicitThis": false
   },
