@@ -61,7 +61,7 @@ export function handlerSetup(client: RequestHandler, config: Configuration, logg
    * @returns {ErrorMessage} - returns the error message created through with
    * the parameters given.
    */
-  function reportManualError(err: {}, request: Request|undefined, additionalMessage: string|{}|undefined, callback: Callback|{}|string|undefined) {
+  function reportManualError(err: {}, request?: Request, additionalMessage?: string|{}, callback?: Callback|{}|string) {
     var em;
     if (isString(request)) {
       // no request given
