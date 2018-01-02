@@ -186,7 +186,7 @@ export class Configuration {
     this._givenConfiguration = isObject(givenConfig) ? givenConfig : {};
     this._checkLocalServiceContext();
     this._gatherLocalConfiguration();
-  };
+  }
   /**
    * The _checkLocalServiceContext function is responsible for attempting to
    * source the _serviceContext objects values from runtime configuration and the
@@ -249,7 +249,7 @@ export class Configuration {
         throw new Error('config.serviceContext.version must be a string');
       }
     }
-  };
+  }
   /**
    * The _gatherLocalConfiguration function is responsible for determining
    * directly determing whether the properties `reportUncaughtExceptions` and
@@ -303,7 +303,7 @@ export class Configuration {
     } else if (has(this._givenConfiguration, 'reportUnhandledRejections')) {
       throw new Error('config.reportUnhandledRejections must be a boolean');
     }
-  };
+  }
   /**
    * The _checkLocalProjectId function is responsible for determing whether the
    * _projectId property was set by the metadata service and whether or not the
@@ -339,7 +339,7 @@ export class Configuration {
       }
     }
     return this._projectId;
-  };
+  }
   /**
    * Returns the _shouldReportErrorsToAPI property on the instance.
    * @memberof Configuration
@@ -349,7 +349,7 @@ export class Configuration {
    */
   getShouldReportErrorsToAPI() {
     return this._shouldReportErrorsToAPI;
-  };
+  }
   /**
    * Returns the _projectId property on the instance.
    * @memberof Configuration
@@ -359,7 +359,7 @@ export class Configuration {
    */
   getProjectId() {
     return this._checkLocalProjectId();
-  };
+  }
   /**
    * Returns the _key property on the instance.
    * @memberof Configuration
@@ -369,7 +369,7 @@ export class Configuration {
    */
   getKey() {
     return this._key;
-  };
+  }
   /**
    * Returns the keyFilename property on the instance.
    * @memberof Configuration
@@ -379,7 +379,7 @@ export class Configuration {
    */
   getKeyFilename() {
     return this.keyFilename;
-  };
+  }
   /**
    * Returns the credentials property on the instance.
    * @memberof Configuration
@@ -389,7 +389,7 @@ export class Configuration {
    */
   getCredentials() {
     return this.credentials;
-  };
+  }
   /**
    * Returns the _serviceContext property on the instance.
    * @memberof Configuration
@@ -399,7 +399,7 @@ export class Configuration {
    */
   getServiceContext() {
     return this._serviceContext;
-  };
+  }
   /**
    * Returns the _reportUnhandledRejections property on the instance.
    * @memberof Configuration
@@ -409,5 +409,5 @@ export class Configuration {
    */
   getReportUnhandledRejections() {
     return this._reportUnhandledRejections;
-  };
+  }
 }

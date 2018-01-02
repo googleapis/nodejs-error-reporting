@@ -74,7 +74,7 @@ export class RequestHandler extends common.Service {
    */
   static manufactureQueryString(key: string|null) {
     if (isString(key)) {
-      return {key: key};
+      return {key};
     }
     return null;
   }
@@ -166,7 +166,7 @@ export class RequestHandler extends common.Service {
    * @returns {Undefined} - does not return anything
    * @instance
    */
-  sendError(errorMessage: ErrorMessage, userCb?: (err: Error|null, response: http.ServerResponse|null, body: any) => void) {
+  sendError(errorMessage: ErrorMessage, userCb?: (err: Error|null, response: http.ServerResponse|null, body: {}) => void) {
     const cb: Function = (isFunction(userCb) ? userCb : RequestHandler.noOp)!;
     if (this._config.getShouldReportErrorsToAPI()) {
       this.request(

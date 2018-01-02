@@ -65,7 +65,7 @@ export class RequestInformationContainer {
     this.url = isString(url) ? url : '';
 
     return this;
-  };
+  }
 
   /**
    * Sets the method property on the instance.
@@ -77,7 +77,7 @@ export class RequestInformationContainer {
     this.method = isString(method) ? method : '';
 
     return this;
-  };
+  }
 
   /**
    * Sets the referrer property on the instance.
@@ -89,7 +89,7 @@ export class RequestInformationContainer {
     this.referrer = (isString(referrer) ? referrer : '')!;
 
     return this;
-  };
+  }
 
   /**
    * Sets the userAgent property on the instance.
@@ -101,7 +101,7 @@ export class RequestInformationContainer {
     this.userAgent = (isString(userAgent) ? userAgent : '')!;
 
     return this;
-  };
+  }
 
   /**
    * Sets the remoteAddress property on the instance.
@@ -113,7 +113,7 @@ export class RequestInformationContainer {
     this.remoteAddress = (isString(remoteIp) ? remoteIp : '')!;
 
     return this;
-  };
+  }
 
   /**
    * Sets the statusCode property on the instance.
@@ -125,5 +125,5 @@ export class RequestInformationContainer {
     this.statusCode = isNumber(statusCode) ? statusCode : 0;
 
     return this;
-  };
+  }
 }

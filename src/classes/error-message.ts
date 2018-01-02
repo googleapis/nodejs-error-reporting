@@ -118,7 +118,7 @@ export class ErrorMessage {
     this.eventTime = new Date().toISOString();
 
     return this;
-  };
+  }
 
   /**
    * Sets the serviceContext property on the instance and its two constituent
@@ -135,7 +135,7 @@ export class ErrorMessage {
     this.serviceContext.version = isString(version) ? version : undefined;
 
     return this;
-  };
+  }
 
   /**
    * Sets the message property on the instance.
@@ -147,7 +147,7 @@ export class ErrorMessage {
     this.message = isString(message) ? message : '';
 
     return this;
-  };
+  }
 
   /**
    * Sets the context.httpRequest.method property on the instance.
@@ -160,7 +160,7 @@ export class ErrorMessage {
     this.context.httpRequest.method = isString(method) ? method : '';
 
     return this;
-  };
+  }
 
   /**
    * Sets the context.httpRequest.url property on the instance.
@@ -172,7 +172,7 @@ export class ErrorMessage {
     this.context.httpRequest.url = isString(url) ? url : '';
 
     return this;
-  };
+  }
 
   /**
    * Sets the context.httpRequest.userAgent property on the instance.
@@ -184,7 +184,7 @@ export class ErrorMessage {
     this.context.httpRequest.userAgent = isString(userAgent) ? userAgent : '';
 
     return this;
-  };
+  }
 
   /**
    * Sets the context.httpRequest.referrer property on the instance.
@@ -196,7 +196,7 @@ export class ErrorMessage {
     this.context.httpRequest.referrer = isString(referrer) ? referrer : '';
 
     return this;
-  };
+  }
 
   /**
    * Sets the context.httpRequest.responseStatusCode property on the instance.
@@ -210,7 +210,7 @@ export class ErrorMessage {
       : 0;
 
     return this;
-  };
+  }
 
   /**
    * Sets the context.httpRequest.remoteIp property on the instance
@@ -222,7 +222,7 @@ export class ErrorMessage {
     this.context.httpRequest.remoteIp = isString(remoteIp) ? remoteIp : '';
 
     return this;
-  };
+  }
 
   /**
    * Sets the context.user property on the instance
@@ -234,7 +234,7 @@ export class ErrorMessage {
     this.context.user = isString(user) ? user : '';
 
     return this;
-  };
+  }
 
   /**
    * Sets the context.reportLocation.filePath property on the instance
@@ -246,7 +246,7 @@ export class ErrorMessage {
     this.context.reportLocation.filePath = isString(filePath) ? filePath : '';
 
     return this;
-  };
+  }
 
   /**
    * Sets the context.reportLocation.lineNumber property on the instance
@@ -260,7 +260,7 @@ export class ErrorMessage {
       : 0;
 
     return this;
-  };
+  }
 
   /**
    * Sets the context.reportLocation.functionName property on the instance
@@ -274,7 +274,7 @@ export class ErrorMessage {
       : '';
 
     return this;
-  };
+  }
 
   /**
    * Consumes the standard object created by the requestInformationExtractors
@@ -297,5 +297,5 @@ export class ErrorMessage {
       .setRemoteIp(requestInformation.remoteAddress);
 
     return this;
-  };
+  }
 }

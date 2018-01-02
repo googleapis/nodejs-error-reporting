@@ -33,7 +33,7 @@ export function buildStackTrace(message: string) {
   const prefix = message ? message + '\n' : '';
   return (
     prefix +
-    (target as any).stack
+    (target as {}).stack
       .split('\n')
       .slice(1)
       .filter(function(line: string) {

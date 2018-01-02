@@ -66,5 +66,5 @@ export function createLogger(initConfiguration: ConfigurationOptions) {
       );
     }
   }
-  return logger({level: level, tag: packageJson.name});
+  return logger({level, tag: packageJson.name});
 }
