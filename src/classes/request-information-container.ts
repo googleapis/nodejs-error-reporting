@@ -30,15 +30,15 @@ export class RequestInformationContainer {
    * The constructor for RequestInformationContainer does not take any arugments
    * and is solely meant to allocate several properties on the instance. The
    * constructor will init properties which closely relate to the ErrorMessage
-   * context.httpRequest object properties. The properties on the instance should
-   * be set through there corresponding setters as these will enforce type
-   * validation around input.
+   * context.httpRequest object properties. The properties on the instance
+   * should be set through there corresponding setters as these will enforce
+   * type validation around input.
    * @class RequestInformationContainer
    * @classdesc RequestInformationContainer is a class which is meant to
    * standardize and contain values corresponding to request information around
    * an error-inducing request. This class is meant to be a temporary container
-   * for request information and essentially a standardized interface consumed by
-   * the ErrorMessage class itself.
+   * for request information and essentially a standardized interface consumed
+   * by the ErrorMessage class itself.
    * @property {String} url - The route/url that the request addressed
    * @property {String} method - The method that the request used
    * @property {String} referrer - The referrer of the request

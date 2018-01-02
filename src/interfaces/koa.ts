@@ -15,11 +15,11 @@
  */
 
 import {ErrorMessage} from '../classes/error-message';
-import {koaRequestInformationExtractor} from '../request-extractors/koa';
+import {Configuration} from '../configuration';
+import {RequestHandler} from '../google-apis/auth-client';
 import {populateErrorMessage} from '../populate-error-message';
-import { RequestHandler } from '../google-apis/auth-client';
-import { Configuration } from '../configuration';
-import { Request, Response } from 'koa';
+import {koaRequestInformationExtractor} from '../request-extractors/koa';
+import {Request, Response} from 'koa';
 
 /**
  * The koaErrorHandler should be placed at the beginning of the koa middleware
