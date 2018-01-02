@@ -15,10 +15,10 @@
  */
 
 import {ErrorMessage} from '../classes/error-message';
-import {koaRequestInformationExtractor} from '../request-extractors/koa';
+import {Configuration} from '../configuration';
+import {RequestHandler} from '../google-apis/auth-client';
 import {populateErrorMessage} from '../populate-error-message';
-import { RequestHandler } from '../google-apis/auth-client';
-import { Configuration } from '../configuration';
+import {koaRequestInformationExtractor} from '../request-extractors/koa';
 
 /**
  * The koaErrorHandler should be placed at the beginning of the koa middleware
@@ -46,13 +46,13 @@ export function koaErrorHandler(client: RequestHandler, config: Configuration) {
     try {
       yield next;
     } catch (err) {
-      const em = new ErrorMessage()
-        .consumeRequestInformation(
-          // TODO: Determine how to use `this` correctly so that
-          //       `noImplicitThis` can be set to `true` in `tsconfig`
-          koaRequestInformationExtractor(this.request, this.response)
-        )
-        .setServiceContext(svc.service, svc.version);
+      const em =
+          new ErrorMessage()
+              .consumeRequestInformation(
+                  // TODO: Determine how to use `this` correctly so that
+                  //       `noImplicitThis` can be set to `true` in `tsconfig`
+                  koaRequestInformationExtractor(this.request, this.response))
+              .setServiceContext(svc.service, svc.version);
 
       populateErrorMessage(err, em);
 
