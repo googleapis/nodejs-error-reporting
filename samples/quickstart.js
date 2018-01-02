@@ -19,10 +19,10 @@
 function quickstart() {
   // [START error_reporting_quickstart]
   // Imports the Google Cloud client library
-  const ErrorReporting = require('@google-cloud/error-reporting');
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Instantiates a client
-  const errors = ErrorReporting();
+  const errors = new ErrorReporting();
 
   // Reports a simple error
   errors.report('Something broke!');

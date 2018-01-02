@@ -18,10 +18,10 @@
 function setupImplicit() {
   // [START error_reporting_setup_implicit]
   // Imports the Google Cloud client library
-  const ErrorReporting = require('@google-cloud/error-reporting');
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Instantiates a client
-  const errors = ErrorReporting();
+  const errors = new ErrorReporting();
 
   // Reports a simple error
   errors.report('Something broke!');
@@ -31,10 +31,10 @@ function setupImplicit() {
 function setupExplicit() {
   // [START error_reporting_setup_explicit]
   // Imports the Google Cloud client library
-  const ErrorReporting = require('@google-cloud/error-reporting');
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Instantiates a client
-  const errors = ErrorReporting({
+  const errors = new ErrorReporting({
     projectId: 'your-project-id',
     keyFilename: '/path/to/key.json',
   });
@@ -47,10 +47,10 @@ function setupExplicit() {
 function manual() {
   // [START error_reporting_manual]
   // Imports the Google Cloud client library
-  const ErrorReporting = require('@google-cloud/error-reporting');
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Instantiates a client
-  const errors = ErrorReporting();
+  const errors = new ErrorReporting();
 
   // Use the error message builder to customize all fields ...
   const errorEvent = errors.event();
@@ -81,10 +81,10 @@ function express() {
   const express = require('express');
 
   // Imports the Google Cloud client library
-  const ErrorReporting = require('@google-cloud/error-reporting');
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Instantiates a client
-  const errors = ErrorReporting();
+  const errors = new ErrorReporting();
 
   const app = express();
 
