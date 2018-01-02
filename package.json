@@ -65,7 +65,7 @@
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-prettier": "^2.3.1",
     "express": "^4.13.4",
-    "gts": "^0.5.2",
+    "gts": "^0.5.3",
     "hapi": "^17.1.1",
     "ink-docstrap": "^1.3.0",
     "intelli-espower-loader": "^1.0.1",
@@ -90,6 +90,6 @@
     "prettier": "^1.7.4",
     "proxyquire": "^1.7.11",
     "restify": "^6.3.4",
-    "typescript": "^2.6.2"
+    "typescript": "~2.6.2"
   }
 }
