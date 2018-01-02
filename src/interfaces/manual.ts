@@ -28,6 +28,8 @@ import { Logger } from '@google-cloud/common';
 import * as http from 'http';
 import {Request} from '../request-extractors/manual';
 
+export type Callback = (err: Error|null, response: http.ServerResponse|null, body: any) => void;
+
 /**
  * The handler setup function serves to produce a bound instance of the
  * reportManualError function with no bound context, a bound first arugment
@@ -43,7 +45,6 @@ import {Request} from '../request-extractors/manual';
  *  function
  */
 export function handlerSetup(client: RequestHandler, config: Configuration, logger: Logger) {
-  type Callback = (err: Error|null, response: http.ServerResponse|null, body: any) => void;
   /**
    * The interface for manually reporting errors to the Google Error API in
    * application code.

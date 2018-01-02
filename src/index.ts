@@ -31,13 +31,13 @@ import {handlerSetup as restify} from './interfaces/restify';
 import * as messageBuilder from './interfaces/message-builder';
 import {createLogger} from './logger';
 
-// These imports are required to resolve compiler errors when defining
-// the application interfaces below.
 import {ErrorMessage} from './classes/error-message';
 import {Request} from './request-extractors/manual';
+import {Callback} from './interfaces/manual';
 import {ServerResponse} from 'http';
-import {Server} from 'hapi';
+import * as h from 'hapi';
 import * as e from 'express';
+import * as r from 'restify';
 
 /**
  * @typedef ConfigurationOptions
@@ -100,6 +100,12 @@ export class Errors {
   private _logger: Logger;
   private _config: Configuration;
   private _client: AuthClient;
+  report: (err: {}, request?: Request, additionalMessage?: string|{}, callback?: Callback|{}|string) => ErrorMessage;
+  event: () => ErrorMessage;
+  hapi: {register: (server: h.Server, options: {}, next: Function) => void };
+  express: (err: {}, req: e.Request, res: e.Response, next: Function) => void;
+  restify: (client: AuthClient, config: Configuration, server: r.Server) => void;
+  koa: (next: Function) => Iterable<Function>;
 
   constructor(initConfiguration: ConfigurationOptions) {
     if (!(this instanceof Errors)) {
@@ -123,63 +129,67 @@ export class Errors {
         that.report(reason);
       });
     }
+
+    // Build the application interfaces for use by the hosting application
+    /**
+     * @example
+     * // Use to report errors manually like so
+     * errors.report(new Error('xyz'), function () {
+     *  console.log('done!');
+     * });
+     */
+    this.report = manual.handlerSetup(this._client, this._config, this._logger);
+
+    /**
+     * @example
+     * // Use to create and report errors manually with a high-degree
+     * // of manual control
+     * var err = errors.event()
+     *  .setMessage('My error message')
+     *  .setUser('root@nexus');
+     * errors.report(err, function () {
+     *  console.log('done!');
+     * });
+     */
+    this.event = messageBuilder.handlerSetup(this._config);
+
+    /**
+     * @example
+     * var hapi = require('hapi');
+     * var server = new hapi.Server();
+     * server.connection({ port: 3000 });
+     * server.start();
+     * // AFTER ALL OTHER ROUTE HANDLERS
+     * server.register({register: errors.hapi});
+     */
+    this.hapi = hapi(this._client, this._config);
+
+    /**
+     * @example
+     * var express = require('express');
+     * var app = express();
+     * // AFTER ALL OTHER ROUTE HANDLERS
+     * app.use(errors.express);
+     * app.listen(3000);
+     */
+    this.express = express(this._client, this._config);
+
+    /**
+     * @example
+     * var restify = require('restify');
+     * var server = restify.createServer();
+     * // BEFORE ALL OTHER ROUTE HANDLERS
+     * server.use(errors.restify(server));
+     */
+    this.restify = restify(this._client, this._config);
+
+    /**
+     * @example
+     * var koa = require('koa');
+     * var app = koa();
+     * // BEFORE ALL OTHER ROUTE HANDLERS HANDLERS
+     * app.use(errors.koa);
+     */
+    this.koa = koa(this._client, this._config);
   }
-
-  // Build the application interfaces for use by the hosting application
-  /**
-   * @example
-   * // Use to report errors manually like so
-   * errors.report(new Error('xyz'), function () {
-   *  console.log('done!');
-   * });
-   */
-  report = manual.handlerSetup(this._client, this._config, this._logger);
-
-  /**
-   * @example
-   * // Use to create and report errors manually with a high-degree
-   * // of manual control
-   * var err = errors.event()
-   *  .setMessage('My error message')
-   *  .setUser('root@nexus');
-   * errors.report(err, function () {
-   *  console.log('done!');
-   * });
-   */
-  event = messageBuilder.handlerSetup(this._config);
-  /**
-   * @example
-   * var hapi = require('hapi');
-   * var server = new hapi.Server();
-   * server.connection({ port: 3000 });
-   * server.start();
-   * // AFTER ALL OTHER ROUTE HANDLERS
-   * server.register({register: errors.hapi});
-   */
-  hapi = hapi(this._client, this._config);
-  /**
-   * @example
-   * var express = require('express');
-   * var app = express();
-   * // AFTER ALL OTHER ROUTE HANDLERS
-   * app.use(errors.express);
-   * app.listen(3000);
-   */
-  express = express(this._client, this._config);
-  /**
-   * @example
-   * var restify = require('restify');
-   * var server = restify.createServer();
-   * // BEFORE ALL OTHER ROUTE HANDLERS
-   * server.use(errors.restify(server));
-   */
-  restify = restify(this._client, this._config);
-  /**
-   * @example
-   * var koa = require('koa');
-   * var app = koa();
-   * // BEFORE ALL OTHER ROUTE HANDLERS HANDLERS
-   * app.use(errors.koa);
-   */
-  koa = koa(this._client, this._config);
 }
