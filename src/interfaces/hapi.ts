@@ -117,7 +117,7 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
 
   const hapiPlugin = {register: hapiRegisterFunction};
 
-  (hapiPlugin.register as any).attributes = {
+  (hapiPlugin.register as {}).attributes = {
     name: packageJson.name,
     version: packageJson.version,
   };

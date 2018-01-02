@@ -106,10 +106,10 @@ function restifyRequestHandler(client: RequestHandler, config: Configuration, re
   if (isObject(res) && isFunction(res.on) && isFunction(res.removeListener)) {
     listener = function() {
       restifyRequestFinishHandler(client, config, req, res);
-      res.removeListener('finish', listener as {} as (...args: {}[]) => void);
+      res.removeListener('finish', listener as {} as (...args: Array<{}>) => void);
     };
 
-    res.on('finish', listener as {} as (...args: {}[]) => void);
+    res.on('finish', listener as {} as (...args: Array<{}>) => void);
   }
 
   return next();
