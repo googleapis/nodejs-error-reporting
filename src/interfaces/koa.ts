@@ -41,12 +41,12 @@ export function koaErrorHandler(client: RequestHandler, config: Configuration) {
    * @returns {Undefined} does not return anything
    */
   return function*(next: Function) {
-    var svc = config.getServiceContext();
+    const svc = config.getServiceContext();
 
     try {
       yield next;
     } catch (err) {
-      var em = new ErrorMessage()
+      const em = new ErrorMessage()
         .consumeRequestInformation(
           // TODO: Determine how to use `this` correctly so that
           //       `noImplicitThis` can be set to `true` in `tsconfig`
