@@ -48,6 +48,8 @@ export function koaErrorHandler(client: RequestHandler, config: Configuration) {
     } catch (err) {
       var em = new ErrorMessage()
         .consumeRequestInformation(
+          // TODO: Determine how to use `this` correctly so that
+          //       `noImplicitThis` can be set to `true` in `tsconfig`
           koaRequestInformationExtractor(this.request, this.response)
         )
         .setServiceContext(svc.service, svc.version);
