@@ -16,7 +16,8 @@
     "test/*.js",
     "test/**/*.js",
     "system-test/*.ts",
-    "system-test/**/*.ts"
+    "system-test/**/*.ts",
+    "utils/*.js"
   ],
   "exclude": [
     "node_modules"
