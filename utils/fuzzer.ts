@@ -273,9 +273,9 @@ export class Fuzzer {
 
   fuzzFunctionForTypes(
     fnToFuzz,
-    expectsArgTypes,
-    cb,
-    withContext
+    expectsArgTypes?: {},
+    cb?: Function,
+    withContext?: {}
   ) {
     var expectsArgTypesChecked = isArray(expectsArgTypes) ? expectsArgTypes : [];
     var typesToFuzzOnEach = this._generateTypesToFuzzWith(expectsArgTypesChecked);
@@ -289,7 +289,7 @@ export class Fuzzer {
       );
 
       if (isFunction(cb)) {
-        cb(returnValue);
+        cb!(returnValue);
       }
     }
 
