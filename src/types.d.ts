@@ -25,7 +25,14 @@ declare module '@google-cloud/common' {
 
   export class Service {
     constructor(config: ServiceConfig, options: ServiceAuthenticationConfig);
+    getProjectId(cb: (err: Error|null, projectId?: string) => void);
     request(options: request.Options,
+      cb: (
+        err: Error | null,
+        body: any,
+        response: request.RequestResponse
+      ) => void): void;
+    request_(options: request.Options,
       cb: (
         err: Error | null,
         body: any,
