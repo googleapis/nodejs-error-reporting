@@ -15,9 +15,7 @@
     ]
   },
   "files": [
-    "src",
-    "build/utils",
-    "build/src/index.js"
+    "build/src"
   ],
   "contributors": [
     "Ace Nassri <anassri@google.com>",
