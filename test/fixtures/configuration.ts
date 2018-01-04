@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-var Configuration = require('../../src/configuration.js').Configuration;
+import {Configuration} from '../../src/configuration';
 
 var FakeConfiguration = function(config) {
   return Configuration.call(this, config, {warn: function() {}});
