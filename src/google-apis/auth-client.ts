@@ -116,7 +116,7 @@ export class RequestHandler extends common.Service {
 
     var that = this;
     if (tryAuthenticate) {
-      this.authClient.getToken(function(err: {message: string}) {
+      this.authClient.getToken(function(err: Error) {
         if (err) {
           that._logger.error(
             [
