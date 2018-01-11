@@ -522,7 +522,7 @@ describe('error-reporting', function() {
       },
       extraConfig || {}
     );
-    const {Errors} = require('../src/index.js');
+    const Errors = require('../src/index.js').Errors;
     errors = new Errors(config);
     transport = new ErrorsApiTransport(errors._config, errors._logger);
   }
