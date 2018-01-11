@@ -19,7 +19,7 @@ import * as merge from 'lodash.merge';
 import {makeExpressHandler as expressInterface} from '../../../src/interfaces/express';
 import {ErrorMessage} from '../../../src/classes/error-message';
 import {Fuzzer} from '../../../utils/fuzzer';
-var Configuration = require('../../fixtures/configuration.js');
+import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
 import {createLogger} from '../../../src/logger';
 import { RequestHandler } from '../../../src/google-apis/auth-client';
 
@@ -44,7 +44,7 @@ describe('expressInterface', function() {
           },
         },
         createLogger({logLevel: 4}));
-    stubbedConfig.lacksCredentials = function() {
+    (stubbedConfig as {} as {lacksCredentials: Function}).lacksCredentials = function() {
       return false;
     };
     var client = {

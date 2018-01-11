@@ -25,7 +25,7 @@ import {Fuzzer} from '../../../utils/fuzzer';
 import {EventEmitter} from 'events';
 import * as config from '../../../src/configuration';
 import { RequestHandler } from '../../../src/google-apis/auth-client';
-var Configuration = require('../../fixtures/configuration.js');
+import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
 
 describe('Hapi interface', function() {
   describe('Fuzzing the setup handler', function() {

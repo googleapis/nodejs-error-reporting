@@ -15,11 +15,10 @@
  */
 
 import {Configuration} from '../../src/configuration';
+import { Logger } from '@google-cloud/common';
 
-var FakeConfiguration = function(this: {}, config) {
-  return Configuration.call(this, config, {warn: function() {}});
-};
-
-FakeConfiguration.prototype = Object.create(Configuration.prototype);
-
-module.exports = FakeConfiguration;
+export class FakeConfiguration extends Configuration {
+  constructor(config, logger?) {
+    super(config, logger || {warn: function() {}} as {} as Logger);
+  }
+}

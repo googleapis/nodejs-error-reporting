@@ -16,9 +16,9 @@
 
 import * as assert from 'assert';
 import * as manual from '../../../src/interfaces/manual';
-var Configuration = require('../../fixtures/configuration.js');
+import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
 var config = new Configuration({});
-config.lacksCredentials = function() {
+(config as {} as {lacksCredentials: Function}).lacksCredentials = function() {
   return false;
 };
 import {ErrorMessage} from '../../../src/classes/error-message';

@@ -19,7 +19,8 @@ import * as nock from 'nock';
 import {RequestHandler} from '../src/google-apis/auth-client';
 import {ErrorsApiTransport} from '../utils/errors-api-transport';
 import {ErrorMessage} from '../src/classes/error-message';
-var Configuration = require('../test/fixtures/configuration.js');
+import {ErrorReporting} from '../src/index';
+import {FakeConfiguration as Configuration} from '../test/fixtures/configuration';
 import {createLogger} from '../src/logger';
 import * as is from 'is';
 var isObject = is.object;
@@ -470,7 +471,6 @@ describe('error-reporting', function() {
           },
         },
         extraConfig || {});
-    const ErrorReporting = require('../src/index.js').ErrorReporting;
     errors = new ErrorReporting(config);
     transport = new ErrorsApiTransport(errors._config, errors._logger);
   }
