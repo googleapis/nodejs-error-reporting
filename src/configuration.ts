@@ -175,7 +175,7 @@ export class Configuration {
     /**
      * The _givenConfiguration property holds a ConfigurationOptions object
      * which, if valid, will be merged against by the values taken from the
-     * meta- data service. If the _givenConfiguration property is not valid then
+     * meta-data service. If the _givenConfiguration property is not valid then
      * only metadata values will be used in the Configuration instance.
      * @memberof Configuration
      * @private
