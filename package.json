@@ -35,7 +35,7 @@
     "restify": "^4.1.0"
   },
   "dependencies": {
-    "@google-cloud/common": "^0.13.0",
+    "@google-cloud/common": "^0.16.1",
     "extend": "^3.0.0",
     "is": "^3.2.0",
     "lodash.has": "^4.5.2"
@@ -53,5 +53,5 @@
     "utils",
     "index.js"
   ],
-  "version": "0.2.2"
+  "version": "0.2.3"
 }
