@@ -73,7 +73,8 @@ export class Configuration {
   _reportUnhandledRejections: boolean;
   _givenConfiguration: ConfigurationOptions;
 
-  constructor(givenConfig: ConfigurationOptions|undefined, logger: types.Logger) {
+  constructor(
+      givenConfig: ConfigurationOptions|undefined, logger: types.Logger) {
     /**
      * The _logger property caches the logger instance created at the top-level
      * for configuration logging purposes.
