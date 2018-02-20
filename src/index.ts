@@ -110,7 +110,7 @@ export class ErrorReporting {
       (client: AuthClient, config: Configuration, server: r.Server) => void;
   koa: (next: Function) => Iterable<Function>;
 
-  constructor(initConfiguration: ConfigurationOptions) {
+  constructor(initConfiguration?: ConfigurationOptions) {
     if (!(this instanceof ErrorReporting)) {
       return new ErrorReporting(initConfiguration);
     }

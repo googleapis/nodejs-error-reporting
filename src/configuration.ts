@@ -72,7 +72,7 @@ export class Configuration {
   _reportUnhandledRejections: boolean;
   _givenConfiguration: ConfigurationOptions;
 
-  constructor(givenConfig: ConfigurationOptions, logger: Logger) {
+  constructor(givenConfig: ConfigurationOptions|undefined, logger: Logger) {
     /**
      * The _logger property caches the logger instance created at the top-level
      * for configuration logging purposes.
@@ -182,7 +182,7 @@ export class Configuration {
      * @type {Object|Null}
      * @defaultvalue null
      */
-    this._givenConfiguration = isObject(givenConfig) ? givenConfig : {};
+    this._givenConfiguration = isObject(givenConfig) ? givenConfig! : {};
     this._checkLocalServiceContext();
     this._gatherLocalConfiguration();
   }
