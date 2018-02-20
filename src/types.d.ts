@@ -1,56 +1,60 @@
 
-declare module '@google-cloud/common' {
-  import * as request from 'request';
+import * as request from 'request';
 
-  type LogFunction = (message: any, ...args: any[]) => void;
+export interface Common {
+  Service: Service;
+  logger: Logger;
+}
 
-  export interface Logger {
-    error: LogFunction;
-    warn: LogFunction;
-    info: LogFunction;
-    debug: LogFunction;
-    silly: LogFunction;
-  }
+export type LogFunction = (message: any, ...args: any[]) => void;
 
-  export interface LoggerOptions {
-    level?: string;
-    levels?: string[];
-    tag?: string;
-  }
+export interface Logger {
+  error: LogFunction;
+  warn: LogFunction;
+  info: LogFunction;
+  debug: LogFunction;
+  silly: LogFunction;
+}
 
-  export const logger: {
-    (options?: LoggerOptions | string): Logger;
-    LEVELS: string[];
+export interface LoggerOptions {
+  level?: string;
+  levels?: string[];
+  tag?: string;
+}
+
+export interface logger {
+  (options?: LoggerOptions | string): Logger;
+  LEVELS: string[];
+}
+
+export interface Service {
+  new(config: ServiceConfig, options: ServiceAuthenticationConfig): Service;
+  authClient: {getToken: (err: {}) => void;};
+  request(options: request.Options,
+    cb: (
+      err: Error | null,
+      body: any,
+      response: request.RequestResponse
+    ) => void): void;
+}
+
+export interface ServiceConfig {
+  packageJson?: any;
+  projectIdRequired?: boolean;
+  baseUrl?: string;
+  scopes?: string[];
+  // TODO: `auth-client.ts` assumes that `projectId` and `customEndpoint`
+  //       are properties of `ServiceConfig`.  Determine if it is.
+  projectId?: string;
+  customEndpoint?: boolean;
+}
+
+export interface ServiceAuthenticationConfig {
+  projectId?: string;
+  keyFilename?: string;
+  email?: string;
+  credentials?: {
+    client_email?: string;
+    private_key?: string;
   };
-
-  export class Service {
-    constructor(config: ServiceConfig, options: ServiceAuthenticationConfig);
-    request(options: request.Options,
-      cb: (
-        err: Error | null,
-        body: any,
-        response: request.RequestResponse
-      ) => void): void;
-  }
-
-  export interface ServiceConfig {
-    packageJson?: any;
-    projectIdRequired?: boolean;
-    baseUrl?: string;
-    scopes?: string[];
-    // TODO: `auth-client.ts` assumes that `projectId` and `customEndpoint`
-    //       are properties of `ServiceConfig`.  Determine if it is.
-    projectId?: string;
-    customEndpoint?: boolean;
-  }
-
-  export interface ServiceAuthenticationConfig {
-    projectId?: string;
-    keyFilename?: string;
-    email?: string;
-    credentials?: {
-      client_email?: string;
-      private_key?: string;
-    };
-  }
 }

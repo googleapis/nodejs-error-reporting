@@ -24,7 +24,8 @@ import {manualRequestInformationExtractor} from '../request-extractors/manual';
 import {populateErrorMessage} from '../populate-error-message';
 import {RequestHandler} from '../google-apis/auth-client';
 import {Configuration} from '../configuration';
-import {Logger} from '@google-cloud/common';
+import * as types from '../types';
+const Logger: types.Logger = require('@google-cloud/common');
 import * as http from 'http';
 import {Request} from '../request-extractors/manual';
 
@@ -46,7 +47,7 @@ export type Callback =
  *  function
  */
 export function handlerSetup(
-    client: RequestHandler, config: Configuration, logger: Logger) {
+    client: RequestHandler, config: Configuration, logger: types.Logger) {
   /**
    * The interface for manually reporting errors to the Google Error API in
    * application code.

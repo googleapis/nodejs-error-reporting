@@ -65,7 +65,7 @@ new ErrorReporting();`,
   },
   {
     code:
-        `const ErrorReportings = require('@google-cloud/error-reporting').ErrorReporting;
+        `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting({
   serviceContext: {
     service: 'some service'
@@ -91,7 +91,7 @@ new ErrorReporting({
 
 const TIMEOUT_MS = 2 * 60 * 1000;
 
-const DEBUG = true;
+const DEBUG = false;
 function log(txt: string): void {
   if (DEBUG) {
     console.log(txt);
