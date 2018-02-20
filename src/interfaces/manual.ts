@@ -25,7 +25,6 @@ import {populateErrorMessage} from '../populate-error-message';
 import {RequestHandler} from '../google-apis/auth-client';
 import {Configuration} from '../configuration';
 import * as types from '../types';
-const Logger: types.Logger = require('@google-cloud/common');
 import * as http from 'http';
 import {Request} from '../request-extractors/manual';
 
