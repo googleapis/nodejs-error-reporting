@@ -1,10 +1,3 @@
-
-import * as request from 'request';
-
-export interface Common {
-  Service: Service;
-  logger: Logger;
-}
 /**
  * Copyright 2018 Google LLC. All Rights Reserved.
  *
@@ -20,6 +13,13 @@ export interface Common {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import * as request from 'request';
+
+export interface Common {
+  Service: Service;
+  logger: Logger;
+}
 
 export type LogFunction = (message: any, ...args: any[]) => void;
 
