@@ -1,5 +1,7 @@
 {
   "packageWhitelist": [
-    "log-driver"  // https://github.com/googleapis/nodejs-common/issues/16
+    "log-driver",  // https://github.com/googleapis/nodejs-common/issues/16
+    "base64-js", // https://github.com/googleapis/nodejs-error-reporting/issues/61
+    "nconf" // nconf@0.7.2 contains a LICENSE file specifying the MIT license
   ]
 }
