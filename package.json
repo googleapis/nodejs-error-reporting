@@ -48,13 +48,16 @@
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "posttest": "npm run check && npm run license-check",
-    "license-check": "jsgl --local ."
+    "license-check": "jsgl --local .",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "@google-cloud/common": "^0.16.0",
     "extend": "^3.0.0",
     "is": "^3.2.0",
-    "lodash.has": "^4.5.2"
+    "lodash.has": "^4.5.2",
+    "snyk": "^1.69.7"
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "^2.0.11",
@@ -102,5 +105,6 @@
     "proxyquire": "^1.7.11",
     "restify": "^6.3.4",
     "typescript": "~2.6.2"
-  }
+  },
+  "snyk": true
 }

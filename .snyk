@@ -1,0 +1,11 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.10.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:hawk:20160119':
+    - '@google-cloud/error-reporting > @google-cloud/common > log-driver > codecov.io > request > hawk':
+        patched: '2018-02-10T02:30:18.049Z'
+  'npm:request:20160119':
+    - '@google-cloud/error-reporting > @google-cloud/common > log-driver > codecov.io > request':
+        patched: '2018-02-10T02:30:18.049Z'
