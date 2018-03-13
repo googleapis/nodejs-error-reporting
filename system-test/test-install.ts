@@ -15,8 +15,8 @@
  */
 
 import * as assert from 'assert';
-import * as path from 'path';
 import {SpawnOptions} from 'child_process';
+import * as path from 'path';
 
 import {globP, mkdirP, ncpP, rimrafP, spawnP, tmpDirP, writeFileP} from './utils';
 
@@ -105,7 +105,8 @@ describe('Installation', () => {
     text += txt;
   }
 
-  async function run(cmd: string, args: string[], options?: SpawnOptions): Promise<void> {
+  async function run(
+      cmd: string, args: string[], options?: SpawnOptions): Promise<void> {
     await spawnP(cmd, args, options, log);
   }
 
@@ -160,8 +161,7 @@ describe('Installation', () => {
            const srcDir = path.join(installDir!, 'src');
            await mkdirP(srcDir);
            await run(
-               'npm', ['install', '--save', 'winston'],
-               {cwd: installDir});
+               'npm', ['install', '--save', 'winston'], {cwd: installDir});
            await run(
                'npm', ['install', '--save-dev', '@types/winston'],
                {cwd: installDir});
@@ -169,10 +169,8 @@ describe('Installation', () => {
            await run(
                'npm', ['install', '--save-dev', 'gts', 'typescript@2.x'],
                {cwd: installDir});
-           await run(
-               'gts', ['init', '--yes'], {cwd: installDir});
-           await run(
-               'npm', ['run', 'compile'], {cwd: installDir});
+           await run('gts', ['init', '--yes'], {cwd: installDir});
+           await run('npm', ['run', 'compile'], {cwd: installDir});
            const buildDir = path.join(installDir!, 'build');
            await run(
                'node', [path.join(buildDir, 'src', INDEX_JS)],
@@ -188,8 +186,7 @@ describe('Installation', () => {
            this.timeout(TIMEOUT_MS);
            assert(installDir);
            await run(
-               'npm', ['install', '--save', 'winston'],
-               {cwd: installDir});
+               'npm', ['install', '--save', 'winston'], {cwd: installDir});
            await run(
                'npm', ['install', '--save-dev', '@types/winston'],
                {cwd: installDir});

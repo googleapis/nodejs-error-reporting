@@ -47,7 +47,8 @@ export function existsP(path: string): Promise<boolean> {
       () => Promise.resolve(true), () => Promise.resolve(false));
 }
 
-function promisifyChildProcess(childProcess: ChildProcess, log?: (text: string) => void): Promise<void> {
+function promisifyChildProcess(
+    childProcess: ChildProcess, log?: (text: string) => void): Promise<void> {
   return new Promise((resolve, reject) => {
     const exit = (err?: Error) => once(() => err ? reject(err) : resolve())();
     const resLog = log ? log : (text: string) => {};
@@ -77,6 +78,8 @@ export async function spawnP(
   if (log) {
     log(`> Running: ${stringifiedCommand}`);
   }
-  await promisifyChildProcess(spawn(
-      command, args, Object.assign({stdio: 'pipe', shell: true}, options)), log);
+  await promisifyChildProcess(
+      spawn(
+          command, args, Object.assign({stdio: 'pipe', shell: true}, options)),
+      log);
 }
