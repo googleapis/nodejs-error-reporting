@@ -106,7 +106,7 @@ describe('Installation', () => {
   }
 
   async function run(cmd: string, args: string[], options?: SpawnOptions): Promise<void> {
-    log(await spawnP(cmd, args, options));
+    await spawnP(cmd, args, options, log);
   }
 
   before(async () => {
