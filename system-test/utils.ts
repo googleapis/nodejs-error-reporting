@@ -47,16 +47,22 @@ export function existsP(path: string): Promise<boolean> {
       () => Promise.resolve(true), () => Promise.resolve(false));
 }
 
-function promisifyChildProcess(childProcess: ChildProcess): Promise<void> {
+function promisifyChildProcess(childProcess: ChildProcess): Promise<string> {
   return new Promise((resolve, reject) => {
-    const exit = (err?: Error) => once(() => err ? reject(err) : resolve())();
-    childProcess.on('error', exit);
+    const fail = (err: Error) => once(() => reject(err))();
+    let text = '';
+    childProcess.stdout.on('data', (txt) => {
+      text += txt;
+    });
+    childProcess.stderr.on('data', (txt) => {
+      text += txt;
+    });
+    childProcess.on('error', fail);
     childProcess.on('close', (code) => {
       if (code === 0) {
-        exit();
+        resolve(text);
       } else {
-        exit(
-            new Error(`Process ${childProcess.pid} exited with code ${code}.`));
+        fail(new Error(`Process ${childProcess.pid} exited with code ${code}.`));
       }
     });
   });
@@ -64,19 +70,19 @@ function promisifyChildProcess(childProcess: ChildProcess): Promise<void> {
 
 export function spawnP(
     command: string, args?: string[], options?: SpawnOptions,
-    log?: (text: string) => void): Promise<void> {
+    log?: (text: string) => void): Promise<string> {
   const stringifiedCommand =
       `\`${command}${args ? (' ' + args.join(' ')) : ''}\``;
   if (log) {
     log(`> Running: ${stringifiedCommand}`);
   }
   return promisifyChildProcess(spawn(
-      command, args, Object.assign({stdio: 'inherit', shell: true}, options)));
+      command, args, Object.assign({stdio: 'pipe', shell: true}, options)));
 }
 
 export function forkP(
     moduleName: string, args?: string[], options?: ForkOptions,
-    log?: (text: string) => void): Promise<void> {
+    log?: (text: string) => void): Promise<string> {
   const stringifiedCommand =
       `\`${moduleName}${args ? (' ' + args.join(' ')) : ''}\``;
   if (log) {
