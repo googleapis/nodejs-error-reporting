@@ -24,8 +24,11 @@ function setupImplicit() {
   // On Node 6+ the following syntax can be used instead:
   // const {ErrorReporting} = require('@google-cloud/error-reporting');
 
+  // With ES6 style imports via TypeScript or Babel, the following
+  // syntax can be used instead:
+
   // Instantiates a client
-  const errors = ErrorReporting();
+  const errors = new ErrorReporting();
 
   // Reports a simple error
   errors.report('Something broke!');
@@ -41,8 +44,11 @@ function setupExplicit() {
   // On Node 6+ the following syntax can be used instead:
   // const {ErrorReporting} = require('@google-cloud/error-reporting');
 
+  // With ES6 style imports via TypeScript or Babel, the following
+  // syntax can be used instead:
+
   // Instantiates a client
-  const errors = ErrorReporting({
+  const errors = new ErrorReporting({
     projectId: 'your-project-id',
     keyFilename: '/path/to/key.json',
   });
@@ -61,8 +67,11 @@ function manual() {
   // On Node 6+ the following syntax can be used instead:
   // const {ErrorReporting} = require('@google-cloud/error-reporting');
 
+  // With ES6 style imports via TypeScript or Babel, the following
+  // syntax can be used instead:
+
   // Instantiates a client
-  const errors = ErrorReporting();
+  const errors = new ErrorReporting();
 
   // Use the error message builder to customize all fields ...
   const errorEvent = errors.event();
@@ -99,8 +108,11 @@ function express() {
   // On Node 6+ the following syntax can be used instead:
   // const {ErrorReporting} = require('@google-cloud/error-reporting');
 
+  // With ES6 style imports via TypeScript or Babel, the following
+  // syntax can be used instead:
+
   // Instantiates a client
-  const errors = ErrorReporting();
+  const errors = new ErrorReporting();
 
   const app = express();
 
