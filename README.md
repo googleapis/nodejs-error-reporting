@@ -140,7 +140,9 @@ also contains samples.
 ### Reporting Manually
 
 ```js
-var errors = require('@google-cloud/error-reporting')();
+// Node 6+
+const {ErrorReporting} = require('@google-cloud/error-reporting');
+var errors = new ErrorReporting();
 
 // Use the error message builder to customize all fields ...
 var errorEvt = errors.event()
@@ -164,7 +166,10 @@ The stack trace associated with an error can be viewed in the error reporting co
 
 ```js
 var express = require('express');
-var errors = require('@google-cloud/error-reporting')();
+
+// Node 6+
+const {ErrorReporting} = require('@google-cloud/error-reporting');
+var errors = ErrorReporting();
 
 var app = express();
 
@@ -188,7 +193,10 @@ app.listen(3000);
 
 ```js
 var hapi = require('hapi');
-var errors = require('@google-cloud/error-reporting')();
+
+// Node 6+
+const {ErrorReporting} = require('@google-cloud/error-reporting');
+var errors = new ErrorReporting();
 
 var server = new hapi.Server();
 server.connection({ port: 3000 });
@@ -210,7 +218,10 @@ server.register(errors.hapi);
 
 ```js
 var Koa = require('koa');
-var errors = require('@google-cloud/error-reporting')();
+
+// Node 6+
+const {ErrorReporting} = require('@google-cloud/error-reporting');
+var errors = new ErrorReporting();
 
 var app = new Koa();
 
@@ -233,7 +244,10 @@ app.listen(3000);
 
 ```js
 var restify = require('restify');
-var errors = require('@google-cloud/error-reporting')();
+
+// Node 6+
+const {ErrorReporting} = require('@google-cloud/error-reporting');
+var errors = new ErrorReporting();
 
 function respond(req, res, next) {
   next(new Error('this is a restify error'));
@@ -253,7 +267,9 @@ server.listen(3000);
 The following code snippet lists all available configuration options.  All configuration options are optional.
 
 ```js
-var errors = require('@google-cloud/error-reporting')({
+// Node 6+
+const {ErrorReporting} = require('@google-cloud/error-reporting');
+var errors = new ErrorReporting({
   projectId: 'my-project-id',
   keyFilename: '/path/to/keyfile.json',
   credentials: require('./path/to/keyfile.json'),
@@ -289,7 +305,9 @@ Uncaught exceptions are not reported by default.  *It is recommended to process 
 Note that uncaught exceptions are not reported by default because to do so would require adding a listener to the `uncaughtException` event.  Adding such a listener without knowledge of other `uncaughtException` listeners can cause interference between the event handlers or prevent the process from terminating cleanly.  As such, it is necessary for `uncaughtException`s to be reported manually.
 
 ```js
-var errors = require('@google-cloud/error-reporting')();
+// Node 6+
+const {ErrorReporting} = require('@google-cloud/error-reporting');
+var errors = new ErrorReporting();
 process.on('uncaughtException', (e) => {
   // Write the error to stderr.
   console.error(e);
@@ -348,8 +366,10 @@ If your application is running outside of Google Cloud Platform, such as locally
   * Alternatively, you may set the `keyFilename` or `credentials` configuration field to the full path or contents to the key file, respectively. Setting either of these fields will override either setting `GOOGLE_APPLICATION_CREDENTIALS` or logging in using `gcloud`. For example:
 
     ```js
+    // Node 6+
+    const {ErrorReporting} = require('@google-cloud/error-reporting');
     // Require and start the agent with configuration options
-    var errors = require('@google-cloud/error-reporting')({
+    var errors = new ErrorReporting({
       // The path to your key file:
       keyFilename: '/path/to/keyfile.json',
 
@@ -367,7 +387,9 @@ You may use an API key in lieu of locally-stored credentials. Please see [this d
 Once you have obtained an API key, you may provide it as part of the Error Reporting instance configuration:
 
 ```js
-var errors = require('@google-cloud/error-reporting')({
+// Node 6+
+const {ErrorReporting} = require('@google-cloud/error-reporting');
+var errors = new ErrorReporting({
   projectId: '{your project ID}',
   key: '{your api key}'
 });
