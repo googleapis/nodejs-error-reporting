@@ -78,8 +78,7 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
    *  plugin
    * @returns {Undefined} - returns the execution of the next callback
    */
-  function hapiRegisterFunction(
-      server: {}, options: {}, next: Function) {
+  function hapiRegisterFunction(server: {}, options: {}, next: Function) {
     if (isObject(server)) {
       if (isFunction((server as hapi.Server).on)) {
         (server as hapi.Server).on('request-error', (req, err) => {

@@ -107,8 +107,7 @@ export class ErrorReporting {
   event: () => ErrorMessage;
   hapi: {register: (server: {}, options: {}, next: Function) => void};
   express: (err: {}, req: {}, res: {}, next: Function) => void;
-  restify:
-      (client: AuthClient, config: Configuration, server: {}) => void;
+  restify: (client: AuthClient, config: Configuration, server: {}) => void;
   koa: (next: Function) => Iterable<Function>;
 
   constructor(initConfiguration?: ConfigurationOptions) {
