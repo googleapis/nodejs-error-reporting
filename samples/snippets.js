@@ -26,6 +26,7 @@ function setupImplicit() {
 
   // With ES6 style imports via TypeScript or Babel, the following
   // syntax can be used instead:
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
 
   // Instantiates a client
   const errors = new ErrorReporting();
@@ -46,6 +47,7 @@ function setupExplicit() {
 
   // With ES6 style imports via TypeScript or Babel, the following
   // syntax can be used instead:
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
 
   // Instantiates a client
   const errors = new ErrorReporting({
@@ -69,6 +71,7 @@ function manual() {
 
   // With ES6 style imports via TypeScript or Babel, the following
   // syntax can be used instead:
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
 
   // Instantiates a client
   const errors = new ErrorReporting();
@@ -110,6 +113,7 @@ function express() {
 
   // With ES6 style imports via TypeScript or Babel, the following
   // syntax can be used instead:
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
 
   // Instantiates a client
   const errors = new ErrorReporting();

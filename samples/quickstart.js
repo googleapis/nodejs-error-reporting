@@ -27,6 +27,7 @@ function quickstart() {
 
   // With ES6 style imports via TypeScript or Babel, the following
   // syntax can be used instead:
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
 
   // Instantiates a client
   const errors = new ErrorReporting();
