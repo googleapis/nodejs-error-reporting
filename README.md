@@ -67,7 +67,7 @@ Google APIs Client Libraries, in [Client Libraries Explained][explained].
   const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 
   // Instantiates a client
-  const errors = ErrorReporting();
+  const errors = new ErrorReporting();
 
   // Reports a simple error
   errors.report('Something broke!');
