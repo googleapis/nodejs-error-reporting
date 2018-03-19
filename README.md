@@ -64,7 +64,7 @@ Google APIs Client Libraries, in [Client Libraries Explained][explained].
 
 ```javascript
   // Imports the Google Cloud client library
-  const ErrorReporting = require('@google-cloud/error-reporting');
+  const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 
   // Instantiates a client
   const errors = ErrorReporting();
