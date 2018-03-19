@@ -142,10 +142,10 @@ also contains samples.
 ```js
 // Node 6+
 const {ErrorReporting} = require('@google-cloud/error-reporting');
-var errors = new ErrorReporting();
+const errors = new ErrorReporting();
 
 // Use the error message builder to customize all fields ...
-var errorEvt = errors.event()
+const errorEvt = errors.event()
                      .setMessage('My error message')
                      .setUser('root@nexus');
 errors.report(errorEvt, () => console.log('done!'));
@@ -165,13 +165,13 @@ The stack trace associated with an error can be viewed in the error reporting co
 ### Using Express
 
 ```js
-var express = require('express');
+const express = require('express');
 
 // Node 6+
 const {ErrorReporting} = require('@google-cloud/error-reporting');
-var errors = ErrorReporting();
+const errors = ErrorReporting();
 
-var app = express();
+const app = express();
 
 app.get('/error', (req, res, next) => {
   res.send('Something broke!');
@@ -192,13 +192,13 @@ app.listen(3000);
 ### Using Hapi
 
 ```js
-var hapi = require('hapi');
+const hapi = require('hapi');
 
 // Node 6+
 const {ErrorReporting} = require('@google-cloud/error-reporting');
-var errors = new ErrorReporting();
+const errors = new ErrorReporting();
 
-var server = new hapi.Server();
+const server = new hapi.Server();
 server.connection({ port: 3000 });
 server.start();
 
@@ -217,13 +217,13 @@ server.register(errors.hapi);
 ### Using Koa
 
 ```js
-var Koa = require('koa');
+const Koa = require('koa');
 
 // Node 6+
 const {ErrorReporting} = require('@google-cloud/error-reporting');
-var errors = new ErrorReporting();
+const errors = new ErrorReporting();
 
-var app = new Koa();
+const app = new Koa();
 
 app.use(errors.koa);
 
@@ -243,17 +243,17 @@ app.listen(3000);
 ### Using Restify
 
 ```js
-var restify = require('restify');
+const restify = require('restify');
 
 // Node 6+
 const {ErrorReporting} = require('@google-cloud/error-reporting');
-var errors = new ErrorReporting();
+const errors = new ErrorReporting();
 
 function respond(req, res, next) {
   next(new Error('this is a restify error'));
 }
 
-var server = restify.createServer();
+const server = restify.createServer();
 
 server.use(errors.restify(server));
 server.get('/hello/:name', respond);
@@ -269,7 +269,7 @@ The following code snippet lists all available configuration options.  All confi
 ```js
 // Node 6+
 const {ErrorReporting} = require('@google-cloud/error-reporting');
-var errors = new ErrorReporting({
+const errors = new ErrorReporting({
   projectId: 'my-project-id',
   keyFilename: '/path/to/keyfile.json',
   credentials: require('./path/to/keyfile.json'),
@@ -307,7 +307,7 @@ Note that uncaught exceptions are not reported by default because to do so would
 ```js
 // Node 6+
 const {ErrorReporting} = require('@google-cloud/error-reporting');
-var errors = new ErrorReporting();
+const errors = new ErrorReporting();
 process.on('uncaughtException', (e) => {
   // Write the error to stderr.
   console.error(e);
@@ -369,7 +369,7 @@ If your application is running outside of Google Cloud Platform, such as locally
     // Node 6+
     const {ErrorReporting} = require('@google-cloud/error-reporting');
     // Require and start the agent with configuration options
-    var errors = new ErrorReporting({
+    const errors = new ErrorReporting({
       // The path to your key file:
       keyFilename: '/path/to/keyfile.json',
 
@@ -389,7 +389,7 @@ Once you have obtained an API key, you may provide it as part of the Error Repor
 ```js
 // Node 6+
 const {ErrorReporting} = require('@google-cloud/error-reporting');
-var errors = new ErrorReporting({
+const errors = new ErrorReporting({
   projectId: '{your project ID}',
   key: '{your api key}'
 });
