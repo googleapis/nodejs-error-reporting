@@ -49,7 +49,7 @@ export function makeExpressHandler(
    * @returns {ErrorMessage} - Returns the ErrorMessage instance
    */
   function expressErrorHandler(
-      err: {}, req: express.Request, res: express.Response, next: Function) {
+      err: {}, req: {}, res: {}, next: Function) {
     let ctxService = '';
     let ctxVersion: string|undefined = '';
 
@@ -60,7 +60,7 @@ export function makeExpressHandler(
 
     const em = new ErrorMessage()
                    .consumeRequestInformation(
-                       expressRequestInformationExtractor(req, res))
+                       expressRequestInformationExtractor(req as express.Request, res as express.Response))
                    .setServiceContext(ctxService, ctxVersion);
 
     populateErrorMessage(err, em);

@@ -105,10 +105,10 @@ export class ErrorReporting {
       (err: {}, request?: Request, additionalMessage?: string|{},
        callback?: Callback|{}|string) => ErrorMessage;
   event: () => ErrorMessage;
-  hapi: {register: (server: h.Server, options: {}, next: Function) => void};
-  express: (err: {}, req: e.Request, res: e.Response, next: Function) => void;
+  hapi: {register: (server: {}, options: {}, next: Function) => void};
+  express: (err: {}, req: {}, res: {}, next: Function) => void;
   restify:
-      (client: AuthClient, config: Configuration, server: r.Server) => void;
+      (client: AuthClient, config: Configuration, server: {}) => void;
   koa: (next: Function) => Iterable<Function>;
 
   constructor(initConfiguration?: ConfigurationOptions) {

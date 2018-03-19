@@ -79,16 +79,16 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
    * @returns {Undefined} - returns the execution of the next callback
    */
   function hapiRegisterFunction(
-      server: hapi.Server, options: {}, next: Function) {
+      server: {}, options: {}, next: Function) {
     if (isObject(server)) {
-      if (isFunction(server.on)) {
-        server.on('request-error', (req, err) => {
+      if (isFunction((server as hapi.Server).on)) {
+        (server as hapi.Server).on('request-error', (req, err) => {
           client.sendError(hapiErrorHandler(req, err, config));
         });
       }
 
-      if (isFunction(server.ext)) {
-        server.ext('onPreResponse', (request, reply) => {
+      if (isFunction((server as hapi.Server).ext)) {
+        (server as hapi.Server).ext('onPreResponse', (request, reply) => {
           if (isObject(request) && isObject(request.response) &&
               // TODO: Handle the case when `request.response` is null
               request.response!.isBoom) {
