@@ -140,6 +140,27 @@ app.use(function *(this: any): IterableIterator<any> {
     description: 'uses koa',
     dependencies: ['koa'],
     devDependencies: ['@types/koa'],
+    skip: true
+  },
+  {
+    code: `import * as restify from 'restify';
+
+import {ErrorReporting} from '@google-cloud/error-reporting';
+const errors = new ErrorReporting();
+
+function respond(req: {}, res: {}, next: Function) {
+  next(new Error('this is a restify error'));
+}
+
+const server = restify.createServer();
+
+server.use(errors.restify(server));
+server.get('/hello/:name', respond);
+server.head('/hello/:name', respond);
+`,
+    description: 'uses restify',
+    dependencies: ['restify'],
+    devDependencies: ['@types/restify'],
     skip: false
   }
 ];
@@ -257,6 +278,27 @@ app.use(function *(){
 `,
     description: 'uses koa',
     dependencies: ['koa'],
+    devDependencies: [],
+    skip: true
+  },
+  {
+    code: `const restify = require('restify');
+
+const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+const errors = new ErrorReporting();
+
+function respond(req, res, next) {
+  next(new Error('this is a restify error'));
+}
+
+const server = restify.createServer();
+
+server.use(errors.restify(server));
+server.get('/hello/:name', respond);
+server.head('/hello/:name', respond);
+`,
+    description: 'uses restify',
+    dependencies: ['restify'],
     devDependencies: [],
     skip: false
   }
