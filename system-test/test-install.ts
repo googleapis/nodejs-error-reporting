@@ -87,9 +87,34 @@ app.get('/exception', () => {
 
 app.use(errors.express);
 `,
-    description: 'can be used with express',
+    description: 'uses express',
     dependencies: ['express'],
     devDependencies: ['@types/express'],
+    skip: true
+  },
+  {
+    code: `import * as hapi from 'hapi';
+
+import {ErrorReporting} from '@google-cloud/error-reporting';
+const errors = new ErrorReporting();
+
+const server = new hapi.Server();
+server.connection({ port: 3000 });
+
+server.route({
+  method: 'GET',
+  path: '/error',
+  handler: (request, reply) => {
+    reply('Something broke!');
+    throw new Error('Custom error message');
+  }
+});
+
+server.register(errors.hapi);
+`,
+    description: 'uses hapi16',
+    dependencies: ['hapi@16.6.3'],
+    devDependencies: ['@types/hapi@16.1.14'],
     skip: false
   }
 ];
@@ -155,8 +180,33 @@ app.get('/exception', () => {
 // the other routes and use() calls. See [express docs][express-error-docs].
 app.use(errors.express);
 `,
-    description: 'can be used with express',
+    description: 'uses express',
     dependencies: ['express'],
+    devDependencies: [],
+    skip: true
+  },
+  {
+    code: `const hapi = require('hapi');
+
+const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+const errors = new ErrorReporting();
+
+const server = new hapi.Server();
+server.connection({ port: 3000 });
+
+server.route({
+  method: 'GET',
+  path: '/error',
+  handler: (request, reply) => {
+    reply('Something broke!');
+    throw new Error('Custom error message');
+  }
+});
+
+server.register(errors.hapi);
+`,
+    description: 'uses hapi16',
+    dependencies: ['hapi@16.6.3'],
     devDependencies: [],
     skip: false
   }
