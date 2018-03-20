@@ -169,7 +169,7 @@ const express = require('express');
 
 // Node 6+
 const {ErrorReporting} = require('@google-cloud/error-reporting');
-const errors = ErrorReporting();
+const errors = new ErrorReporting();
 
 const app = express();
 
