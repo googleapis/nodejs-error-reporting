@@ -115,6 +115,31 @@ server.register(errors.hapi);
     description: 'uses hapi16',
     dependencies: ['hapi@16.6.3'],
     devDependencies: ['@types/hapi@16.1.14'],
+    skip: true
+  },
+  {
+    code: `import * as Koa from 'koa';
+
+import {ErrorReporting} from '@google-cloud/error-reporting';
+const errors = new ErrorReporting();
+
+const app = new Koa();
+
+app.use(errors.koa);
+
+app.use(function *(this: any): IterableIterator<any> {
+  //This will set status and message
+  this.throw('Error Message', 500);
+});
+
+// response
+app.use(function *(this: any): IterableIterator<any> {
+  this.body = 'Hello World';
+});
+`,
+    description: 'uses koa',
+    dependencies: ['koa'],
+    devDependencies: ['@types/koa'],
     skip: false
   }
 ];
@@ -207,6 +232,31 @@ server.register(errors.hapi);
 `,
     description: 'uses hapi16',
     dependencies: ['hapi@16.6.3'],
+    devDependencies: [],
+    skip: true
+  },
+  {
+    code: `const Koa = require('koa');
+
+const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+const errors = new ErrorReporting();
+
+const app = new Koa();
+
+app.use(errors.koa);
+
+app.use(function *(next) {
+  //This will set status and message
+  this.throw('Error Message', 500);
+});
+
+// response
+app.use(function *(){
+  this.body = 'Hello World';
+});
+`,
+    description: 'uses koa',
+    dependencies: ['koa'],
     devDependencies: [],
     skip: false
   }
@@ -320,17 +370,19 @@ describe('Installation', () => {
            assert(installDir);
 
            await writeFileP(
-            path.join(installDir!, INDEX_JS), sample.code, 'utf-8');
+               path.join(installDir!, INDEX_JS), sample.code, 'utf-8');
 
            if (sample.dependencies) {
              await run(
-               'npm', ['install', '--save'].concat(sample.dependencies), {cwd: installDir});
+                 'npm', ['install', '--save'].concat(sample.dependencies),
+                 {cwd: installDir});
            }
 
            if (sample.devDependencies) {
              await run(
-               'npm', ['install', '--save-dev'].concat(sample.devDependencies),
-               {cwd: installDir});
+                 'npm',
+                 ['install', '--save-dev'].concat(sample.devDependencies),
+                 {cwd: installDir});
            }
 
            await run('node', [INDEX_JS], {cwd: installDir});

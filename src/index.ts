@@ -108,7 +108,8 @@ export class ErrorReporting {
   hapi: {register: (server: {}, options: {}, next: Function) => void};
   express: (err: {}, req: {}, res: {}, next: Function) => void;
   restify: (client: AuthClient, config: Configuration, server: {}) => void;
-  koa: (next: Function) => Iterable<Function>;
+  // tslint:disable-next-line:no-any
+  koa: (context: any, next: () => Promise<{}>) => {};
 
   constructor(initConfiguration?: ConfigurationOptions) {
     if (!(this instanceof ErrorReporting)) {
