@@ -1,4 +1,4 @@
-ae/*!
+/*!
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +18,13 @@ ae/*!
  * @module error-reporting
  */
 
-import * as hapi from 'hapi';
 import * as express from 'express';
-import * as restify from 'restify';
+import * as hapi from 'hapi';
 import * as koa from 'koa';
+import * as restify from 'restify';
 
 import * as types from './types';
+
 const Logger: types.Logger = require('@google-cloud/common').Logger;
 
 import {RequestHandler} from './google-apis/auth-client';
@@ -135,9 +136,11 @@ export class ErrorReporting {
    *  console.log('done!');
    * });
    */
-  report(err: {}, request?: Request, additionalMessage?: string|{},
-    callback?: manual.Callback|{}|string): ErrorMessage {
-    return manual.handlerSetup(this._client, this._config, this._logger)(err, request, additionalMessage, callback);
+  report(
+      err: {}, request?: Request, additionalMessage?: string|{},
+      callback?: manual.Callback|{}|string): ErrorMessage {
+    return manual.handlerSetup(this._client, this._config, this._logger)(
+        err, request, additionalMessage, callback);
   }
 
   /**
@@ -176,8 +179,10 @@ export class ErrorReporting {
    * app.use(errors.express);
    * app.listen(3000);
    */
-  express(err: {}, req: express.Request, res: express.Response, next: Function) {
-    return expressInterface.makeExpressHandler(this._client, this._config)(err, req, res, next);
+  express(
+      err: {}, req: express.Request, res: express.Response, next: Function) {
+    return expressInterface.makeExpressHandler(this._client, this._config)(
+        err, req, res, next);
   }
 
   /**
@@ -188,7 +193,8 @@ export class ErrorReporting {
    * server.use(errors.restify(server));
    */
   restify(server: restify.Server) {
-    return restifyInterface.handlerSetup(this._client, this._config)(this._client, this._config, server);
+    return restifyInterface.handlerSetup(this._client, this._config)(
+        this._client, this._config, server);
   }
 
   /**
@@ -198,7 +204,7 @@ export class ErrorReporting {
    * // BEFORE ALL OTHER ROUTE HANDLERS HANDLERS
    * app.use(errors.koa);
    */
-  *koa(next: Function) {
+  * koa(next: Function) {
     return koaInterface.koaErrorHandler(this._client, this._config);
   }
 }
