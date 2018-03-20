@@ -27,12 +27,16 @@ const TS_CODE_ARRAY: CodeSample[] = [
   {
     code: `import * as errorReporting from '@google-cloud/error-reporting';
 new errorReporting.ErrorReporting();`,
-    description: 'imports the module using * syntax'
+    description: 'imports the module using * syntax',
+    dependencies: [],
+    devDependencies: []
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
 new ErrorReporting();`,
-    description: 'imports the module with {} syntax'
+    description: 'imports the module with {} syntax',
+    dependencies: [],
+    devDependencies: []
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -41,7 +45,10 @@ new ErrorReporting({
     service: 'some service'
   }
 });`,
-    description: 'imports the module and starts with a partial `serviceContext`'
+    description:
+        'imports the module and starts with a partial `serviceContext`',
+    dependencies: [],
+    devDependencies: []
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -53,7 +60,9 @@ new ErrorReporting({
   }
 });`,
     description:
-        'imports the module and starts with a complete `serviceContext`'
+        'imports the module and starts with a complete `serviceContext`',
+    dependencies: [],
+    devDependencies: []
   }
 ];
 
@@ -62,7 +71,9 @@ const JS_CODE_ARRAY: CodeSample[] = [
     code:
         `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting();`,
-    description: 'requires the module using Node 4+ syntax'
+    description: 'requires the module using Node 4+ syntax',
+    dependencies: [],
+    devDependencies: []
   },
   {
     code:
@@ -73,7 +84,9 @@ new ErrorReporting({
   }
 });`,
     description:
-        'requires the module and starts with a partial `serviceContext`'
+        'requires the module and starts with a partial `serviceContext`',
+    dependencies: [],
+    devDependencies: []
   },
   {
     code:
@@ -86,7 +99,9 @@ new ErrorReporting({
   }
 });`,
     description:
-        'requires the module and starts with a complete `serviceContext`'
+        'requires the module and starts with a complete `serviceContext`',
+    dependencies: [],
+    devDependencies: []
   }
 ];
 
@@ -95,6 +110,8 @@ const TIMEOUT_MS = 2 * 60 * 1000;
 interface CodeSample {
   code: string;
   description: string;
+  dependencies: string[];
+  devDependencies: string[];
 }
 
 describe('Installation', () => {
@@ -160,15 +177,21 @@ describe('Installation', () => {
            assert(installDir);
            const srcDir = path.join(installDir!, 'src');
            await mkdirP(srcDir);
-           await run(
-               'npm', ['install', '--save', 'winston'], {cwd: installDir});
-           await run(
-               'npm', ['install', '--save-dev', '@types/winston'],
-               {cwd: installDir});
+
            await writeFileP(path.join(srcDir, INDEX_TS), sample.code, 'utf-8');
+
+           if (sample.dependencies.length > 0) {
+             await run(
+                 'npm', ['install', '--save'].concat(sample.dependencies),
+                 {cwd: installDir});
+           }
+
+           const devDeps =
+               sample.devDependencies.concat(['gts', 'typescript@2.x']);
            await run(
-               'npm', ['install', '--save-dev', 'gts', 'typescript@2.x'],
+               'npm', ['install', '--save-dev'].concat(devDeps),
                {cwd: installDir});
+
            await run('gts', ['init', '--yes'], {cwd: installDir});
            await run('npm', ['run', 'compile'], {cwd: installDir});
            const buildDir = path.join(installDir!, 'build');
@@ -185,13 +208,21 @@ describe('Installation', () => {
          async function() {
            this.timeout(TIMEOUT_MS);
            assert(installDir);
-           await run(
-               'npm', ['install', '--save', 'winston'], {cwd: installDir});
-           await run(
-               'npm', ['install', '--save-dev', '@types/winston'],
-               {cwd: installDir});
+
            await writeFileP(
-               path.join(installDir!, INDEX_JS), sample.code, 'utf-8');
+            path.join(installDir!, INDEX_JS), sample.code, 'utf-8');
+
+           if (sample.dependencies) {
+             await run(
+               'npm', ['install', '--save'].concat(sample.dependencies), {cwd: installDir});
+           }
+
+           if (sample.devDependencies) {
+             await run(
+               'npm', ['install', '--save-dev'].concat(sample.devDependencies),
+               {cwd: installDir});
+           }
+
            await run('node', [INDEX_JS], {cwd: installDir});
          });
     });
