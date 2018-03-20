@@ -29,16 +29,14 @@ const TS_CODE_ARRAY: CodeSample[] = [
 new errorReporting.ErrorReporting();`,
     description: 'imports the module using * syntax',
     dependencies: [],
-    devDependencies: [],
-    skip: true
+    devDependencies: []
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
 new ErrorReporting();`,
     description: 'imports the module with {} syntax',
     dependencies: [],
-    devDependencies: [],
-    skip: true
+    devDependencies: []
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -50,8 +48,7 @@ new ErrorReporting({
     description:
         'imports the module and starts with a partial `serviceContext`',
     dependencies: [],
-    devDependencies: [],
-    skip: true
+    devDependencies: []
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -65,8 +62,7 @@ new ErrorReporting({
     description:
         'imports the module and starts with a complete `serviceContext`',
     dependencies: [],
-    devDependencies: [],
-    skip: true
+    devDependencies: []
   },
   {
     code: `import * as express from 'express';
@@ -89,8 +85,7 @@ app.use(errors.express);
 `,
     description: 'uses express',
     dependencies: ['express'],
-    devDependencies: ['@types/express'],
-    skip: true
+    devDependencies: ['@types/express']
   },
   {
     code: `import * as hapi from 'hapi';
@@ -114,8 +109,7 @@ server.register(errors.hapi);
 `,
     description: 'uses hapi16',
     dependencies: ['hapi@16.6.3'],
-    devDependencies: ['@types/hapi@16.1.14'],
-    skip: true
+    devDependencies: ['@types/hapi@16.1.14']
   },
   {
     code: `import * as Koa from 'koa';
@@ -139,8 +133,7 @@ app.use(function *(this: any): IterableIterator<any> {
 `,
     description: 'uses koa',
     dependencies: ['koa'],
-    devDependencies: ['@types/koa'],
-    skip: true
+    devDependencies: ['@types/koa']
   },
   {
     code: `import * as restify from 'restify';
@@ -160,8 +153,7 @@ server.head('/hello/:name', respond);
 `,
     description: 'uses restify',
     dependencies: ['restify'],
-    devDependencies: ['@types/restify'],
-    skip: false
+    devDependencies: ['@types/restify']
   }
 ];
 
@@ -172,8 +164,7 @@ const JS_CODE_ARRAY: CodeSample[] = [
 new ErrorReporting();`,
     description: 'requires the module using Node 4+ syntax',
     dependencies: [],
-    devDependencies: [],
-    skip: true
+    devDependencies: []
   },
   {
     code:
@@ -186,8 +177,7 @@ new ErrorReporting({
     description:
         'requires the module and starts with a partial `serviceContext`',
     dependencies: [],
-    devDependencies: [],
-    skip: true
+    devDependencies: []
   },
   {
     code:
@@ -202,8 +192,7 @@ new ErrorReporting({
     description:
         'requires the module and starts with a complete `serviceContext`',
     dependencies: [],
-    devDependencies: [],
-    skip: true
+    devDependencies: []
   },
   {
     code: `const express = require('express');
@@ -228,8 +217,7 @@ app.use(errors.express);
 `,
     description: 'uses express',
     dependencies: ['express'],
-    devDependencies: [],
-    skip: true
+    devDependencies: []
   },
   {
     code: `const hapi = require('hapi');
@@ -253,8 +241,7 @@ server.register(errors.hapi);
 `,
     description: 'uses hapi16',
     dependencies: ['hapi@16.6.3'],
-    devDependencies: [],
-    skip: true
+    devDependencies: []
   },
   {
     code: `const Koa = require('koa');
@@ -278,8 +265,7 @@ app.use(function *(){
 `,
     description: 'uses koa',
     dependencies: ['koa'],
-    devDependencies: [],
-    skip: true
+    devDependencies: []
   },
   {
     code: `const restify = require('restify');
@@ -299,8 +285,7 @@ server.head('/hello/:name', respond);
 `,
     description: 'uses restify',
     dependencies: ['restify'],
-    devDependencies: [],
-    skip: false
+    devDependencies: []
   }
 ];
 
