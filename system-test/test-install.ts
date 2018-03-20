@@ -29,14 +29,16 @@ const TS_CODE_ARRAY: CodeSample[] = [
 new errorReporting.ErrorReporting();`,
     description: 'imports the module using * syntax',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
+    skip: true
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
 new ErrorReporting();`,
     description: 'imports the module with {} syntax',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
+    skip: true
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -48,7 +50,8 @@ new ErrorReporting({
     description:
         'imports the module and starts with a partial `serviceContext`',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
+    skip: true
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -62,7 +65,32 @@ new ErrorReporting({
     description:
         'imports the module and starts with a complete `serviceContext`',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
+    skip: true
+  },
+  {
+    code: `import * as express from 'express';
+
+import {ErrorReporting} from '@google-cloud/error-reporting';
+const errors = new ErrorReporting();
+
+const app = express();
+
+app.get('/error', (req, res, next) => {
+  res.send('Something broke!');
+  next(new Error('Custom error message'));
+});
+
+app.get('/exception', () => {
+  JSON.parse('{\"malformedJson\": true');
+});
+
+app.use(errors.express);
+`,
+    description: 'can be used with express',
+    dependencies: ['express'],
+    devDependencies: ['@types/express'],
+    skip: false
   }
 ];
 
@@ -73,7 +101,8 @@ const JS_CODE_ARRAY: CodeSample[] = [
 new ErrorReporting();`,
     description: 'requires the module using Node 4+ syntax',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
+    skip: true
   },
   {
     code:
@@ -86,7 +115,8 @@ new ErrorReporting({
     description:
         'requires the module and starts with a partial `serviceContext`',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
+    skip: true
   },
   {
     code:
@@ -101,7 +131,34 @@ new ErrorReporting({
     description:
         'requires the module and starts with a complete `serviceContext`',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
+    skip: true
+  },
+  {
+    code: `const express = require('express');
+
+const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+const errors = ErrorReporting();
+
+const app = express();
+
+app.get('/error', (req, res, next) => {
+  res.send('Something broke!');
+  next(new Error('Custom error message'));
+});
+
+app.get('/exception', () => {
+  JSON.parse('{\"malformedJson\": true');
+});
+
+// Note that express error handling middleware should be attached after all
+// the other routes and use() calls. See [express docs][express-error-docs].
+app.use(errors.express);
+`,
+    description: 'can be used with express',
+    dependencies: ['express'],
+    devDependencies: [],
+    skip: false
   }
 ];
 
@@ -112,6 +169,7 @@ interface CodeSample {
   description: string;
   dependencies: string[];
   devDependencies: string[];
+  skip?: boolean;
 }
 
 describe('Installation', () => {
@@ -171,7 +229,8 @@ describe('Installation', () => {
 
   describe('When used with Typescript code', () => {
     TS_CODE_ARRAY.forEach((sample) => {
-      it(`should install and work with code that ${sample.description}`,
+      const fn = sample.skip ? it.skip : it;
+      fn(`should install and work with code that ${sample.description}`,
          async function() {
            this.timeout(TIMEOUT_MS);
            assert(installDir);
@@ -204,7 +263,8 @@ describe('Installation', () => {
 
   describe('When used with Javascript code', () => {
     JS_CODE_ARRAY.forEach((sample) => {
-      it(`should install and work with code that ${sample.description}`,
+      const fn = sample.skip ? it.skip : it;
+      fn(`should install and work with code that ${sample.description}`,
          async function() {
            this.timeout(TIMEOUT_MS);
            assert(installDir);
