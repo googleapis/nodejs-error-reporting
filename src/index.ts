@@ -1,4 +1,4 @@
-/*!
+ae/*!
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,27 +18,28 @@
  * @module error-reporting
  */
 
+import * as hapi from 'hapi';
+import * as express from 'express';
+import * as restify from 'restify';
+import * as koa from 'koa';
+
 import * as types from './types';
 const Logger: types.Logger = require('@google-cloud/common').Logger;
-import * as e from 'express';
-import * as h from 'hapi';
-import {ServerResponse} from 'http';
-import * as r from 'restify';
 
-import {ErrorMessage} from './classes/error-message';
+import {RequestHandler} from './google-apis/auth-client';
 import {Configuration, ConfigurationOptions} from './configuration';
-import {RequestHandler as AuthClient} from './google-apis/auth-client';
-import {makeExpressHandler as express} from './interfaces/express';
-import {makeHapiPlugin as hapi} from './interfaces/hapi';
-// Begin error reporting interfaces
-
-import {koaErrorHandler as koa} from './interfaces/koa';
-import * as manual from './interfaces/manual';
-import {Callback} from './interfaces/manual';
-import * as messageBuilder from './interfaces/message-builder';
-import {handlerSetup as restify} from './interfaces/restify';
 import {createLogger} from './logger';
+
 import {Request} from './request-extractors/manual';
+import {ErrorMessage} from './classes/error-message';
+
+import * as manual from './interfaces/manual';
+import * as messageBuilder from './interfaces/message-builder';
+
+import * as hapiInterface from './interfaces/hapi';
+import * as expressInterface from './interfaces/express';
+import * as restifyInterface from './interfaces/restify';
+import * as koaInterface from './interfaces/koa';
 
 export type RequestHandler = (req: {}, res: {}, next: {}) => {};
 
@@ -102,16 +103,7 @@ export type RequestHandler = (req: {}, res: {}, next: {}) => {};
 export class ErrorReporting {
   private _logger: types.Logger;
   private _config: Configuration;
-  private _client: AuthClient;
-  report:
-      (err: {}, request?: Request, additionalMessage?: string|{},
-       callback?: Callback|{}|string) => ErrorMessage;
-  event: () => ErrorMessage;
-  hapi: {register: (server: {}, options: {}, next: Function) => void};
-  express: (err: {}, req: {}, res: {}, next: Function) => void;
-  restify: (server: {}) => RequestHandler | RequestHandler[];
-  // tslint:disable-next-line:no-any
-  koa: (context: any, next: () => Promise<{}>) => {};
+  private _client: RequestHandler;
 
   constructor(initConfiguration?: ConfigurationOptions) {
     if (!(this instanceof ErrorReporting)) {
@@ -120,7 +112,7 @@ export class ErrorReporting {
 
     this._logger = createLogger(initConfiguration);
     this._config = new Configuration(initConfiguration, this._logger);
-    this._client = new AuthClient(this._config, this._logger);
+    this._client = new RequestHandler(this._config, this._logger);
 
     if (this._config.getReportUnhandledRejections()) {
       const that = this;
@@ -133,67 +125,80 @@ export class ErrorReporting {
         that.report(reason);
       });
     }
+  }
 
-    // Build the application interfaces for use by the hosting application
-    /**
-     * @example
-     * // Use to report errors manually like so
-     * errors.report(new Error('xyz'), function () {
-     *  console.log('done!');
-     * });
-     */
-    this.report = manual.handlerSetup(this._client, this._config, this._logger);
+  // Build the application interfaces for use by the hosting application
+  /**
+   * @example
+   * // Use to report errors manually like so
+   * errors.report(new Error('xyz'), function () {
+   *  console.log('done!');
+   * });
+   */
+  report(err: {}, request?: Request, additionalMessage?: string|{},
+    callback?: manual.Callback|{}|string): ErrorMessage {
+    return manual.handlerSetup(this._client, this._config, this._logger)(err, request, additionalMessage, callback);
+  }
 
-    /**
-     * @example
-     * // Use to create and report errors manually with a high-degree
-     * // of manual control
-     * const err = errors.event()
-     *  .setMessage('My error message')
-     *  .setUser('root@nexus');
-     * errors.report(err, function () {
-     *  console.log('done!');
-     * });
-     */
-    this.event = messageBuilder.handlerSetup(this._config);
+  /**
+   * @example
+   * // Use to create and report errors manually with a high-degree
+   * // of manual control
+   * const err = errors.event()
+   *  .setMessage('My error message')
+   *  .setUser('root@nexus');
+   * errors.report(err, function () {
+   *  console.log('done!');
+   * });
+   */
+  event() {
+    return messageBuilder.handlerSetup(this._config);
+  }
 
-    /**
-     * @example
-     * const hapi = require('hapi');
-     * const server = new hapi.Server();
-     * server.connection({ port: 3000 });
-     * server.start();
-     * // AFTER ALL OTHER ROUTE HANDLERS
-     * server.register({register: errors.hapi});
-     */
-    this.hapi = hapi(this._client, this._config);
+  /**
+   * @example
+   * const hapi = require('hapi');
+   * const server = new hapi.Server();
+   * server.connection({ port: 3000 });
+   * server.start();
+   * // AFTER ALL OTHER ROUTE HANDLERS
+   * server.register({register: errors.hapi});
+   */
+  hapi() {
+    return hapiInterface.makeHapiPlugin(this._client, this._config);
+  }
 
-    /**
-     * @example
-     * const express = require('express');
-     * const app = express();
-     * // AFTER ALL OTHER ROUTE HANDLERS
-     * app.use(errors.express);
-     * app.listen(3000);
-     */
-    this.express = express(this._client, this._config);
+  /**
+   * @example
+   * const express = require('express');
+   * const app = express();
+   * // AFTER ALL OTHER ROUTE HANDLERS
+   * app.use(errors.express);
+   * app.listen(3000);
+   */
+  express(err: {}, req: express.Request, res: express.Response, next: Function) {
+    return expressInterface.makeExpressHandler(this._client, this._config)(err, req, res, next);
+  }
 
-    /**
-     * @example
-     * const restify = require('restify');
-     * const server = restify.createServer();
-     * // BEFORE ALL OTHER ROUTE HANDLERS
-     * server.use(errors.restify(server));
-     */
-    this.restify = restify(this._client, this._config);
+  /**
+   * @example
+   * const restify = require('restify');
+   * const server = restify.createServer();
+   * // BEFORE ALL OTHER ROUTE HANDLERS
+   * server.use(errors.restify(server));
+   */
+  restify(server: restify.Server) {
+    return restifyInterface.handlerSetup(this._client, this._config)(this._client, this._config, server);
+  }
 
-    /**
-     * @example
-     * const koa = require('koa');
-     * const app = koa();
-     * // BEFORE ALL OTHER ROUTE HANDLERS HANDLERS
-     * app.use(errors.koa);
-     */
-    this.koa = koa(this._client, this._config);
+  /**
+   * @example
+   * const koa = require('koa');
+   * const app = koa();
+   * // BEFORE ALL OTHER ROUTE HANDLERS HANDLERS
+   * app.use(errors.koa);
+   */
+  *koa(next: Function) {
+    return koaInterface.koaErrorHandler(this._client, this._config);
   }
 }
