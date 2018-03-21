@@ -53,7 +53,7 @@
     "license-check": "jsgl --local ."
   },
   "dependencies": {
-    "@google-cloud/common": "^0.16.0",
+    "@google-cloud/common": "^0.17.0",
     "express": "^4.13.4",
     "extend": "^3.0.0",
     "hapi": "^17.1.1",
