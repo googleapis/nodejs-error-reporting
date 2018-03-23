@@ -15,7 +15,6 @@
  */
 // jscs doesn't understand koa..
 // jscs:disable
-'use strict';
 
 var errorHandler = require('../../src/index.js')({
   onUncaughtException: 'report',
