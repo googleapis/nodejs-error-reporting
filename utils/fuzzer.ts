@@ -1,4 +1,4 @@
-/**1
+/**
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,11 +21,11 @@ var indexOf = require('lodash.indexof');
 var without = require('lodash.without');
 var maxBy = require('lodash.maxby');
 var random = require('lodash.random');
-var is1 = require('is');
-var isNumber = is1.number;
-var isString = is1.string;
-var isArray = is1.array;
-var isFunction = is1.function;
+var is = require('is');
+var isNumber = is.number;
+var isString = is.string;
+var isArray = is.array;
+var isFunction = is.function;
 
 
 export class Fuzzer {
@@ -110,7 +110,7 @@ export class Fuzzer {
           : this.types();
       var currentDepthChecked = isNumber(currentDepth) ? currentDepth : 0;
       var allowedDepthChecked = isNumber(allowedDepth) ? allowedDepth : 3;
-      var arr: {}[] = [];
+      var arr: Array<{}> = [];
       var currentTypeBeingGenerated = '';
       currentDepthChecked += 1;
 
