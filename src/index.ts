@@ -42,8 +42,6 @@ import * as expressInterface from './interfaces/express';
 import * as restifyInterface from './interfaces/restify';
 import * as koaInterface from './interfaces/koa';
 
-export type RequestHandler = (req: {}, res: {}, next: {}) => {};
-
 /**
  * @typedef ConfigurationOptions
  * @type {Object}
