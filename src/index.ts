@@ -176,8 +176,7 @@ export class ErrorReporting {
    * app.use(errors.express);
    * app.listen(3000);
    */
-  express(
-      err: {}, req: {}, res: {}, next: Function) {
+  express(err: {}, req: {}, res: {}, next: Function) {
     return expressInterface.makeExpressHandler(this._client, this._config)(
         err, req, res, next);
   }
