@@ -54,11 +54,11 @@
   },
   "dependencies": {
     "@google-cloud/common": "^0.16.0",
-    "express": "^4.13.4",
     "is": "^3.2.0",
     "lodash.has": "^4.5.2"
   },
   "devDependencies": {
+    "express": "^4.13.4",
     "express-serve-static-core": "^0.1.1",
     "extend": "^3.0.0",
     "hapi": "^17.1.1",
