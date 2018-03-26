@@ -105,6 +105,7 @@ export class ErrorReporting {
   private _logger: types.Logger;
   private _config: Configuration;
   private _client: RequestHandler;
+  hapi: {register: (server: {}, options: {}, next: Function) => void};
 
   constructor(initConfiguration?: ConfigurationOptions) {
     if (!(this instanceof ErrorReporting)) {
@@ -126,6 +127,17 @@ export class ErrorReporting {
         that.report(reason);
       });
     }
+
+    /**
+     * @example
+     * const hapi = require('hapi');
+     * const server = new hapi.Server();
+     * server.connection({ port: 3000 });
+     * server.start();
+     * // AFTER ALL OTHER ROUTE HANDLERS
+     * server.register({register: errors.hapi});
+     */
+    this.hapi = hapiInterface.makeHapiPlugin(this._client, this._config);
   }
 
   // Build the application interfaces for use by the hosting application
@@ -157,17 +169,6 @@ export class ErrorReporting {
   event() {
     return messageBuilder.handlerSetup(this._config);
   }
-
-  /**
-   * @example
-   * const hapi = require('hapi');
-   * const server = new hapi.Server();
-   * server.connection({ port: 3000 });
-   * server.start();
-   * // AFTER ALL OTHER ROUTE HANDLERS
-   * server.register({register: errors.hapi});
-   */
-  hapi = hapiInterface.makeHapiPlugin(this._client, this._config);
 
   /**
    * @example
