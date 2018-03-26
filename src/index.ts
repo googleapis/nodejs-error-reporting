@@ -167,9 +167,7 @@ export class ErrorReporting {
    * // AFTER ALL OTHER ROUTE HANDLERS
    * server.register({register: errors.hapi});
    */
-  hapi() {
-    return hapiInterface.makeHapiPlugin(this._client, this._config);
-  }
+  hapi = hapiInterface.makeHapiPlugin(this._client, this._config);
 
   /**
    * @example
@@ -180,7 +178,7 @@ export class ErrorReporting {
    * app.listen(3000);
    */
   express(
-      err: {}, req: express.Request, res: express.Response, next: Function) {
+      err: {}, req: {}, res: {}, next: Function) {
     return expressInterface.makeExpressHandler(this._client, this._config)(
         err, req, res, next);
   }
@@ -192,7 +190,7 @@ export class ErrorReporting {
    * // BEFORE ALL OTHER ROUTE HANDLERS
    * server.use(errors.restify(server));
    */
-  restify(server: restify.Server) {
+  restify(server: {}) {
     return restifyInterface.handlerSetup(this._client, this._config)(
         this._client, this._config, server);
   }
@@ -204,7 +202,7 @@ export class ErrorReporting {
    * // BEFORE ALL OTHER ROUTE HANDLERS HANDLERS
    * app.use(errors.koa);
    */
-  * koa(next: Function) {
+  * koa(next: {}) {
     return koaInterface.koaErrorHandler(this._client, this._config);
   }
 }

@@ -55,20 +55,20 @@
   "dependencies": {
     "@google-cloud/common": "^0.16.0",
     "express": "^4.13.4",
+    "is": "^3.2.0",
+    "lodash.has": "^4.5.2"
+  },
+  "devDependencies": {
     "express-serve-static-core": "^0.1.1",
     "extend": "^3.0.0",
     "hapi": "^17.1.1",
-    "is": "^3.2.0",
-    "lodash.has": "^4.5.2",
     "ncp": "^2.0.0",
     "once": "^1.4.0",
     "pify": "^3.0.0",
     "request": "^2.85.0",
     "restify": "^6.3.4",
     "rimraf": "^2.6.2",
-    "tmp": "0.0.33"
-  },
-  "devDependencies": {
+    "tmp": "0.0.33",
     "@google-cloud/nodejs-repo-tools": "^2.0.11",
     "@types/express": "^4.11.0",
     "@types/express-serve-static-core": "^4.11.1",
@@ -102,7 +102,7 @@
     "jscs": "^3.0.7",
     "jsdoc": "^3.5.5",
     "jshint": "^2.9.2",
-    "koa": "^2.4.1",
+    "koa": "^2.5.0",
     "lodash.assign": "^4.2.0",
     "lodash.foreach": "^4.5.0",
     "lodash.indexof": "^4.0.5",
