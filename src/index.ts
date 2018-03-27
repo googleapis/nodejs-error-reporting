@@ -28,7 +28,7 @@ import * as r from 'restify';
 import {ErrorMessage} from './classes/error-message';
 import {Configuration, ConfigurationOptions} from './configuration';
 import {RequestHandler as AuthClient} from './google-apis/auth-client';
-import {makeExpressHandler as express} from './interfaces/express';
+import * as expressInterface from './interfaces/express';
 import {makeHapiPlugin as hapi} from './interfaces/hapi';
 // Begin error reporting interfaces
 
@@ -175,7 +175,7 @@ export class ErrorReporting {
      * app.use(errors.express);
      * app.listen(3000);
      */
-    this.express = express(this._client, this._config);
+    this.express = expressInterface.makeExpressHandler(this._client, this._config);
 
     /**
      * @example
