@@ -25,7 +25,6 @@ import {ErrorMessage} from '../../../src/classes/error-message';
 import { RequestHandler } from '../../../src/google-apis/auth-client';
 import { Logger } from '@google-cloud/common';
 import { RequestInformationContainer } from '../../../src/classes/request-information-container';
-// const nock = require('nock');
 
 describe('Manual handler', function() {
   // nock.disableNetConnect();
