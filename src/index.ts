@@ -35,7 +35,7 @@ import {makeHapiPlugin as hapi} from './interfaces/hapi';
 import * as koaInterface from './interfaces/koa';
 import * as manualInterface from './interfaces/manual';
 import * as messageBuilder from './interfaces/message-builder';
-import {handlerSetup as restify} from './interfaces/restify';
+import * as restifyInterface from './interfaces/restify';
 import {createLogger} from './logger';
 import {Request} from './request-extractors/manual';
 
@@ -184,7 +184,7 @@ export class ErrorReporting {
      * // BEFORE ALL OTHER ROUTE HANDLERS
      * server.use(errors.restify(server));
      */
-    this.restify = restify(this._client, this._config);
+    this.restify = restifyInterface.handlerSetup(this._client, this._config);
 
     /**
      * @example
