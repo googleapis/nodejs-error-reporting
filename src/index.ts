@@ -100,7 +100,8 @@ export class ErrorReporting {
   private _config: Configuration;
   private _client: AuthClient;
   report:
-      (err: {}, request?: manualRequestExtractor.Request, additionalMessage?: string|{},
+      (err: {}, request?: manualRequestExtractor.Request,
+       additionalMessage?: string|{},
        callback?: manualInterface.Callback|{}|string) => ErrorMessage;
   event: () => ErrorMessage;
   hapi: {register: (server: {}, options: {}, next: Function) => void};
@@ -138,7 +139,8 @@ export class ErrorReporting {
      *  console.log('done!');
      * });
      */
-    this.report = manualInterface.handlerSetup(this._client, this._config, this._logger);
+    this.report =
+        manualInterface.handlerSetup(this._client, this._config, this._logger);
 
     /**
      * @example
@@ -172,7 +174,8 @@ export class ErrorReporting {
      * app.use(errors.express);
      * app.listen(3000);
      */
-    this.express = expressInterface.makeExpressHandler(this._client, this._config);
+    this.express =
+        expressInterface.makeExpressHandler(this._client, this._config);
 
     /**
      * @example
