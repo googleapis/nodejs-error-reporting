@@ -29,7 +29,7 @@ import {ErrorMessage} from './classes/error-message';
 import {Configuration, ConfigurationOptions} from './configuration';
 import {RequestHandler as AuthClient} from './google-apis/auth-client';
 import * as expressInterface from './interfaces/express';
-import {makeHapiPlugin as hapi} from './interfaces/hapi';
+import * as hapiInterface from './interfaces/hapi';
 // Begin error reporting interfaces
 
 import * as koaInterface from './interfaces/koa';
@@ -165,7 +165,7 @@ export class ErrorReporting {
      * // AFTER ALL OTHER ROUTE HANDLERS
      * server.register({register: errors.hapi});
      */
-    this.hapi = hapi(this._client, this._config);
+    this.hapi = hapiInterface.makeHapiPlugin(this._client, this._config);
 
     /**
      * @example
