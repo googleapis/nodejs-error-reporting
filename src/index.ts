@@ -34,7 +34,7 @@ import * as hapiInterface from './interfaces/hapi';
 
 import * as koaInterface from './interfaces/koa';
 import * as manualInterface from './interfaces/manual';
-import * as messageBuilder from './interfaces/message-builder';
+import * as messageBuilderInterface from './interfaces/message-builder';
 import * as restifyInterface from './interfaces/restify';
 import {createLogger} from './logger';
 import {Request} from './request-extractors/manual';
@@ -154,7 +154,7 @@ export class ErrorReporting {
      *  console.log('done!');
      * });
      */
-    this.event = messageBuilder.handlerSetup(this._config);
+    this.event = messageBuilderInterface.handlerSetup(this._config);
 
     /**
      * @example
