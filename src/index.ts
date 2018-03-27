@@ -33,8 +33,7 @@ import {makeHapiPlugin as hapi} from './interfaces/hapi';
 // Begin error reporting interfaces
 
 import * as koaInterface from './interfaces/koa';
-import * as manual from './interfaces/manual';
-import {Callback} from './interfaces/manual';
+import * as manualInterface from './interfaces/manual';
 import * as messageBuilder from './interfaces/message-builder';
 import {handlerSetup as restify} from './interfaces/restify';
 import {createLogger} from './logger';
@@ -105,7 +104,7 @@ export class ErrorReporting {
   private _client: AuthClient;
   report:
       (err: {}, request?: Request, additionalMessage?: string|{},
-       callback?: Callback|{}|string) => ErrorMessage;
+       callback?: manualInterface.Callback|{}|string) => ErrorMessage;
   event: () => ErrorMessage;
   hapi: {register: (server: {}, options: {}, next: Function) => void};
   express: (err: {}, req: {}, res: {}, next: Function) => void;
@@ -142,7 +141,7 @@ export class ErrorReporting {
      *  console.log('done!');
      * });
      */
-    this.report = manual.handlerSetup(this._client, this._config, this._logger);
+    this.report = manualInterface.handlerSetup(this._client, this._config, this._logger);
 
     /**
      * @example
