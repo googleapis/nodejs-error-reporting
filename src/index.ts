@@ -28,6 +28,7 @@ import * as r from 'restify';
 import {ErrorMessage} from './classes/error-message';
 import {Configuration, ConfigurationOptions} from './configuration';
 import {RequestHandler as AuthClient} from './google-apis/auth-client';
+import {createLogger} from './logger';
 
 // Begin error reporting interfaces
 import * as expressInterface from './interfaces/express';
@@ -37,8 +38,7 @@ import * as manualInterface from './interfaces/manual';
 import * as messageBuilderInterface from './interfaces/message-builder';
 import * as restifyInterface from './interfaces/restify';
 
-import {createLogger} from './logger';
-import {Request} from './request-extractors/manual';
+import * as manualRequestExtractor from './request-extractors/manual';
 
 export type RestifyRequestHandler = (req: {}, res: {}, next: {}) => {};
 
@@ -104,7 +104,7 @@ export class ErrorReporting {
   private _config: Configuration;
   private _client: AuthClient;
   report:
-      (err: {}, request?: Request, additionalMessage?: string|{},
+      (err: {}, request?: manualRequestExtractor.Request, additionalMessage?: string|{},
        callback?: manualInterface.Callback|{}|string) => ErrorMessage;
   event: () => ErrorMessage;
   hapi: {register: (server: {}, options: {}, next: Function) => void};
