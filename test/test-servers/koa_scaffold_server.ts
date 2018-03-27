@@ -16,8 +16,10 @@
 // jscs doesn't understand koa..
 // jscs:disable
 
-import {ErrorReporting} from '../../src/index';
+import {ErrorReporting} from '../../src';
 const errorHandler = new ErrorReporting({
+  // TODO: Address the fact that this configuration
+  //       option is now invalid.
   onUncaughtException: 'report',
 } as {});
 import * as koa from 'koa';
@@ -32,6 +34,8 @@ app.use(function*(this, next) {
 });
 
 app.use(function*(this, next) {
+  // TODO: Address the fact that new Date()
+  //       is used instead of Date.now()
   const start = new Date() as any;
   yield next;
   const ms = new Date() as any - start;
