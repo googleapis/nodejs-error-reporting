@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-'use strict';
-
-var EventEmitter = require('events').EventEmitter;
-var assert = require('assert');
-var restifyInterface =
-    require('../../../src/interfaces/restify.js').handlerSetup;
+import {EventEmitter} from 'events';
+import * as assert from 'assert';
+import {handlerSetup as restifyInterface} from '../../../src/interfaces/restify';
+import { RequestHandler } from '../../../src/google-apis/auth-client';
+import { Configuration } from '../../../src/configuration';
 
 // node v0.12 compatibility
 if (!EventEmitter.prototype.listenerCount) {
@@ -30,19 +29,19 @@ if (!EventEmitter.prototype.listenerCount) {
 }
 
 describe('restifyInterface', function() {
-  var UNCAUGHT_EVENT = 'uncaughtException';
-  var FINISH = 'finish';
-  var noOp = function() {
+  const UNCAUGHT_EVENT = 'uncaughtException';
+  const FINISH = 'finish';
+  const noOp = function() {
     return;
   };
   describe('Attachment to the uncaughtException event', function() {
     it('Should attach one listener after instantiation', function() {
-      var ee = new EventEmitter();
+      const ee = new EventEmitter();
       assert.strictEqual(
           ee.listenerCount(UNCAUGHT_EVENT), 0,
           'Listeners on event should be zero');
       // return the bound function which the user will actually interface with
-      var errorHandlerInstance = restifyInterface(null, null);
+      const errorHandlerInstance = restifyInterface(null!, null!);
       // execute the handler the user will use with the stubbed server instance
       errorHandlerInstance(ee);
       assert.strictEqual(
@@ -51,9 +50,9 @@ describe('restifyInterface', function() {
     });
   });
   describe('Request handler lifecycle events', function() {
-    var ee = new EventEmitter();
-    var errorHandlerInstance = restifyInterface(null, null);
-    var requestHandlerInstance = errorHandlerInstance(ee);
+    const ee = new EventEmitter();
+    const errorHandlerInstance = restifyInterface(null!, null!);
+    const requestHandlerInstance = errorHandlerInstance(ee);
     describe('default path on invalid input', function() {
       it('Should not throw', function() {
         assert.doesNotThrow(function() {
@@ -63,9 +62,9 @@ describe('restifyInterface', function() {
     });
     describe('default path without req/res error', function() {
       ee.removeAllListeners();
-      var req = new EventEmitter();
-      var res = new EventEmitter();
-      res.statusCode = 200;
+      const req = new EventEmitter();
+      const res = new EventEmitter();
+      (res as {} as {statusCode: number}).statusCode = 200;
       it('Should have 0 listeners on the finish event', function() {
         assert.strictEqual(res.listenerCount(FINISH), 0);
       });
@@ -85,12 +84,12 @@ describe('restifyInterface', function() {
     });
     describe('default path with req/res error', function() {
       ee.removeAllListeners();
-      var client = {
+      const client = {
         sendError: function() {
           assert(true, 'sendError should be called');
         },
       };
-      var config = {
+      const config = {
         getServiceContext: function() {
           assert(true, 'getServiceContext should be called');
           return {
@@ -104,12 +103,12 @@ describe('restifyInterface', function() {
         getVersion: function() {
           return '1';
         },
-      };
-      var errorHandlerInstance = restifyInterface(client, config);
-      var requestHandlerInstance = errorHandlerInstance(ee);
-      var req = new EventEmitter();
-      var res = new EventEmitter();
-      res.statusCode = 500;
+      } as {} as Configuration;
+      const errorHandlerInstance = restifyInterface(client as {} as RequestHandler, config);
+      const requestHandlerInstance = errorHandlerInstance(ee);
+      const req = new EventEmitter();
+      const res = new EventEmitter();
+      (res as {} as {statusCode: number}).statusCode = 500;
       it('Should have 0 Listeners on the finish event', function() {
         assert.strictEqual(res.listenerCount(FINISH), 0);
       });

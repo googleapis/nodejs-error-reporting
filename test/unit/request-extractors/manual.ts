@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-'use strict';
-
-var assert = require('assert');
-var omit = require('lodash.omit');
-var extend = require('extend');
-var manualRequestInformationExtractor =
-    require('../../../src/request-extractors/manual.js')
-        .manualRequestInformationExtractor;
-var Fuzzer = require('../../../utils/fuzzer.js');
+import * as assert from 'assert';
+import * as omit from 'lodash.omit';
+import * as extend from 'extend';
+import {manualRequestInformationExtractor} from '../../../src/request-extractors/manual';
+import {Fuzzer} from '../../../utils/fuzzer';
 
 describe('manualRequestInformationExtractor', function() {
   describe('Behaviour given invalid input', function() {
     it('Should return default values', function() {
-      var DEFAULT_RETURN_VALUE = {
+      const DEFAULT_RETURN_VALUE = {
         method: '',
         url: '',
         userAgent: '',
@@ -35,8 +31,8 @@ describe('manualRequestInformationExtractor', function() {
         statusCode: 0,
         remoteAddress: '',
       };
-      var f = new Fuzzer();
-      var cbFn = function(value) {
+      const f = new Fuzzer();
+      const cbFn = function(value) {
         assert.deepEqual(value, DEFAULT_RETURN_VALUE);
       };
       f.fuzzFunctionForTypes(
@@ -44,7 +40,7 @@ describe('manualRequestInformationExtractor', function() {
     });
   });
   describe('Behaviour given valid input', function() {
-    var FULL_VALID_INPUT = {
+    const FULL_VALID_INPUT = {
       method: 'GET',
       url: 'http://0.0.0.0/myTestRoute',
       userAgent: 'Something like Gecko',
@@ -70,34 +66,34 @@ describe('manualRequestInformationExtractor', function() {
           extend({}, FULL_VALID_INPUT, {url: ''}), [
             'Given a valid input sans the url property these values should be',
             'reflected by the output of the request extraction',
-          ]);
+          ].join(''));
       assert.deepEqual(
           manualRequestInformationExtractor(
               omit(FULL_VALID_INPUT, 'userAgent')),
           extend({}, FULL_VALID_INPUT, {userAgent: ''}), [
             'Given a full valid input sans the userAgent property these values',
             'should be reflected by the output of the request extraction',
-          ]);
+          ].join(''));
       assert.deepEqual(
           manualRequestInformationExtractor(omit(FULL_VALID_INPUT, 'referrer')),
           extend({}, FULL_VALID_INPUT, {referrer: ''}), [
             'Given a full valid input sans the referrer property these values',
             'should be reflected by the output of the request extraction',
-          ]);
+          ].join(''));
       assert.deepEqual(
           manualRequestInformationExtractor(
               omit(FULL_VALID_INPUT, 'statusCode')),
           extend({}, FULL_VALID_INPUT, {statusCode: 0}), [
             'Given a full valid input sans the statusCode property these values',
             'should be reflected by the output of the request extraction',
-          ]);
+          ].join(''));
       assert.deepEqual(
           manualRequestInformationExtractor(
               omit(FULL_VALID_INPUT, 'remoteAddress')),
           extend({}, FULL_VALID_INPUT, {remoteAddress: ''}), [
             'Given a valid input sans the remoteAddress property these values',
             'should be reflected by the output of the request extraction',
-          ]);
+          ].join(''));
     });
   });
 });

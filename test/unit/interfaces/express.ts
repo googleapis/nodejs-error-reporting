@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-'use strict';
-
-var assert = require('assert');
-var merge = require('lodash.merge');
-var expressInterface =
-    require('../../../src/interfaces/express.js').makeExpressHandler;
-var ErrorMessage =
-    require('../../../src/classes/error-message.js').ErrorMessage;
-var Fuzzer = require('../../../utils/fuzzer.js');
-var Configuration = require('../../fixtures/configuration.js');
-var createLogger = require('../../../src/logger.js').createLogger;
+import * as assert from 'assert';
+import * as merge from 'lodash.merge';
+import {makeExpressHandler as expressInterface} from '../../../src/interfaces/express';
+import {ErrorMessage} from '../../../src/classes/error-message';
+import {Fuzzer} from '../../../utils/fuzzer';
+import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
+import {createLogger} from '../../../src/logger';
+import { RequestHandler } from '../../../src/google-apis/auth-client';
 
 describe('expressInterface', function() {
   describe('Exception handling', function() {
     describe('Given invalid input', function() {
       it('Should not throw errors', function() {
-        var f = new Fuzzer();
+        const f = new Fuzzer();
         assert.doesNotThrow(function() {
           f.fuzzFunctionForTypes(expressInterface, ['object', 'object']);
           return;
@@ -39,7 +36,7 @@ describe('expressInterface', function() {
     });
   });
   describe('Intended behaviour', function() {
-    var stubbedConfig = new Configuration(
+    const stubbedConfig = new Configuration(
         {
           serviceContext: {
             service: 'a_test_service',
@@ -47,23 +44,23 @@ describe('expressInterface', function() {
           },
         },
         createLogger({logLevel: 4}));
-    stubbedConfig.lacksCredentials = function() {
+    (stubbedConfig as {} as {lacksCredentials: Function}).lacksCredentials = function() {
       return false;
     };
-    var client = {
+    const client = {
       sendError: function() {
         return;
       },
     };
-    var testError = new Error('This is a test');
-    var validBoundHandler = expressInterface(client, stubbedConfig);
+    const testError = new Error('This is a test');
+    const validBoundHandler = expressInterface(client as {} as RequestHandler, stubbedConfig);
     it('Should return the error message', function() {
-      var res = validBoundHandler(testError, null, null, null);
+      const res = validBoundHandler(testError, null!, null!, null!);
       assert.deepEqual(
           res,
           merge(
               new ErrorMessage()
-                  .setMessage(testError.stack)
+                  .setMessage(testError.stack!)
                   .setServiceContext(
                       stubbedConfig._serviceContext.service,
                       stubbedConfig._serviceContext.version),
@@ -71,20 +68,20 @@ describe('expressInterface', function() {
     });
     describe('Calling back to express builtins', function() {
       it('Should callback to next', function(done) {
-        var nextCb = function() {
+        const nextCb = function() {
           done();
         };
-        validBoundHandler(testError, null, null, nextCb);
+        validBoundHandler(testError, null!, null!, nextCb);
       });
       it('Should callback to sendError', function(done) {
-        var sendError = function() {
+        const sendError = function() {
           done();
         };
-        var client = {
+        const client = {
           sendError: sendError,
         };
-        var handler = expressInterface(client, stubbedConfig);
-        handler(testError, null, null, function() {
+        const handler = expressInterface(client as {} as RequestHandler, stubbedConfig);
+        handler(testError, null!, null!, function() {
           return;
         });
       });

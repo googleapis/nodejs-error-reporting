@@ -15,41 +15,45 @@
  */
 // jscs doesn't understand koa..
 // jscs:disable
-'use strict';
 
-var errorHandler = require('../../src/index.js')({
+import {ErrorReporting} from '../../src';
+const errorHandler = new ErrorReporting({
+  // TODO: Address the fact that this configuration
+  //       option is now invalid.
   onUncaughtException: 'report',
-});
-var koa = require('koa');
-var app = koa();
+} as {});
+import * as koa from 'koa';
+const app = (koa as Function)();
 
 app.use(errorHandler.koa);
 
-app.use(function*(next) {
+app.use(function*(this, next) {
   // This will set status and message
   this.throw('Error Message', 500);
   yield next;
 });
 
-app.use(function*(next) {
-  var start = new Date();
+app.use(function*(this, next) {
+  // TODO: Address the fact that new Date()
+  //       is used instead of Date.now()
+  const start = new Date() as any;
   yield next;
-  var ms = new Date() - start;
+  const ms = new Date() as any - start;
   this.set('X-Response-Time', ms + 'ms');
 });
 
 // logger
 
-app.use(function*(next) {
-  var start = new Date();
+app.use(function*(this, next) {
+  const start = new Date() as any;
   yield next;
-  var ms = new Date() - start;
+  const ms = new Date() as any - start;
   // eslint-disable-next-line no-console
   console.log('%s %s - %s', this.method, this.url, ms);
 });
 
 // response
-app.use(function*(next) {
+app.use(function*(this, next) {
   this.body = 'Hello World';
   yield next;
 });

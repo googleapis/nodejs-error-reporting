@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-'use strict';
-var assert = require('assert');
-var isNumber = require('is').number;
-var merge = require('lodash.merge');
-var Configuration = require('../fixtures/configuration.js');
-var Fuzzer = require('../../utils/fuzzer.js');
-var level = process.env.GCLOUD_ERRORS_LOGLEVEL;
-var logger = require('../../src/logger.js').createLogger({
+import * as assert from 'assert';
+import * as is from 'is';
+const isNumber = is.number;
+import merge = require('lodash.merge');
+import {FakeConfiguration as Configuration} from '../fixtures/configuration';
+import {Fuzzer} from '../../utils/fuzzer';
+const level = process.env.GCLOUD_ERRORS_LOGLEVEL;
+import {createLogger} from '../../src/logger';
+const logger = createLogger({
   logLevel: isNumber(level) ? level : 4,
 });
-var nock = require('nock');
+import * as nock from 'nock';
 
-var METADATA_URL = 'http://metadata.google.internal/computeMetadata/v1/project';
+const METADATA_URL = 'http://metadata.google.internal/computeMetadata/v1/project';
 
-var configEnv = {
+const configEnv = {
   NODE_ENV: process.env.NODE_ENV,
   GCLOUD_PROJECT: process.env.GCLOUD_PROJECT,
   GAE_MODULE_NAME: process.env.GAE_MODULE_NAME,
@@ -58,11 +59,11 @@ describe('Configuration class', function() {
     restoreConfigEnv();
   });
   describe('Initialization', function() {
-    var f = new Fuzzer();
-    var stubConfig = {test: true};
+    const f = new Fuzzer();
+    const stubConfig = {test: true};
     describe('fuzzing the constructor', function() {
       it('Should return default values', function() {
-        var c;
+        let c;
         f.fuzzFunctionForTypes(function(givenConfigFuzz) {
           c = new Configuration(givenConfigFuzz, logger);
           assert.deepEqual(c._givenConfiguration, {});
@@ -70,7 +71,7 @@ describe('Configuration class', function() {
       });
     });
     describe('valid config and default values', function() {
-      var c;
+      let c;
       before(function() {
         process.env.NODE_ENV = 'development';
       });
@@ -102,15 +103,15 @@ describe('Configuration class', function() {
       });
     });
     describe('with ignoreEnvironmentCheck', function() {
-      var conf = merge({}, stubConfig, {ignoreEnvironmentCheck: true});
-      var c = new Configuration(conf, logger);
+      const conf = merge({}, stubConfig, {ignoreEnvironmentCheck: true});
+      const c = new Configuration(conf, logger);
       it('Should reportErrorsToAPI', function() {
         assert.strictEqual(c.getShouldReportErrorsToAPI(), true);
       });
     });
     describe('without ignoreEnvironmentCheck', function() {
       describe('report behaviour with production env', function() {
-        var c;
+        let c;
         before(function() {
           sterilizeConfigEnv();
           process.env.NODE_ENV = 'production';
@@ -163,8 +164,8 @@ describe('Configuration class', function() {
       sterilizeConfigEnv();
     });
     describe('project id from configuration instance', function() {
-      var pi = 'test';
-      var c;
+      const pi = 'test';
+      let c;
       before(function() {
         c = new Configuration({projectId: pi}, logger);
       });
@@ -176,8 +177,8 @@ describe('Configuration class', function() {
       });
     });
     describe('project number from configuration instance', function() {
-      var pn = 1234;
-      var c;
+      const pn = 1234;
+      let c;
       before(function() {
         sterilizeConfigEnv();
         c = new Configuration({projectId: pn}, logger);
@@ -193,7 +194,7 @@ describe('Configuration class', function() {
   });
   describe('Exception behaviour', function() {
     describe('While lacking a project id', function() {
-      var c;
+      let c;
       before(function() {
         sterilizeConfigEnv();
         createDeadMetadataService();
@@ -208,7 +209,7 @@ describe('Configuration class', function() {
       });
     });
     describe('Invalid type for projectId in runtime config', function() {
-      var c;
+      let c;
       before(function() {
         sterilizeConfigEnv();
         createDeadMetadataService();
@@ -241,8 +242,8 @@ describe('Configuration class', function() {
         sterilizeConfigEnv();
       });
       describe('no longer tests env itself', function() {
-        var c;
-        var projectId = 'test-xyz';
+        let c;
+        const projectId = 'test-xyz';
         before(function() {
           process.env.GCLOUD_PROJECT = projectId;
           c = new Configuration(undefined, logger);
@@ -252,9 +253,9 @@ describe('Configuration class', function() {
         });
       });
       describe('serviceContext', function() {
-        var c;
-        var projectId = 'test-abc';
-        var serviceContext = {
+        let c;
+        const projectId = 'test-abc';
+        const serviceContext = {
           service: 'test',
           version: '1.x',
         };
@@ -274,9 +275,9 @@ describe('Configuration class', function() {
         sterilizeConfigEnv();
       });
       describe('serviceContext', function() {
-        var c;
-        var projectId = 'xyz123';
-        var serviceContext = {
+        let c;
+        const projectId = 'xyz123';
+        const serviceContext = {
           service: 'evaluation',
           version: '2.x',
         };
@@ -291,9 +292,9 @@ describe('Configuration class', function() {
         });
       });
       describe('api key', function() {
-        var c;
-        var projectId = '987abc';
-        var key = '1337-api-key';
+        let c;
+        const projectId = '987abc';
+        const key = '1337-api-key';
         before(function() {
           c = new Configuration(
               {
@@ -307,8 +308,8 @@ describe('Configuration class', function() {
         });
       });
       describe('reportUnhandledRejections', function() {
-        var c;
-        var reportRejections = false;
+        let c;
+        const reportRejections = false;
         before(function() {
           c = new Configuration({
             reportUnhandledRejections: reportRejections,

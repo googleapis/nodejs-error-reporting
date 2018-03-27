@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-'use strict';
-
-var assert = require('assert');
-var hapiRequestInformationExtractor =
-    require('../../../src/request-extractors/hapi.js')
-        .hapiRequestInformationExtractor;
-var Fuzzer = require('../../../utils/fuzzer.js');
+import * as assert from 'assert';
+import {hapiRequestInformationExtractor} from '../../../src/request-extractors/hapi';
+import {Fuzzer} from '../../../utils/fuzzer';
+import * as hapi from 'hapi';
 
 describe('hapiRequestInformationExtractor behaviour', function() {
   describe('behaviour given invalid input', function() {
     it('Should produce the default value', function() {
-      var DEFAULT_RETURN_VALUE = {
+      const DEFAULT_RETURN_VALUE = {
         method: '',
         url: '',
         userAgent: '',
@@ -33,15 +30,15 @@ describe('hapiRequestInformationExtractor behaviour', function() {
         statusCode: 0,
         remoteAddress: '',
       };
-      var f = new Fuzzer();
-      var cbFn = function(value) {
+      const f = new Fuzzer();
+      const cbFn = function(value) {
         assert.deepEqual(value, DEFAULT_RETURN_VALUE);
       };
       f.fuzzFunctionForTypes(hapiRequestInformationExtractor, ['object'], cbFn);
     });
   });
   describe('behaviour given valid input', function() {
-    var FULL_REQ_DERIVATION_VALUE = {
+    const FULL_REQ_DERIVATION_VALUE = {
       method: 'STUB_METHOD',
       url: 'www.TEST-URL.com',
       info: {
@@ -56,7 +53,7 @@ describe('hapiRequestInformationExtractor behaviour', function() {
         statusCode: 200,
       },
     };
-    var FULL_REQ_EXPECTED_VALUE = {
+    const FULL_REQ_EXPECTED_VALUE = {
       method: 'STUB_METHOD',
       url: 'www.TEST-URL.com',
       userAgent: 'Something like Mozilla',
@@ -64,7 +61,7 @@ describe('hapiRequestInformationExtractor behaviour', function() {
       remoteAddress: '0.0.0.1',
       statusCode: 200,
     };
-    var PARTIAL_REQ_DERIVATION_VALUE = {
+    const PARTIAL_REQ_DERIVATION_VALUE = {
       method: 'STUB_METHOD_#2',
       url: 'www.SUPER-TEST.com',
       info: {
@@ -80,7 +77,7 @@ describe('hapiRequestInformationExtractor behaviour', function() {
         },
       },
     };
-    var PARTIAL_REQ_EXPECTED_VALUE = {
+    const PARTIAL_REQ_EXPECTED_VALUE = {
       method: 'STUB_METHOD_#2',
       url: 'www.SUPER-TEST.com',
       userAgent: 'Something like Gecko',
@@ -88,7 +85,7 @@ describe('hapiRequestInformationExtractor behaviour', function() {
       remoteAddress: '0.0.2.1',
       statusCode: 201,
     };
-    var ANOTHER_PARTIAL_REQ_DERIVATION_VALUE = {
+    const ANOTHER_PARTIAL_REQ_DERIVATION_VALUE = {
       method: 'STUB_METHOD_#2',
       url: 'www.SUPER-TEST.com',
       headers: {
@@ -96,7 +93,7 @@ describe('hapiRequestInformationExtractor behaviour', function() {
         referrer: 'www.SUPER-ANOTHER-TEST.com',
       },
     };
-    var ANOTHER_PARTIAL_REQ_EXPECTED_VALUE = {
+    const ANOTHER_PARTIAL_REQ_EXPECTED_VALUE = {
       method: 'STUB_METHOD_#2',
       url: 'www.SUPER-TEST.com',
       userAgent: 'Something like Gecko',
@@ -106,17 +103,17 @@ describe('hapiRequestInformationExtractor behaviour', function() {
     };
     it('Should produce the full request input', function() {
       assert.deepEqual(
-          hapiRequestInformationExtractor(FULL_REQ_DERIVATION_VALUE),
+          hapiRequestInformationExtractor(FULL_REQ_DERIVATION_VALUE as {} as hapi.Request),
           FULL_REQ_EXPECTED_VALUE);
     });
     it('Should produce the partial request input', function() {
       assert.deepEqual(
-          hapiRequestInformationExtractor(PARTIAL_REQ_DERIVATION_VALUE),
+          hapiRequestInformationExtractor(PARTIAL_REQ_DERIVATION_VALUE as {} as hapi.Request),
           PARTIAL_REQ_EXPECTED_VALUE);
     });
     it('Should produce the second partial request input', function() {
       assert.deepEqual(
-          hapiRequestInformationExtractor(ANOTHER_PARTIAL_REQ_DERIVATION_VALUE),
+          hapiRequestInformationExtractor(ANOTHER_PARTIAL_REQ_DERIVATION_VALUE as {} as hapi.Request),
           ANOTHER_PARTIAL_REQ_EXPECTED_VALUE);
     });
   });

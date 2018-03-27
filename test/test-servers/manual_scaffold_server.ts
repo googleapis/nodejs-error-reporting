@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-const errors = require('../../src/index.js')();
-errors.report('Sample test string', err => {
+import {ErrorReporting} from '../../src/index';
+const errors = new ErrorReporting();
+(errors.report as Function)('Sample test string', err => {
   // eslint-disable-next-line no-console
   console.log(
       'Callback from report:\n', '\tError: ', err, '\n', '\tResponse Body:');

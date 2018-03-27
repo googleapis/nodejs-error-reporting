@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-'use strict';
-
-var assert = require('assert');
-var RequestInformationContainer =
-    require('../../../src/classes/request-information-container.js');
-var Fuzzer = require('../../../utils/fuzzer.js');
+import * as assert from 'assert';
+import {RequestInformationContainer} from '../../../src/classes/request-information-container';
+import {Fuzzer} from '../../../utils/fuzzer';
 
 describe('RequestInformationContainer', function() {
-  var f = new Fuzzer();
-  var cbFn, ric;
+  const f = new Fuzzer();
+  let cbFn, ric;
   beforeEach(function() {
-    ric = new RequestInformationContainer.RequestInformationContainer();
+    ric = new RequestInformationContainer();
   });
   describe('Fuzzing against RequestInformationContainer', function() {
     it('Should return the property as an empty string', function() {
@@ -66,8 +63,8 @@ describe('RequestInformationContainer', function() {
     });
   });
   describe('Fuzzing against for positive cases', function() {
-    var VALID_STRING_INPUT = 'valid';
-    var VALID_NUMBER_INPUT = 500;
+    const VALID_STRING_INPUT = 'valid';
+    const VALID_NUMBER_INPUT = 500;
     it('Should assign the value to the url property', function() {
       ric.setUrl(VALID_STRING_INPUT);
       assert.deepEqual(ric.url, VALID_STRING_INPUT);
