@@ -165,7 +165,7 @@ export class ErrorReporting {
    * });
    */
   event() {
-    return messageBuilder.handlerSetup(this._config);
+    return messageBuilder.handlerSetup(this._config)();
   }
 
   /**
@@ -189,8 +189,7 @@ export class ErrorReporting {
    * server.use(errors.restify(server));
    */
   restify(server: {}) {
-    return restifyInterface.handlerSetup(this._client, this._config)(
-        this._client, this._config, server);
+    return restifyInterface.handlerSetup(this._client, this._config)(server);
   }
 
   /**
@@ -200,7 +199,7 @@ export class ErrorReporting {
    * // BEFORE ALL OTHER ROUTE HANDLERS HANDLERS
    * app.use(errors.koa);
    */
-  * koa(next: {}) {
+  * koa() {
     return koaInterface.koaErrorHandler(this._client, this._config);
   }
 }
