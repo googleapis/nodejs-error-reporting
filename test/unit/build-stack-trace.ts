@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-'use strict';
-
-var assert = require('assert');
-var path = require('path');
-var buildStackTrace = require('../../src/build-stack-trace.js').buildStackTrace;
+import * as assert from 'assert';
+import * as path from 'path';
+import {buildStackTrace} from '../../src/build-stack-trace';
 
 const SRC_ROOT = path.join(__dirname, '..', '..', 'src');
 
@@ -37,7 +35,7 @@ describe('build-stack-trace', function() {
     (function functionA() {
       (function functionB() {
         (function functionC() {
-          var stackTrace = buildStackTrace();
+          const stackTrace = buildStackTrace();
           assert(stackTrace);
           assert.strictEqual(stackTrace.indexOf(SRC_ROOT), -1);
         })();
@@ -49,7 +47,7 @@ describe('build-stack-trace', function() {
     (function functionA() {
       (function functionB() {
         (function functionC() {
-          var stackTrace = buildStackTrace();
+          const stackTrace = buildStackTrace();
           assert(stackTrace);
           assert.notStrictEqual(stackTrace.indexOf('functionA'), -1);
           assert.notStrictEqual(stackTrace.indexOf('functionB'), -1);

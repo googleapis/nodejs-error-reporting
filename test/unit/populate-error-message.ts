@@ -14,29 +14,39 @@
  * limitations under the License.
  */
 
-'use strict';
+import * as assert from 'assert';
 
-var assert = require('assert');
+import {ErrorMessage} from '../../src/classes/error-message';
+import {populateErrorMessage} from '../../src/populate-error-message';
 
-var ErrorMessage = require('../../src/classes/error-message.js').ErrorMessage;
-var populateErrorMessage =
-    require('../../src/populate-error-message.js').populateErrorMessage;
-
-var TEST_USER_INVALID = 12;
-var TEST_MESSAGE = 'This is a test';
-var TEST_SERVICE_DEFAULT = {service: 'node', version: undefined};
-var TEST_STACK_DEFAULT = {
+const TEST_USER_INVALID = 12;
+const TEST_MESSAGE = 'This is a test';
+const TEST_SERVICE_DEFAULT = {service: 'node', version: undefined};
+const TEST_STACK_DEFAULT = {
   filePath: '',
   lineNumber: 0,
   functionName: '',
 };
 
+/*
+ * The type of each property is {} to allow the tests to set values
+ * of various types to test the outcome.
+ */
+interface AnnotatedError {
+  user?: {};
+  serviceContext?: {};
+  stack?: {};
+  filePath?: {};
+  lineNumber?: {};
+  functionName?: {};
+};
+
 describe('populate-error-message', function() {
-  var em;
-  var adversarialObjectInput = {
+  let em;
+  const adversarialObjectInput = {
     stack: {},
   };
-  var adversarialObjectInputTwo = {
+  const adversarialObjectInputTwo = {
     stack: [],
   };
   beforeEach(function() {
@@ -80,7 +90,7 @@ describe('populate-error-message', function() {
 
   it('Message Field: Should set the message as the stack given an Error',
      function() {
-       var err = new Error(TEST_MESSAGE);
+       const err = new Error(TEST_MESSAGE);
        populateErrorMessage(err, em);
        assert.deepEqual(
            em.message, err.stack,
@@ -90,8 +100,8 @@ describe('populate-error-message', function() {
 
   it('Message Field: Should set the field given valid input given an object',
      function() {
-       var err = {};
-       var MESSAGE = 'test';
+      let err = {};
+       const MESSAGE = 'test';
        err = {message: MESSAGE};
        populateErrorMessage(err, em);
        assert.strictEqual(em.message, MESSAGE);
@@ -100,15 +110,15 @@ describe('populate-error-message', function() {
   it('Message Field: Should default the field given lack-of input given ' +
          'an object',
      function() {
-       var err = {};
+       const err = {};
        populateErrorMessage(err, em);
        assert(em.message.startsWith('[object Object]'));
      });
 
   it('User Field: Should set the field given valid input given an Error',
      function() {
-       var err = new Error();
-       var TEST_USER_VALID = 'TEST_USER';
+       const err: AnnotatedError = new Error();
+       const TEST_USER_VALID = 'TEST_USER';
        err.user = TEST_USER_VALID;
        populateErrorMessage(err, em);
        assert.strictEqual(em.context.user, TEST_USER_VALID);
@@ -116,7 +126,7 @@ describe('populate-error-message', function() {
 
   it('User Field: Should default the field given invalid input given an Error',
      function() {
-       var err = new Error();
+       const err: AnnotatedError = new Error();
        err.user = TEST_USER_INVALID;
        populateErrorMessage(err, em);
        assert.strictEqual(em.context.user, '');
@@ -124,8 +134,8 @@ describe('populate-error-message', function() {
 
   it('User Field: Should set the field given valid input given an object',
      function() {
-       var err = {};
-       var USER = 'test';
+       const err: AnnotatedError = {};
+       const USER = 'test';
        err.user = USER;
        populateErrorMessage(err, em);
        assert.strictEqual(em.context.user, USER);
@@ -134,7 +144,7 @@ describe('populate-error-message', function() {
   it('User Field: Should default the field given lack-of input given an ' +
          'object',
      function() {
-       var err = {};
+       const err = {};
        populateErrorMessage(err, em);
        assert.strictEqual(em.context.user, '');
      });
@@ -142,8 +152,8 @@ describe('populate-error-message', function() {
   it('ServiceContext Field: Should set the field given valid input given ' +
          'an Error',
      function() {
-       var err = new Error();
-       var TEST_SERVICE_VALID = {service: 'test', version: 'test'};
+       const err: AnnotatedError = new Error();
+       const TEST_SERVICE_VALID = {service: 'test', version: 'test'};
        err.serviceContext = TEST_SERVICE_VALID;
        populateErrorMessage(err, em);
        assert.deepEqual(err.serviceContext, TEST_SERVICE_VALID);
@@ -152,8 +162,8 @@ describe('populate-error-message', function() {
   it('ServiceContext Field: Should default the field given invalid input ' +
          'given an Error',
      function() {
-       var err = new Error();
-       var TEST_SERVICE_INVALID = 12;
+       const err: AnnotatedError = new Error();
+       const TEST_SERVICE_INVALID = 12;
        err.serviceContext = TEST_SERVICE_INVALID;
        populateErrorMessage(err, em);
        assert.deepEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
@@ -162,7 +172,7 @@ describe('populate-error-message', function() {
   it('ServiceContext Field: Should default the field if not given input ' +
          'given an Error',
      function() {
-       var err = new Error();
+       const err = new Error();
        populateErrorMessage(err, em);
        assert.deepEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
      });
@@ -170,8 +180,8 @@ describe('populate-error-message', function() {
   it('ServiceContext Field: Should set the field given valid input given an ' +
          'object',
      function() {
-       var err = {};
-       var TEST_SERVICE_VALID = {service: 'test', version: 'test'};
+       const err: AnnotatedError = {};
+       const TEST_SERVICE_VALID = {service: 'test', version: 'test'};
        err.serviceContext = TEST_SERVICE_VALID;
        populateErrorMessage(err, em);
        assert.deepEqual(em.serviceContext, TEST_SERVICE_VALID);
@@ -180,8 +190,8 @@ describe('populate-error-message', function() {
   it('ServiceContext Field: Should default the field given invalid input ' +
          'given an object',
      function() {
-       var err = {};
-       var TEST_SERVICE_INVALID = 12;
+       const err: AnnotatedError = {};
+       const TEST_SERVICE_INVALID = 12;
        err.serviceContext = TEST_SERVICE_INVALID;
        populateErrorMessage(err, em);
        assert.deepEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
@@ -190,7 +200,7 @@ describe('populate-error-message', function() {
   it('ServiceContext Field: Should default the field given lack-of input ' +
          'given an object',
      function() {
-       var err = {};
+       const err = {};
        populateErrorMessage(err, em);
        assert.deepEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
      });
@@ -198,12 +208,12 @@ describe('populate-error-message', function() {
   it('Report location Field: Should default the field if given invalid input ' +
          'given an Error',
      function() {
-       var TEST_STACK_INVALID_CONTENTS = {
+       const TEST_STACK_INVALID_CONTENTS = {
          filePath: null,
          lineNumber: '2',
          functionName: {},
        };
-       var err = new Error();
+       const err: AnnotatedError = new Error();
        err.stack = TEST_STACK_INVALID_CONTENTS;
        populateErrorMessage(err, em);
        assert.deepEqual(em.context.reportLocation, TEST_STACK_DEFAULT);
@@ -212,8 +222,8 @@ describe('populate-error-message', function() {
   it('Report location Field: Should default field if not given a valid type ' +
          'given an Error',
      function() {
-       var err = new Error();
-       var TEST_STACK_INVALID_TYPE = [];
+       const err: AnnotatedError = new Error();
+       const TEST_STACK_INVALID_TYPE = [];
        err.stack = TEST_STACK_INVALID_TYPE;
        populateErrorMessage(err, em);
        assert.deepEqual(em.context.reportLocation, TEST_STACK_DEFAULT);
@@ -221,8 +231,8 @@ describe('populate-error-message', function() {
 
   it('FilePath Field: Should set the field given valid input given an object',
      function() {
-       var err = {};
-       var PATH = 'test';
+       const err: AnnotatedError = {};
+       const PATH = 'test';
        err.filePath = PATH;
        populateErrorMessage(err, em);
        assert.strictEqual(em.context.reportLocation.filePath, PATH);
@@ -231,15 +241,15 @@ describe('populate-error-message', function() {
   it('FilePath Field: Should default the field given lack-of input given ' +
          'an object',
      function() {
-       var err = {};
+       const err = {};
        populateErrorMessage(err, em);
        assert.strictEqual(em.context.reportLocation.filePath, '');
      });
 
   it('LineNumber Field: Should set the field given valid input given an object',
      function() {
-       var err = {};
-       var LINE_NUMBER = 10;
+       const err: AnnotatedError = {};
+       const LINE_NUMBER = 10;
        err.lineNumber = LINE_NUMBER;
        populateErrorMessage(err, em);
        assert.strictEqual(em.context.reportLocation.lineNumber, LINE_NUMBER);
@@ -248,7 +258,7 @@ describe('populate-error-message', function() {
   it('LineNumber Field: Should default the field given lack-of input given ' +
          'an object',
      function() {
-       var err = {};
+       const err = {};
        populateErrorMessage(err, em);
        assert.strictEqual(em.context.reportLocation.lineNumber, 0);
      });
@@ -256,8 +266,8 @@ describe('populate-error-message', function() {
   it('FunctionName Field: Should set the field given valid input given ' +
          'an object',
      function() {
-       var err = {};
-       var FUNCTION_NAME = 'test';
+       const err: AnnotatedError = {};
+       const FUNCTION_NAME = 'test';
        err.functionName = FUNCTION_NAME;
        populateErrorMessage(err, em);
        assert.strictEqual(
@@ -267,7 +277,7 @@ describe('populate-error-message', function() {
   it('FunctionName Field: Should default the field given lack-of input given ' +
          'an object',
      function() {
-       var err = {};
+       const err = {};
        populateErrorMessage(err, em);
        assert.strictEqual(em.context.reportLocation.functionName, '');
      });
