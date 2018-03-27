@@ -40,7 +40,7 @@ import * as restifyInterface from './interfaces/restify';
 import {createLogger} from './logger';
 import {Request} from './request-extractors/manual';
 
-export type RequestHandler = (req: {}, res: {}, next: {}) => {};
+export type RestifyRequestHandler = (req: {}, res: {}, next: {}) => {};
 
 /**
  * @typedef ConfigurationOptions
@@ -109,7 +109,7 @@ export class ErrorReporting {
   event: () => ErrorMessage;
   hapi: {register: (server: {}, options: {}, next: Function) => void};
   express: (err: {}, req: {}, res: {}, next: Function) => void;
-  restify: (server: {}) => RequestHandler | RequestHandler[];
+  restify: (server: {}) => RestifyRequestHandler | RestifyRequestHandler[];
   // tslint:disable-next-line:no-any
   koa: (context: any, next: {}) => IterableIterator<{}>;
 
