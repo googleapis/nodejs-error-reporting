@@ -32,7 +32,7 @@ import {makeExpressHandler as express} from './interfaces/express';
 import {makeHapiPlugin as hapi} from './interfaces/hapi';
 // Begin error reporting interfaces
 
-import {koaErrorHandler as koa} from './interfaces/koa';
+import * as koaInterface from './interfaces/koa';
 import * as manual from './interfaces/manual';
 import {Callback} from './interfaces/manual';
 import * as messageBuilder from './interfaces/message-builder';
@@ -111,7 +111,7 @@ export class ErrorReporting {
   express: (err: {}, req: {}, res: {}, next: Function) => void;
   restify: (server: {}) => RequestHandler | RequestHandler[];
   // tslint:disable-next-line:no-any
-  koa: (context: any, next: () => Promise<{}>) => {};
+  koa: (context: any, next: {}) => IterableIterator<{}>;
 
   constructor(initConfiguration?: ConfigurationOptions) {
     if (!(this instanceof ErrorReporting)) {
@@ -194,6 +194,6 @@ export class ErrorReporting {
      * // BEFORE ALL OTHER ROUTE HANDLERS HANDLERS
      * app.use(errors.koa);
      */
-    this.koa = koa(this._client, this._config);
+    this.koa = koaInterface.koaErrorHandler(this._client, this._config);
   }
 }
