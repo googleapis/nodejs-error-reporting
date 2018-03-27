@@ -20,10 +20,6 @@
 
 import * as types from './types';
 const Logger: types.Logger = require('@google-cloud/common').Logger;
-import * as e from 'express';
-import * as h from 'hapi';
-import {ServerResponse} from 'http';
-import * as r from 'restify';
 
 import {ErrorMessage} from './classes/error-message';
 import {Configuration, ConfigurationOptions} from './configuration';
