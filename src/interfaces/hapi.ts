@@ -81,7 +81,7 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
   function hapiRegisterFunction(server: {}, options: {}, next: Function) {
     if (server) {
       if ((server as any).events && (server as any).events.on) {
-        // then Hapi 17 is being used
+        // Hapi 17 is being used
         (server as any).events.on('log', function(event, tags) {
           if (event.error) {
             client.sendError(hapiErrorHandler(undefined, event.error));
@@ -127,7 +127,11 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
     }
   }
 
-  const hapiPlugin = {register: hapiRegisterFunction};
+  const hapiPlugin = {
+    register: hapiRegisterFunction,
+    name: packageJson.name,
+    version: packageJson.version
+  };
 
   (hapiPlugin.register as {} as {attributes: {}}).attributes = {
     name: packageJson.name,
