@@ -28,14 +28,15 @@ import * as r from 'restify';
 import {ErrorMessage} from './classes/error-message';
 import {Configuration, ConfigurationOptions} from './configuration';
 import {RequestHandler as AuthClient} from './google-apis/auth-client';
+
+// Begin error reporting interfaces
 import * as expressInterface from './interfaces/express';
 import * as hapiInterface from './interfaces/hapi';
-// Begin error reporting interfaces
-
 import * as koaInterface from './interfaces/koa';
 import * as manualInterface from './interfaces/manual';
 import * as messageBuilderInterface from './interfaces/message-builder';
 import * as restifyInterface from './interfaces/restify';
+
 import {createLogger} from './logger';
 import {Request} from './request-extractors/manual';
 
