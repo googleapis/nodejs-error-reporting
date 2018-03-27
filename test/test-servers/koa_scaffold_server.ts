@@ -16,11 +16,12 @@
 // jscs doesn't understand koa..
 // jscs:disable
 
-var errorHandler = require('../../src/index.js')({
+import {ErrorReporting} from '../../src/index';
+const errorHandler = new ErrorReporting({
   onUncaughtException: 'report',
-});
-var koa = require('koa');
-var app = koa();
+} as {});
+import * as koa from 'koa';
+const app = (koa as Function)();
 
 app.use(errorHandler.koa);
 
@@ -31,18 +32,18 @@ app.use(function*(this, next) {
 });
 
 app.use(function*(this, next) {
-  var start = new Date() as any;
+  const start = new Date() as any;
   yield next;
-  var ms = new Date() as any - start;
+  const ms = new Date() as any - start;
   this.set('X-Response-Time', ms + 'ms');
 });
 
 // logger
 
 app.use(function*(this, next) {
-  var start = new Date() as any;
+  const start = new Date() as any;
   yield next;
-  var ms = new Date() as any - start;
+  const ms = new Date() as any - start;
   // eslint-disable-next-line no-console
   console.log('%s %s - %s', this.method, this.url, ms);
 });
