@@ -37,7 +37,7 @@ import * as hapi from 'hapi';
  * @returns {ErrorMessage} - a partially or fully populated instance of
  *  ErrorMessage
  */
-function hapiErrorHandler(req: hapi.Request|undefined, err: {}, config?: Configuration) {
+function hapiErrorHandler(err: {}, req?: hapi.Request, config?: Configuration) {
   let service = '';
   let version: string|undefined = '';
 
@@ -84,20 +84,20 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
         // Hapi 17 is being used
         (server as any).events.on('log', function(event, tags) {
           if (event.error) {
-            client.sendError(hapiErrorHandler(undefined, event.error));
+            client.sendError(hapiErrorHandler(event.error));
           }
         });
 
         (server as any).events.on('request', (request, event, tags) => {
           if (event.error) {
-            client.sendError(hapiErrorHandler(request, event.error));
+            client.sendError(hapiErrorHandler(event.error, request));
           }
         });
       }
       else {
         if (isFunction((server as hapi.Server).on)) {
           (server as hapi.Server).on('request-error', (req, err) => {
-            client.sendError(hapiErrorHandler(req, err, config));
+            client.sendError(hapiErrorHandler(err, req, config));
           });
         }
 
@@ -107,10 +107,9 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
                 // TODO: Handle the case when `request.response` is null
                 request.response!.isBoom) {
               const em = hapiErrorHandler(
-                  request,
                   // TODO: Handle the case when `request.response` is null
                   // TODO: Handle the type conflict that requires a cast to string
-                  new Error(request.response!.message as {} as string), config);
+                  new Error(request.response!.message as {} as string), request, config);
               client.sendError(em);
             }
 
