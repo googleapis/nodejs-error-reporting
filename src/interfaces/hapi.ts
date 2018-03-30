@@ -78,7 +78,7 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
    *  plugin
    * @returns {Undefined} - returns the execution of the next callback
    */
-  function hapiRegisterFunction(server: any, options: {}, next: Function) {
+  function hapiRegisterFunction(server: any, options: {}, next?: Function) {
     if (server) {
       if (server.events && server.events.on) {
         // Hapi 17 is being used
@@ -122,7 +122,7 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
     }
 
     if (isFunction(next)) {
-      return next();
+      return next!();
     }
   }
 
