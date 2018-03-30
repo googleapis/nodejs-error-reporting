@@ -15,8 +15,9 @@
  */
 
 import * as assert from 'assert';
-import * as omit from 'lodash.omit';
 import * as extend from 'extend';
+import * as omit from 'lodash.omit';
+
 import {manualRequestInformationExtractor} from '../../../src/request-extractors/manual';
 import {Fuzzer} from '../../../utils/fuzzer';
 

@@ -16,12 +16,13 @@
 
 import * as assert from 'assert';
 import * as merge from 'lodash.merge';
-import {makeExpressHandler as expressInterface} from '../../../src/interfaces/express';
+
 import {ErrorMessage} from '../../../src/classes/error-message';
+import {RequestHandler} from '../../../src/google-apis/auth-client';
+import {makeExpressHandler as expressInterface} from '../../../src/interfaces/express';
+import {createLogger} from '../../../src/logger';
 import {Fuzzer} from '../../../utils/fuzzer';
 import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
-import {createLogger} from '../../../src/logger';
-import { RequestHandler } from '../../../src/google-apis/auth-client';
 
 describe('expressInterface', () => {
   describe('Exception handling', () => {
@@ -44,16 +45,18 @@ describe('expressInterface', () => {
           },
         },
         createLogger({logLevel: 4}));
-    (stubbedConfig as {} as {lacksCredentials: Function}).lacksCredentials = () => {
-      return false;
-    };
+    (stubbedConfig as {} as {lacksCredentials: Function}).lacksCredentials =
+        () => {
+          return false;
+        };
     const client = {
       sendError() {
         return;
       },
     };
     const testError = new Error('This is a test');
-    const validBoundHandler = expressInterface(client as {} as RequestHandler, stubbedConfig);
+    const validBoundHandler =
+        expressInterface(client as {} as RequestHandler, stubbedConfig);
     it('Should return the error message', () => {
       const res = validBoundHandler(testError, null!, null!, null!);
       assert.deepEqual(
@@ -80,7 +83,8 @@ describe('expressInterface', () => {
         const client = {
           sendError,
         };
-        const handler = expressInterface(client as {} as RequestHandler, stubbedConfig);
+        const handler =
+            expressInterface(client as {} as RequestHandler, stubbedConfig);
         handler(testError, null!, null!, () => {
           return;
         });

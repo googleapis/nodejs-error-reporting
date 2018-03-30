@@ -22,9 +22,9 @@ const config = new Configuration({});
   return false;
 };
 import {ErrorMessage} from '../../../src/classes/error-message';
-import { RequestHandler } from '../../../src/google-apis/auth-client';
-import { Logger } from '@google-cloud/common';
-import { RequestInformationContainer } from '../../../src/classes/request-information-container';
+import {RequestHandler} from '../../../src/google-apis/auth-client';
+import {Logger} from '@google-cloud/common';
+import {RequestInformationContainer} from '../../../src/classes/request-information-container';
 
 describe('Manual handler', () => {
   // nock.disableNetConnect();
@@ -68,17 +68,18 @@ describe('Manual handler', () => {
       const r = report(new Error('hokeypokey'));
       assert(r.message.match(/hokeypokey/));
     });
-    it('Should allow a function as a malformed error input', function(this, done) {
-      this.timeout(2000);
-      const r = report(() => {
-        assert(false, 'callback should not be called');
-        done();
-      });
-      assert(r instanceof ErrorMessage, 'should be an inst of ErrorMessage');
-      setTimeout(() => {
-        done();
-      }, 1000);
-    });
+    it('Should allow a function as a malformed error input',
+       function(this, done) {
+         this.timeout(2000);
+         const r = report(() => {
+           assert(false, 'callback should not be called');
+           done();
+         });
+         assert(r instanceof ErrorMessage, 'should be an inst of ErrorMessage');
+         setTimeout(() => {
+           done();
+         }, 1000);
+       });
     it('Should callback to the supplied function', done => {
       const r = report('malarkey', () => {
         done();
@@ -169,7 +170,8 @@ describe('Manual handler', () => {
       const oldReq = {method: 'GET'};
       const newReq = {method: 'POST'};
       const r = report(
-          new ErrorMessage().setMessage(msg).consumeRequestInformation(oldReq as RequestInformationContainer),
+          new ErrorMessage().setMessage(msg).consumeRequestInformation(
+              oldReq as RequestInformationContainer),
           newReq);
       assert(
           r.message.startsWith(msg),

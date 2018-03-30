@@ -24,7 +24,7 @@ import {ErrorMessage} from '../../../src/classes/error-message';
 import {Fuzzer} from '../../../utils/fuzzer';
 import {EventEmitter} from 'events';
 import * as config from '../../../src/configuration';
-import { RequestHandler } from '../../../src/google-apis/auth-client';
+import {RequestHandler} from '../../../src/google-apis/auth-client';
 import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
 
 describe('Hapi interface', () => {
@@ -59,12 +59,11 @@ describe('Hapi interface', () => {
              has(plugin.register, 'attributes') &&
              isObject(plugin.register.attributes));
        });
-    it('the plugin\'s attribute property should have a name property',
-       () => {
-         assert(has(plugin.register.attributes, 'name'));
-         assert.strictEqual(
-             plugin.register.attributes.name, '@google-cloud/error-reporting');
-       });
+    it('the plugin\'s attribute property should have a name property', () => {
+      assert(has(plugin.register.attributes, 'name'));
+      assert.strictEqual(
+          plugin.register.attributes.name, '@google-cloud/error-reporting');
+    });
     it('the plugin\'s attribute property should have a version property',
        () => {
          assert(has(plugin.register.attributes, 'version'));
@@ -140,7 +139,7 @@ describe('Hapi interface', () => {
          // If `reply.continue()` is not invoked in this situation, the Hapi
          // app will become unresponsive.
          plugin.register(fakeServer, null, () => {});
-         const reply: Function & {continue?: Function} = () => {};
+         const reply: Function&{continue?: Function} = () => {};
          reply.continue = () => {
            // The continue function should be called
            done();
@@ -163,8 +162,7 @@ describe('Hapi interface', () => {
         // The next function should be called
         done();
       });
-      fakeServer.emit(
-          EVENT, {response: {isBoom: true}}, {continue() {}});
+      fakeServer.emit(EVENT, {response: {isBoom: true}}, {continue() {}});
     });
   });
 });

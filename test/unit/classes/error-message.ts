@@ -18,7 +18,7 @@
 
 import * as assert from 'assert';
 import {ErrorMessage} from '../../../src/classes/error-message';
-import { RequestInformationContainer } from '../../../src/classes/request-information-container';
+import {RequestInformationContainer} from '../../../src/classes/request-information-container';
 
 describe('Instantiating a new ErrorMessage', () => {
   let em;
@@ -447,7 +447,8 @@ describe('Fuzzing against consumeRequestInformation', () => {
     remoteAddress: undefined,
   };
   it('Should consume the stubbed request object', () => {
-    em.consumeRequestInformation(AFFIRMATIVE_TEST_VALUE as RequestInformationContainer);
+    em.consumeRequestInformation(
+        AFFIRMATIVE_TEST_VALUE as RequestInformationContainer);
     assert(em.context.httpRequest.method === A_VALID_STRING, [
       'The error messages method, given a valid string, should be',
       'set to that value',
@@ -501,7 +502,8 @@ describe('Fuzzing against consumeRequestInformation', () => {
     ].join(' '));
   });
   it('Should default when consuming mistyped response object properties', () => {
-    em.consumeRequestInformation(NEGATIVE_TEST_VALUE as {} as RequestInformationContainer);
+    em.consumeRequestInformation(
+        NEGATIVE_TEST_VALUE as {} as RequestInformationContainer);
     assert(em.context.httpRequest.method === NEGATIVE_STRING_CASE, [
       'The error messages method, given an invalid input should default to',
       'the negative value',
@@ -527,18 +529,18 @@ describe('Fuzzing against consumeRequestInformation', () => {
       'the negative value',
     ].join(' '));
   });
-  it('Should return the instance on calling consumeRequestInformation',
-     () => {
-       assert(
-           em.consumeRequestInformation(AFFIRMATIVE_TEST_VALUE as RequestInformationContainer) instanceof
-               ErrorMessage,
-           [
-             'Calling consumeRequestInformation with valid input should return',
-             'the ErrorMessage instance',
-           ].join(' '));
-       assert(em.consumeRequestInformation(undefined!) instanceof ErrorMessage, [
-         'Calling consumeRequestInformation with invalid input should return',
-         'the ErrorMessage instance',
-       ].join(' '));
-     });
+  it('Should return the instance on calling consumeRequestInformation', () => {
+    assert(
+        em.consumeRequestInformation(
+            AFFIRMATIVE_TEST_VALUE as RequestInformationContainer)
+                instanceof ErrorMessage,
+        [
+          'Calling consumeRequestInformation with valid input should return',
+          'the ErrorMessage instance',
+        ].join(' '));
+    assert(em.consumeRequestInformation(undefined!) instanceof ErrorMessage, [
+      'Calling consumeRequestInformation with invalid input should return',
+      'the ErrorMessage instance',
+    ].join(' '));
+  });
 });

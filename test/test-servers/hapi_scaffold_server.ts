@@ -52,8 +52,9 @@ server.route({
   },
 });
 
-server.register({register: errorHandler.hapi} as {} as hapi.PluginFunction<{}>, err => {
-  if (err) {
-    error('There was an error in registering the plugin', err);
-  }
-});
+server.register(
+    {register: errorHandler.hapi} as {} as hapi.PluginFunction<{}>, err => {
+      if (err) {
+        error('There was an error in registering the plugin', err);
+      }
+    });

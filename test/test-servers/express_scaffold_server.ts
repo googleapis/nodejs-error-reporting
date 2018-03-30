@@ -75,8 +75,7 @@ function throwUncaughtError() {
 function reportManualError() {
   log('Reporting a manual error..');
   errorHandler.report(
-      new Error('This is a manually reported error'), null, null,
-      err => {
+      new Error('This is a manually reported error'), null, null, err => {
         if (err) {
           log(WARNING_HEADER);
           log('Got an error in sending error information to the API');

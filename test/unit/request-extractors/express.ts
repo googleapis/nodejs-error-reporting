@@ -15,10 +15,11 @@
  */
 
 import * as assert from 'assert';
+import {Response} from 'express-serve-static-core';
+import * as extend from 'extend';
+
 import {expressRequestInformationExtractor} from '../../../src/request-extractors/express';
 import {Fuzzer} from '../../../utils/fuzzer';
-import * as extend from 'extend';
-import { Response } from 'express-serve-static-core';
 
 describe('Behaviour under varying input', () => {
   let f;
@@ -112,7 +113,8 @@ describe('Behaviour under varying input', () => {
       return lrn;
     };
     let tmpOutput = expressRequestInformationExtractor(
-        headerFactory(FULL_REQ_DERIVATION_VALUE), FULL_RES_DERIVATION_VALUE as Response);
+        headerFactory(FULL_REQ_DERIVATION_VALUE),
+        FULL_RES_DERIVATION_VALUE as Response);
     assert.deepEqual(tmpOutput, FULL_REQ_EXPECTED_VALUE, [
       'Given a valid object input for the request parameter and an',
       '\'x-forwarded-for\' parameter the request extractor should return',

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import {Logger} from '@google-cloud/common';
 import * as assert from 'assert';
 import * as proxyquire from 'proxyquire';
 
 import {Configuration} from '../../../src/configuration';
-import { Logger } from '@google-cloud/common';
 
 function verifyReportedMessage(config1, errToReturn, expectedLogs) {
   class ServiceStub {
@@ -35,10 +35,10 @@ function verifyReportedMessage(config1, errToReturn, expectedLogs) {
   }
 
   const RequestHandler = proxyquire('../../../src/google-apis/auth-client.js', {
-                         '@google-cloud/common': {
-                           Service: ServiceStub,
-                         },
-                       }).RequestHandler;
+                           '@google-cloud/common': {
+                             Service: ServiceStub,
+                           },
+                         }).RequestHandler;
 
   const logs: {error?: string; info?: string;} = {};
   const logger = {
@@ -82,10 +82,9 @@ describe('RequestHandler', () => {
     });
   });
 
-  it('should not issue a warning if it can communicate with the API',
-     () => {
-       const config = {ignoreEnvironmentCheck: true};
-       verifyReportedMessage(config, null, {});
-       verifyReportedMessage(config, undefined, {});
-     });
+  it('should not issue a warning if it can communicate with the API', () => {
+    const config = {ignoreEnvironmentCheck: true};
+    verifyReportedMessage(config, null, {});
+    verifyReportedMessage(config, undefined, {});
+  });
 });

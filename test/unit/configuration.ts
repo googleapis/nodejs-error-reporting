@@ -27,7 +27,8 @@ const logger = createLogger({
 });
 import * as nock from 'nock';
 
-const METADATA_URL = 'http://metadata.google.internal/computeMetadata/v1/project';
+const METADATA_URL =
+    'http://metadata.google.internal/computeMetadata/v1/project';
 
 const configEnv = {
   NODE_ENV: process.env.NODE_ENV,
@@ -155,13 +156,12 @@ describe('Configuration class', () => {
             new Configuration({reportUnhandledRejections: 'INVALID'}, logger);
           });
         });
-        it('Should not throw given an empty object for serviceContext',
-           () => {
-             assert.doesNotThrow(() => {
-               // tslint:disable-next-line:no-unused-expression
-               new Configuration({serviceContext: {}}, logger);
-             });
-           });
+        it('Should not throw given an empty object for serviceContext', () => {
+          assert.doesNotThrow(() => {
+            // tslint:disable-next-line:no-unused-expression
+            new Configuration({serviceContext: {}}, logger);
+          });
+        });
       });
     });
   });
@@ -234,8 +234,8 @@ describe('Configuration class', () => {
     after(() => {
       /*
        * !! IMPORTANT !!
-       * THE restoreConfigEnv FUNCTION SHOULD BE CALLED LAST AS THIS TEST FILE EXITS
-       * AND SHOULD THEREFORE BE THE LAST THING TO EXECUTE FROM THIS FILE.
+       * THE restoreConfigEnv FUNCTION SHOULD BE CALLED LAST AS THIS TEST FILE
+       * EXITS AND SHOULD THEREFORE BE THE LAST THING TO EXECUTE FROM THIS FILE.
        * !! IMPORTANT !!
        */
       restoreConfigEnv();

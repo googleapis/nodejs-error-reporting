@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import {EventEmitter} from 'events';
 import * as assert from 'assert';
+import {EventEmitter} from 'events';
+
+import {Configuration} from '../../../src/configuration';
+import {RequestHandler} from '../../../src/google-apis/auth-client';
 import {handlerSetup as restifyInterface} from '../../../src/interfaces/restify';
-import { RequestHandler } from '../../../src/google-apis/auth-client';
-import { Configuration } from '../../../src/configuration';
 
 // node v0.12 compatibility
 if (!EventEmitter.prototype.listenerCount) {
@@ -104,7 +105,8 @@ describe('restifyInterface', () => {
           return '1';
         },
       } as {} as Configuration;
-      const errorHandlerInstance = restifyInterface(client as {} as RequestHandler, config);
+      const errorHandlerInstance =
+          restifyInterface(client as {} as RequestHandler, config);
       const requestHandlerInstance = errorHandlerInstance(ee);
       const req = new EventEmitter();
       const res = new EventEmitter();

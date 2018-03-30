@@ -21,7 +21,10 @@ import {populateErrorMessage} from '../../src/populate-error-message';
 
 const TEST_USER_INVALID = 12;
 const TEST_MESSAGE = 'This is a test';
-const TEST_SERVICE_DEFAULT = {service: 'node', version: undefined};
+const TEST_SERVICE_DEFAULT = {
+  service: 'node',
+  version: undefined
+};
 const TEST_STACK_DEFAULT = {
   filePath: '',
   lineNumber: 0,
@@ -100,7 +103,7 @@ describe('populate-error-message', () => {
 
   it('Message Field: Should set the field given valid input given an object',
      () => {
-      let err = {};
+       let err = {};
        const MESSAGE = 'test';
        err = {message: MESSAGE};
        populateErrorMessage(err, em);

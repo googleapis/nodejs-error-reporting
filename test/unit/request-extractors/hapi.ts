@@ -15,9 +15,10 @@
  */
 
 import * as assert from 'assert';
+import * as hapi from 'hapi';
+
 import {hapiRequestInformationExtractor} from '../../../src/request-extractors/hapi';
 import {Fuzzer} from '../../../utils/fuzzer';
-import * as hapi from 'hapi';
 
 describe('hapiRequestInformationExtractor behaviour', () => {
   describe('behaviour given invalid input', () => {
@@ -103,17 +104,20 @@ describe('hapiRequestInformationExtractor behaviour', () => {
     };
     it('Should produce the full request input', () => {
       assert.deepEqual(
-          hapiRequestInformationExtractor(FULL_REQ_DERIVATION_VALUE as {} as hapi.Request),
+          hapiRequestInformationExtractor(
+              FULL_REQ_DERIVATION_VALUE as {} as hapi.Request),
           FULL_REQ_EXPECTED_VALUE);
     });
     it('Should produce the partial request input', () => {
       assert.deepEqual(
-          hapiRequestInformationExtractor(PARTIAL_REQ_DERIVATION_VALUE as {} as hapi.Request),
+          hapiRequestInformationExtractor(
+              PARTIAL_REQ_DERIVATION_VALUE as {} as hapi.Request),
           PARTIAL_REQ_EXPECTED_VALUE);
     });
     it('Should produce the second partial request input', () => {
       assert.deepEqual(
-          hapiRequestInformationExtractor(ANOTHER_PARTIAL_REQ_DERIVATION_VALUE as {} as hapi.Request),
+          hapiRequestInformationExtractor(
+              ANOTHER_PARTIAL_REQ_DERIVATION_VALUE as {} as hapi.Request),
           ANOTHER_PARTIAL_REQ_EXPECTED_VALUE);
     });
   });

@@ -15,9 +15,10 @@
  */
 
 import * as assert from 'assert';
+import {Request, Response} from 'koa';
+
 import {koaRequestInformationExtractor} from '../../../src/request-extractors/koa';
 import {Fuzzer} from '../../../utils/fuzzer';
-import { Request, Response } from 'koa';
 
 describe('koaRequestInformationExtractor', () => {
   describe('Behaviour under invalid input', () => {
@@ -62,7 +63,8 @@ describe('koaRequestInformationExtractor', () => {
       };
       assert.deepEqual(
           koaRequestInformationExtractor(
-              FULL_REQ_DERIVATION_VALUE as Request, FULL_RES_DERIVATION_VALUE as Response),
+              FULL_REQ_DERIVATION_VALUE as Request,
+              FULL_RES_DERIVATION_VALUE as Response),
           FULL_REQ_EXPECTED_VALUE);
     });
   });

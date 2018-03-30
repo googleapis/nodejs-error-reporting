@@ -15,14 +15,16 @@
  */
 
 import * as assert from 'assert';
-import * as nock from 'nock';
-import {RequestHandler} from '../src/google-apis/auth-client';
-import {ErrorsApiTransport} from '../utils/errors-api-transport';
-import {ErrorMessage} from '../src/classes/error-message';
-import {ErrorReporting} from '../src/index';
-import {FakeConfiguration as Configuration} from '../test/fixtures/configuration';
-import {createLogger} from '../src/logger';
 import * as is from 'is';
+import * as nock from 'nock';
+
+import {ErrorMessage} from '../src/classes/error-message';
+import {RequestHandler} from '../src/google-apis/auth-client';
+import {ErrorReporting} from '../src/index';
+import {createLogger} from '../src/logger';
+import {FakeConfiguration as Configuration} from '../test/fixtures/configuration';
+import {ErrorsApiTransport} from '../utils/errors-api-transport';
+
 const isObject = is.object;
 const isString = is.string;
 const isEmpty = is.empty;
@@ -200,7 +202,7 @@ describe('Request/Response lifecycle mocking', () => {
 
   it('Should provide the key as a query string on outgoing requests when ' +
          'using an API key',
-      done => {
+     done => {
        env.sterilizeProcess().setProjectId().setProduction();
        const key = env.apiKey;
        const logger = createLogger({logLevel: 5});
@@ -365,25 +367,24 @@ describe('Expected Behavior', () => {
     });
   });
 
-  it('Should succeed in its request given a valid project number',
-     done => {
-       env.sterilizeProcess();
-       const logger = createLogger({logLevel: 5});
-       const cfg = new Configuration(
-           {
-             projectId: Number(env.injected().projectNumber),
-             ignoreEnvironmentCheck: true,
-           },
-           logger);
-       const client = new RequestHandler(cfg, logger);
-       client.sendError(em, (err, response, body) => {
-         assert.strictEqual(err, null);
-         assert(isObject(body));
-         assert(isEmpty(body));
-         assert.strictEqual(response!.statusCode, 200);
-         done();
-       });
-     });
+  it('Should succeed in its request given a valid project number', done => {
+    env.sterilizeProcess();
+    const logger = createLogger({logLevel: 5});
+    const cfg = new Configuration(
+        {
+          projectId: Number(env.injected().projectNumber),
+          ignoreEnvironmentCheck: true,
+        },
+        logger);
+    const client = new RequestHandler(cfg, logger);
+    client.sendError(em, (err, response, body) => {
+      assert.strictEqual(err, null);
+      assert(isObject(body));
+      assert(isEmpty(body));
+      assert.strictEqual(response!.statusCode, 200);
+      done();
+    });
+  });
 });
 
 describe('Error Reporting API', () => {
@@ -409,22 +410,23 @@ describe('Error Reporting API', () => {
      statusCode: 400
    },
   ].forEach(testCase => {
-    it(`should return an expected message ${testCase.name}`, function(this, done) {
-      this.timeout(30000);
-      const API = 'https://clouderrorreporting.googleapis.com/v1beta1';
-      const key = testCase.getKey();
-      request.post(
-          {
-            url: `${API}/projects/${env.projectId}/events:report?key=${key}`,
-            json: {},
-          },
-          (err, response, body) => {
-            assert.ok(!err && body.error);
-            assert.strictEqual(response.statusCode, testCase.statusCode);
-            assert.strictEqual(body.error.message, testCase.message);
-            done();
-          });
-    });
+    it(`should return an expected message ${testCase.name}`,
+       function(this, done) {
+         this.timeout(30000);
+         const API = 'https://clouderrorreporting.googleapis.com/v1beta1';
+         const key = testCase.getKey();
+         request.post(
+             {
+               url: `${API}/projects/${env.projectId}/events:report?key=${key}`,
+               json: {},
+             },
+             (err, response, body) => {
+               assert.ok(!err && body.error);
+               assert.strictEqual(response.statusCode, testCase.statusCode);
+               assert.strictEqual(body.error.message, testCase.message);
+               done();
+             });
+       });
   });
 });
 
@@ -565,20 +567,22 @@ describe('error-reporting', () => {
        }, TIMEOUT, done);
      });
 
-  it('Should correctly publish an error that is a string', function(this, done) {
-    this.timeout(TIMEOUT * 2);
-    const errorId = buildName('with-string');
-    verifyReporting(errorId, message => {
-      return message.startsWith(errorId + '\n');
-    }, TIMEOUT, done);
-  });
+  it('Should correctly publish an error that is a string',
+     function(this, done) {
+       this.timeout(TIMEOUT * 2);
+       const errorId = buildName('with-string');
+       verifyReporting(errorId, message => {
+         return message.startsWith(errorId + '\n');
+       }, TIMEOUT, done);
+     });
 
-  it('Should correctly publish an error that is undefined', function(this, done) {
-    this.timeout(TIMEOUT * 2);
-    verifyReporting(undefined, message => {
-      return message.startsWith('undefined\n');
-    }, TIMEOUT, done);
-  });
+  it('Should correctly publish an error that is undefined',
+     function(this, done) {
+       this.timeout(TIMEOUT * 2);
+       verifyReporting(undefined, message => {
+         return message.startsWith('undefined\n');
+       }, TIMEOUT, done);
+     });
 
   it('Should correctly publish an error that is null', function(this, done) {
     this.timeout(TIMEOUT * 2);
@@ -595,13 +599,14 @@ describe('error-reporting', () => {
        }, TIMEOUT, done);
      });
 
-  it('Should correctly publish an error that is a number', function(this, done) {
-    this.timeout(TIMEOUT * 2);
-    const num = new Date().getTime();
-    verifyReporting(num, message => {
-      return message.startsWith('' + num + '\n');
-    }, TIMEOUT, done);
-  });
+  it('Should correctly publish an error that is a number',
+     function(this, done) {
+       this.timeout(TIMEOUT * 2);
+       const num = new Date().getTime();
+       verifyReporting(num, message => {
+         return message.startsWith('' + num + '\n');
+       }, TIMEOUT, done);
+     });
 
   it('Should correctly publish an error that is of an unknown type',
      function(this, done) {
@@ -612,33 +617,33 @@ describe('error-reporting', () => {
        }, TIMEOUT, done);
      });
 
-  it('Should correctly publish errors using an error builder', function(this, done) {
-    this.timeout(TIMEOUT * 2);
-    const errorId = buildName('with-error-builder');
-    // Use an IIFE with the name `definitionSiteFunction` to use later to ensure
-    // the stack trace of the point where the error message was constructed is
-    // used.
-    // Use an IIFE with the name `expectedTopOfStack` so that the test can
-    // verify that the stack trace used does not contain any frames
-    // specific to the error-reporting library.
-    const errOb = (function definitionSiteFunction() {
-      return (function expectedTopOfStack() {
-        return errors.event().setMessage(errorId);
-      })();
-    })();
-    (function callingSiteFunction() {
-      verifyReporting(errOb, message => {
-        // Verify that the stack trace of the constructed error
-        // uses the stack trace at the point where the error was constructed
-        // and not the stack trace at the point where the `report` method
-        // was called.
-        return (
-            message.startsWith(errorId) &&
-            message.indexOf('callingSiteFunction') === -1 &&
-            message.indexOf('definitionSiteFunction') !== -1);
-      }, TIMEOUT, done);
-    })();
-  });
+  it('Should correctly publish errors using an error builder',
+     function(this, done) {
+       this.timeout(TIMEOUT * 2);
+       const errorId = buildName('with-error-builder');
+       // Use an IIFE with the name `definitionSiteFunction` to use later to
+       // ensure the stack trace of the point where the error message was
+       // constructed is used. Use an IIFE with the name `expectedTopOfStack` so
+       // that the test can verify that the stack trace used does not contain
+       // any frames specific to the error-reporting library.
+       const errOb = (function definitionSiteFunction() {
+         return (function expectedTopOfStack() {
+           return errors.event().setMessage(errorId);
+         })();
+       })();
+       (function callingSiteFunction() {
+         verifyReporting(errOb, message => {
+           // Verify that the stack trace of the constructed error
+           // uses the stack trace at the point where the error was constructed
+           // and not the stack trace at the point where the `report` method
+           // was called.
+           return (
+               message.startsWith(errorId) &&
+               message.indexOf('callingSiteFunction') === -1 &&
+               message.indexOf('definitionSiteFunction') !== -1);
+         }, TIMEOUT, done);
+       })();
+     });
 
   it('Should report unhandledRejections if enabled', function(this, done) {
     this.timeout(TIMEOUT * 2);
