@@ -283,8 +283,8 @@ describe('Configuration class', function() {
         };
         before(function() {
           c = new Configuration({
-            projectId: projectId,
-            serviceContext: serviceContext,
+            projectId,
+            serviceContext,
           });
         });
         it('Should assign', function() {
@@ -298,8 +298,8 @@ describe('Configuration class', function() {
         before(function() {
           c = new Configuration(
               {
-                key: key,
-                projectId: projectId,
+                key,
+                projectId,
               },
               logger);
         });

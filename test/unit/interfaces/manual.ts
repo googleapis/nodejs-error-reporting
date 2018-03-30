@@ -30,7 +30,7 @@ describe('Manual handler', function() {
   // nock.disableNetConnect();
   // Mocked client
   const client: RequestHandler = {
-    sendError: function(e, cb) {
+    sendError(e, cb) {
       // immediately callback
       if (cb) {
         setImmediate(cb);
@@ -38,7 +38,7 @@ describe('Manual handler', function() {
     },
   } as {} as RequestHandler;
   const report = manual.handlerSetup(client, config, {
-    warn: function(message) {
+    warn(message) {
       // The use of `report` in this class should issue the following warning
       // becasue the `report` class is used directly and, as such, cannot
       // by itself have information where a ErrorMesasge was constructed.  It

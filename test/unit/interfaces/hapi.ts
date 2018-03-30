@@ -39,7 +39,7 @@ describe('Hapi interface', function() {
   });
   describe('Providing valid input to the setup handler', function() {
     const givenConfig = {
-      getVersion: function() {
+      getVersion() {
         return '1';
       },
     };
@@ -77,20 +77,20 @@ describe('Hapi interface', function() {
     });
     it('Should call fn when the request-error event is emitted', function() {
       const fakeClient = {
-        sendError: function(errMsg) {
+        sendError(errMsg) {
           assert(
               errMsg instanceof ErrorMessage,
               'should be an instance of Error message');
         },
       } as {} as RequestHandler;
       const plugin = hapiInterface(fakeClient, {
-        lacksCredentials: function() {
+        lacksCredentials() {
           return false;
         },
-        getVersion: function() {
+        getVersion() {
           return '1';
         },
-        getServiceContext: function() {
+        getServiceContext() {
           return {service: 'node'};
         },
       } as {} as config.Configuration);
@@ -100,7 +100,7 @@ describe('Hapi interface', function() {
   });
   describe('Behaviour around the request/response lifecycle', function() {
     const EVENT = 'onPreResponse';
-    const fakeClient = {sendError: function() {}} as {} as RequestHandler;
+    const fakeClient = {sendError() {}} as {} as RequestHandler;
     let fakeServer, config, plugin;
     before(function() {
       config = new Configuration({
@@ -126,7 +126,7 @@ describe('Hapi interface', function() {
        function(done) {
          plugin.register(fakeServer, null, function() {});
          fakeServer.emit(EVENT, {response: {isBoom: true}}, {
-           continue: function() {
+           continue() {
              // The continue function should be called
              done();
            },
@@ -149,7 +149,7 @@ describe('Hapi interface', function() {
        });
     it('Should call sendError when a boom is received', function(done) {
       const fakeClient = {
-        sendError: function(err) {
+        sendError(err) {
           assert(err instanceof ErrorMessage);
           done();
         },
@@ -164,7 +164,7 @@ describe('Hapi interface', function() {
         done();
       });
       fakeServer.emit(
-          EVENT, {response: {isBoom: true}}, {continue: function() {}});
+          EVENT, {response: {isBoom: true}}, {continue() {}});
     });
   });
 });

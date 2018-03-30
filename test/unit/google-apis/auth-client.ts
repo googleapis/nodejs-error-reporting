@@ -26,7 +26,7 @@ function verifyReportedMessage(config1, errToReturn, expectedLogs) {
     request: {};
     constructor() {
       this.authClient = {
-        getToken: function(cb) {
+        getToken(cb) {
           cb(errToReturn);
         },
       };
@@ -42,13 +42,13 @@ function verifyReportedMessage(config1, errToReturn, expectedLogs) {
 
   const logs: {error?: string; info?: string;} = {};
   const logger = {
-    error: function(text) {
+    error(text) {
       if (!logs.error) {
         logs.error = '';
       }
       logs.error += text;
     },
-    info: function(text) {
+    info(text) {
       if (!logs.info) {
         logs.info = '';
       }

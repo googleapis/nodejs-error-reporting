@@ -19,6 +19,6 @@ import { Logger } from '@google-cloud/common';
 
 export class FakeConfiguration extends Configuration {
   constructor(config, logger?) {
-    super(config, logger || {warn: function() {}} as {} as Logger);
+    super(config, logger || {warn() {}} as {} as Logger);
   }
 }

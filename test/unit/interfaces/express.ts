@@ -48,7 +48,7 @@ describe('expressInterface', function() {
       return false;
     };
     const client = {
-      sendError: function() {
+      sendError() {
         return;
       },
     };
@@ -78,7 +78,7 @@ describe('expressInterface', function() {
           done();
         };
         const client = {
-          sendError: sendError,
+          sendError,
         };
         const handler = expressInterface(client as {} as RequestHandler, stubbedConfig);
         handler(testError, null!, null!, function() {

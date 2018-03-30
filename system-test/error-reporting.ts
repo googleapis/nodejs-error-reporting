@@ -205,9 +205,9 @@ describe('Request/Response lifecycle mocking', function() {
        const key = env.apiKey;
        const logger = createLogger({logLevel: 5});
        const client = new RequestHandler(
-           new Configuration({key: key, ignoreEnvironmentCheck: true}, logger),
+           new Configuration({key, ignoreEnvironmentCheck: true}, logger),
            logger);
-       fakeService.query({key: key}).reply(200, function(uri) {
+       fakeService.query({key}).reply(200, function(uri) {
          assert(uri.indexOf('key=' + key) > -1);
          return {};
        });

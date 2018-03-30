@@ -85,22 +85,22 @@ describe('restifyInterface', function() {
     describe('default path with req/res error', function() {
       ee.removeAllListeners();
       const client = {
-        sendError: function() {
+        sendError() {
           assert(true, 'sendError should be called');
         },
       };
       const config = {
-        getServiceContext: function() {
+        getServiceContext() {
           assert(true, 'getServiceContext should be called');
           return {
             service: 'stub-service',
             version: 'stub-version',
           };
         },
-        lacksCredentials: function() {
+        lacksCredentials() {
           return false;
         },
-        getVersion: function() {
+        getVersion() {
           return '1';
         },
       } as {} as Configuration;

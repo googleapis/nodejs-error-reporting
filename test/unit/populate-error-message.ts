@@ -39,7 +39,7 @@ interface AnnotatedError {
   filePath?: {};
   lineNumber?: {};
   functionName?: {};
-};
+}
 
 describe('populate-error-message', function() {
   let em;

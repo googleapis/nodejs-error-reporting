@@ -30,7 +30,7 @@ const isFunction = is.function;
 
 export class Fuzzer {
   generate = {
-    types: function() {
+    types() {
       return [
         'object',
         'array',
@@ -43,7 +43,7 @@ export class Fuzzer {
       ];
     },
 
-    string: function(len) {
+    string(len) {
       const lenChecked = isNumber(len) ? len : 10;
       const chars: string[] = [];
 
@@ -54,11 +54,11 @@ export class Fuzzer {
       return chars.join('');
     },
 
-    boolean: function() {
+    boolean() {
       return !!random(0, 1);
     },
 
-    alphaNumericString: function(len) {
+    alphaNumericString(len) {
       const lenChecked = isNumber(len) ? len : 10;
       const chars: string[] = [];
       let thisRange: number[] = [];
@@ -72,7 +72,7 @@ export class Fuzzer {
       return chars.join('');
     },
 
-    function: function() {
+    function() {
       const availableTypes = without(this.types(), 'function');
       const typeToGen = this.types()[random(0, availableTypes.length - 1)];
       const fnToCall = this[typeToGen];
@@ -82,22 +82,22 @@ export class Fuzzer {
       };
     },
 
-    number: function(lower, upper) {
+    number(lower, upper) {
       const lowerChecked = isNumber(lower) ? lower : 0;
       const upperChecked = isNumber(upper) ? upper : 100;
 
       return random(lowerChecked, upperChecked);
     },
 
-    null: function() {
+    null() {
       return null;
     },
 
-    undefined: function() {
+    undefined() {
       return undefined;
     },
 
-    array: function(
+    array(
       len,
       ofOneType,
       currentDepth,
@@ -148,7 +148,7 @@ export class Fuzzer {
       return arr;
     },
 
-    object: function(
+    object(
       numProperties,
       currentDepth,
       allowedDepth
@@ -235,7 +235,7 @@ export class Fuzzer {
   }
 
   _generateTypesToFuzzWith(expectsArgTypes) {
-    let argsTypesArray: Array<{}[]> = [];
+    let argsTypesArray: Array<{}>[] = [];
     let tmpArray = this.generate.types();
 
     for (let i = 0; i < expectsArgTypes.length; i++) {
@@ -246,20 +246,20 @@ export class Fuzzer {
           tmpArray = without(tmpArray, expectsArgTypes[i][j]);
         }
 
-        argsTypesArray.push(([] as {}[]).concat(tmpArray));
+        argsTypesArray.push(([] as Array<{}>).concat(tmpArray));
         tmpArray = this.generate.types();
       }
     }
 
     argsTypesArray = this._normalizeTypesArrayLengths(argsTypesArray);
     return argsTypesArray;
-  };
+  }
 
   _generateValuesForFuzzTyping(
     typesToFuzzOnEach,
     index
   ) {
-    const args: {}[] = [];
+    const args: Array<{}> = [];
     let typeToGen = '';
 
     for (let i = 0; i < typesToFuzzOnEach.length; i++) {
