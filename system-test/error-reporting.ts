@@ -280,7 +280,7 @@ describe('Client creation', () => {
        const logger = createLogger({logLevel: 5});
        const cfg = new Configuration(
            {
-             projectId: parseInt(env.injected().projectNumber),
+             projectId: Number(env.injected().projectNumber),
              ignoreEnvironmentCheck: true,
            },
            logger);
@@ -371,7 +371,7 @@ describe('Expected Behavior', () => {
        const logger = createLogger({logLevel: 5});
        const cfg = new Configuration(
            {
-             projectId: parseInt(env.injected().projectNumber),
+             projectId: Number(env.injected().projectNumber),
              ignoreEnvironmentCheck: true,
            },
            logger);
