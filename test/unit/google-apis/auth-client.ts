@@ -56,6 +56,7 @@ function verifyReportedMessage(config1, errToReturn, expectedLogs) {
     },
   };
   const config2 = new Configuration(config1, logger as Logger);
+  // tslint:disable-next-line:no-unused-expression
   new RequestHandler(config2, logger);
   assert.deepStrictEqual(logs, expectedLogs);
 }

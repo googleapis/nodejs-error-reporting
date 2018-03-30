@@ -127,32 +127,38 @@ describe('Configuration class', () => {
       describe('exception behaviour', () => {
         it('Should throw if invalid type for key', () => {
           assert.throws(() => {
+            // tslint:disable-next-line:no-unused-expression
             new Configuration({key: null}, logger);
           });
         });
         it('Should throw if invalid for ignoreEnvironmentCheck', () => {
           assert.throws(() => {
+            // tslint:disable-next-line:no-unused-expression
             new Configuration({ignoreEnvironmentCheck: null}, logger);
           });
         });
         it('Should throw if invalid for serviceContext.service', () => {
           assert.throws(() => {
+            // tslint:disable-next-line:no-unused-expression
             new Configuration({serviceContext: {service: false}}, logger);
           });
         });
         it('Should throw if invalid for serviceContext.version', () => {
           assert.throws(() => {
+            // tslint:disable-next-line:no-unused-expression
             new Configuration({serviceContext: {version: true}}, logger);
           });
         });
         it('Should throw if invalid for reportUnhandledRejections', () => {
           assert.throws(() => {
+            // tslint:disable-next-line:no-unused-expression
             new Configuration({reportUnhandledRejections: 'INVALID'}, logger);
           });
         });
         it('Should not throw given an empty object for serviceContext',
            () => {
              assert.doesNotThrow(() => {
+               // tslint:disable-next-line:no-unused-expression
                new Configuration({serviceContext: {}}, logger);
              });
            });
