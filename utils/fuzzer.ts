@@ -235,7 +235,7 @@ export class Fuzzer {
   }
 
   _generateTypesToFuzzWith(expectsArgTypes) {
-    let argsTypesArray: Array<{}>[] = [];
+    let argsTypesArray: Array<Array<{}>> = [];
     let tmpArray = this.generate.types();
 
     for (let i = 0; i < expectsArgTypes.length; i++) {
