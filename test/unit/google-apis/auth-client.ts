@@ -30,7 +30,7 @@ function verifyReportedMessage(config1, errToReturn, expectedLogs) {
           cb(errToReturn);
         },
       };
-      this.request = function() {};
+      this.request = () => {};
     }
   }
 
@@ -59,8 +59,8 @@ function verifyReportedMessage(config1, errToReturn, expectedLogs) {
   new RequestHandler(config2, logger);
   assert.deepStrictEqual(logs, expectedLogs);
 }
-describe('RequestHandler', function() {
-  it('should not request OAuth2 token if key is provided', function() {
+describe('RequestHandler', () => {
+  it('should not request OAuth2 token if key is provided', () => {
     const config = {
       ignoreEnvironmentCheck: true,
       key: 'key',
@@ -71,7 +71,7 @@ describe('RequestHandler', function() {
     });
   });
 
-  it('should issue a warning if it cannot communicate with the API', function() {
+  it('should issue a warning if it cannot communicate with the API', () => {
     const config = {ignoreEnvironmentCheck: true};
     const message = 'Test Error';
     verifyReportedMessage(config, new Error(message), {
@@ -82,7 +82,7 @@ describe('RequestHandler', function() {
   });
 
   it('should not issue a warning if it can communicate with the API',
-     function() {
+     () => {
        const config = {ignoreEnvironmentCheck: true};
        verifyReportedMessage(config, null, {});
        verifyReportedMessage(config, undefined, {});

@@ -77,7 +77,7 @@ export class Fuzzer {
       const typeToGen = this.types()[random(0, availableTypes.length - 1)];
       const fnToCall = this[typeToGen];
 
-      return function() {
+      return () => {
         return fnToCall();
       };
     },
@@ -199,7 +199,7 @@ export class Fuzzer {
   };
 
   _backFillUnevenTypesArrays(argsTypesArray) {
-    const largestLength = maxBy(argsTypesArray, function(o) {
+    const largestLength = maxBy(argsTypesArray, o => {
       return o.length;
     }).length;
 

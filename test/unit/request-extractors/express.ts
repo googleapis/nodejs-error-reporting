@@ -20,7 +20,7 @@ import {Fuzzer} from '../../../utils/fuzzer';
 import * as extend from 'extend';
 import { Response } from 'express-serve-static-core';
 
-describe('Behaviour under varying input', function() {
+describe('Behaviour under varying input', () => {
   let f;
   const DEFAULT_RETURN_VALUE = {
     method: '',
@@ -30,17 +30,17 @@ describe('Behaviour under varying input', function() {
     statusCode: 0,
     remoteAddress: '',
   };
-  beforeEach(function() {
+  beforeEach(() => {
     f = new Fuzzer();
   });
-  it('Should return a default value given invalid input', function() {
-    const cbFn = function(value) {
+  it('Should return a default value given invalid input', () => {
+    const cbFn = value => {
       assert.deepEqual(value, DEFAULT_RETURN_VALUE);
     };
     f.fuzzFunctionForTypes(
         expressRequestInformationExtractor, ['object', 'object'], cbFn);
   });
-  it('Should return valid request object given valid input', function() {
+  it('Should return valid request object given valid input', () => {
     const FULL_REQ_DERIVATION_VALUE = {
       method: 'STUB_METHOD',
       url: 'www.TEST-URL.com',
@@ -101,9 +101,9 @@ describe('Behaviour under varying input', function() {
       remoteAddress: '',
       statusCode: 201,
     };
-    const headerFactory = function(toDeriveFrom) {
+    const headerFactory = toDeriveFrom => {
       const lrn = extend({}, toDeriveFrom);
-      lrn.header = function(toRet) {
+      lrn.header = toRet => {
         if (lrn.hasOwnProperty(toRet)) {
           return lrn[toRet];
         }

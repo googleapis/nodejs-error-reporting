@@ -27,55 +27,55 @@ import * as config from '../../../src/configuration';
 import { RequestHandler } from '../../../src/google-apis/auth-client';
 import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
 
-describe('Hapi interface', function() {
-  describe('Fuzzing the setup handler', function() {
-    it('Should not throw when fuzzed with invalid types', function() {
+describe('Hapi interface', () => {
+  describe('Fuzzing the setup handler', () => {
+    it('Should not throw when fuzzed with invalid types', () => {
       const f = new Fuzzer();
-      assert.doesNotThrow(function() {
+      assert.doesNotThrow(() => {
         f.fuzzFunctionForTypes(hapiInterface, ['object', 'object']);
         return;
       });
     });
   });
-  describe('Providing valid input to the setup handler', function() {
+  describe('Providing valid input to the setup handler', () => {
     const givenConfig = {
       getVersion() {
         return '1';
       },
     };
     let plugin;
-    beforeEach(function() {
+    beforeEach(() => {
       plugin = hapiInterface(null!, givenConfig as {} as config.Configuration);
     });
-    it('should have plain object as plugin', function() {
+    it('should have plain object as plugin', () => {
       assert(isObject(plugin));
     });
-    it('plugin should have a register function property', function() {
+    it('plugin should have a register function property', () => {
       assert(has(plugin, 'register') && isFunction(plugin.register));
     });
     it('the plugin\'s register property should have an attributes property',
-       function() {
+       () => {
          assert(
              has(plugin.register, 'attributes') &&
              isObject(plugin.register.attributes));
        });
     it('the plugin\'s attribute property should have a name property',
-       function() {
+       () => {
          assert(has(plugin.register.attributes, 'name'));
          assert.strictEqual(
              plugin.register.attributes.name, '@google-cloud/error-reporting');
        });
     it('the plugin\'s attribute property should have a version property',
-       function() {
+       () => {
          assert(has(plugin.register.attributes, 'version'));
        });
   });
-  describe('hapiRegisterFunction behaviour', function() {
+  describe('hapiRegisterFunction behaviour', () => {
     let fakeServer;
-    beforeEach(function() {
+    beforeEach(() => {
       fakeServer = new EventEmitter();
     });
-    it('Should call fn when the request-error event is emitted', function() {
+    it('Should call fn when the request-error event is emitted', () => {
       const fakeClient = {
         sendError(errMsg) {
           assert(
@@ -98,11 +98,11 @@ describe('Hapi interface', function() {
       fakeServer.emit('request-error');
     });
   });
-  describe('Behaviour around the request/response lifecycle', function() {
+  describe('Behaviour around the request/response lifecycle', () => {
     const EVENT = 'onPreResponse';
     const fakeClient = {sendError() {}} as {} as RequestHandler;
     let fakeServer, config, plugin;
-    before(function() {
+    before(() => {
       config = new Configuration({
         projectId: 'xyz',
         serviceContext: {
@@ -110,21 +110,21 @@ describe('Hapi interface', function() {
           version: '1.x',
         },
       });
-      config.lacksCredentials = function() {
+      config.lacksCredentials = () => {
         return false;
       };
       plugin = hapiInterface(fakeClient, config);
     });
-    beforeEach(function() {
+    beforeEach(() => {
       fakeServer = new EventEmitter();
       fakeServer.ext = fakeServer.on;
     });
-    afterEach(function() {
+    afterEach(() => {
       fakeServer.removeAllListeners();
     });
     it('Should call continue when a boom is emitted if reply is an object',
-       function(done) {
-         plugin.register(fakeServer, null, function() {});
+       done => {
+         plugin.register(fakeServer, null, () => {});
          fakeServer.emit(EVENT, {response: {isBoom: true}}, {
            continue() {
              // The continue function should be called
@@ -133,21 +133,21 @@ describe('Hapi interface', function() {
          });
        });
     it('Should call continue when a boom is emitted if reply is a function',
-       function(done) {
+       done => {
          // Manually testing has shown that in actual usage the `reply` object
          // provided to listeners of the `onPreResponse` event can be a function
          // that has a `continue` property that is a function.
          // If `reply.continue()` is not invoked in this situation, the Hapi
          // app will become unresponsive.
-         plugin.register(fakeServer, null, function() {});
-         const reply: Function & {continue?: Function} = function() {};
-         reply.continue = function() {
+         plugin.register(fakeServer, null, () => {});
+         const reply: Function & {continue?: Function} = () => {};
+         reply.continue = () => {
            // The continue function should be called
            done();
          };
          fakeServer.emit(EVENT, {response: {isBoom: true}}, reply);
        });
-    it('Should call sendError when a boom is received', function(done) {
+    it('Should call sendError when a boom is received', done => {
       const fakeClient = {
         sendError(err) {
           assert(err instanceof ErrorMessage);
@@ -155,11 +155,11 @@ describe('Hapi interface', function() {
         },
       } as {} as RequestHandler;
       const plugin = hapiInterface(fakeClient, config);
-      plugin.register(fakeServer, null!, function() {});
+      plugin.register(fakeServer, null!, () => {});
       fakeServer.emit('onPreResponse', {response: {isBoom: true}});
     });
-    it('Should call next when completing a request', function(done) {
-      plugin.register(fakeServer, null, function() {
+    it('Should call next when completing a request', done => {
+      plugin.register(fakeServer, null, () => {
         // The next function should be called
         done();
       });

@@ -19,9 +19,9 @@ import {koaRequestInformationExtractor} from '../../../src/request-extractors/ko
 import {Fuzzer} from '../../../utils/fuzzer';
 import { Request, Response } from 'koa';
 
-describe('koaRequestInformationExtractor', function() {
-  describe('Behaviour under invalid input', function() {
-    it('Should produce a default value', function() {
+describe('koaRequestInformationExtractor', () => {
+  describe('Behaviour under invalid input', () => {
+    it('Should produce a default value', () => {
       const DEFAULT_RETURN_VALUE = {
         method: '',
         url: '',
@@ -31,15 +31,15 @@ describe('koaRequestInformationExtractor', function() {
         remoteAddress: '',
       };
       const f = new Fuzzer();
-      const cbFn = function(value) {
+      const cbFn = value => {
         assert.deepEqual(value, DEFAULT_RETURN_VALUE);
       };
       f.fuzzFunctionForTypes(
           koaRequestInformationExtractor, ['object', 'object'], cbFn);
     });
   });
-  describe('Behaviour under valid input', function() {
-    it('Should produce the expected value', function() {
+  describe('Behaviour under valid input', () => {
+    it('Should produce the expected value', () => {
       const FULL_REQ_DERIVATION_VALUE = {
         method: 'STUB_METHOD',
         url: 'www.TEST-URL.com',

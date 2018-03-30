@@ -22,20 +22,20 @@ import { Configuration } from '../../../src/configuration';
 
 // node v0.12 compatibility
 if (!EventEmitter.prototype.listenerCount) {
-  EventEmitter.prototype.listenerCount = function(eventName) {
+  EventEmitter.prototype.listenerCount = function(this, eventName) {
     // eslint-disable-next-line node/no-deprecated-api
     return EventEmitter.listenerCount(this, eventName);
   };
 }
 
-describe('restifyInterface', function() {
+describe('restifyInterface', () => {
   const UNCAUGHT_EVENT = 'uncaughtException';
   const FINISH = 'finish';
-  const noOp = function() {
+  const noOp = () => {
     return;
   };
-  describe('Attachment to the uncaughtException event', function() {
-    it('Should attach one listener after instantiation', function() {
+  describe('Attachment to the uncaughtException event', () => {
+    it('Should attach one listener after instantiation', () => {
       const ee = new EventEmitter();
       assert.strictEqual(
           ee.listenerCount(UNCAUGHT_EVENT), 0,
@@ -49,40 +49,40 @@ describe('restifyInterface', function() {
           'Listeners on event should now be one');
     });
   });
-  describe('Request handler lifecycle events', function() {
+  describe('Request handler lifecycle events', () => {
     const ee = new EventEmitter();
     const errorHandlerInstance = restifyInterface(null!, null!);
     const requestHandlerInstance = errorHandlerInstance(ee);
-    describe('default path on invalid input', function() {
-      it('Should not throw', function() {
-        assert.doesNotThrow(function() {
+    describe('default path on invalid input', () => {
+      it('Should not throw', () => {
+        assert.doesNotThrow(() => {
           requestHandlerInstance(null, null, noOp);
         });
       });
     });
-    describe('default path without req/res error', function() {
+    describe('default path without req/res error', () => {
       ee.removeAllListeners();
       const req = new EventEmitter();
       const res = new EventEmitter();
       (res as {} as {statusCode: number}).statusCode = 200;
-      it('Should have 0 listeners on the finish event', function() {
+      it('Should have 0 listeners on the finish event', () => {
         assert.strictEqual(res.listenerCount(FINISH), 0);
       });
-      it('Should not throw while handling the req/res objects', function() {
-        assert.doesNotThrow(function() {
+      it('Should not throw while handling the req/res objects', () => {
+        assert.doesNotThrow(() => {
           requestHandlerInstance(req, res, noOp);
         });
       });
-      it('Should have 1 listener', function() {
+      it('Should have 1 listener', () => {
         assert.strictEqual(res.listenerCount(FINISH), 1);
       });
-      it('Should not throw when emitting the finish event', function() {
-        assert.doesNotThrow(function() {
+      it('Should not throw when emitting the finish event', () => {
+        assert.doesNotThrow(() => {
           res.emit(FINISH);
         });
       });
     });
-    describe('default path with req/res error', function() {
+    describe('default path with req/res error', () => {
       ee.removeAllListeners();
       const client = {
         sendError() {
@@ -109,29 +109,29 @@ describe('restifyInterface', function() {
       const req = new EventEmitter();
       const res = new EventEmitter();
       (res as {} as {statusCode: number}).statusCode = 500;
-      it('Should have 0 Listeners on the finish event', function() {
+      it('Should have 0 Listeners on the finish event', () => {
         assert.strictEqual(res.listenerCount(FINISH), 0);
       });
-      it('Should not throw on instantiation', function() {
-        assert.doesNotThrow(function() {
+      it('Should not throw on instantiation', () => {
+        assert.doesNotThrow(() => {
           requestHandlerInstance(req, res, noOp);
         });
       });
-      it('Should have 1 listener on the finish event', function() {
+      it('Should have 1 listener on the finish event', () => {
         assert.strictEqual(res.listenerCount(FINISH), 1);
       });
-      it('Should not throw on emission of the finish event', function() {
-        assert.doesNotThrow(function() {
+      it('Should not throw on emission of the finish event', () => {
+        assert.doesNotThrow(() => {
           res.emit(FINISH);
         });
       });
-      describe('Exercise the uncaughtException event path', function() {
-        it('Should call the sendError function property', function(done) {
-          client.sendError = function() {
+      describe('Exercise the uncaughtException event path', () => {
+        it('Should call the sendError function property', done => {
+          client.sendError = () => {
             assert(true, 'sendError should be called');
             done();
           };
-          assert.doesNotThrow(function() {
+          assert.doesNotThrow(() => {
             ee.emit(UNCAUGHT_EVENT);
           });
         });
