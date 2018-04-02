@@ -42,7 +42,7 @@ app.post('/testErrorHandling', (req, res, next) => {
 });
 
 app.get('/customError', (req, res, next) => {
-  errorHandler.report('Error on Express Custom Error GET Route', err => {
+  errorHandler.report('Error on Express Custom Error GET Route', (err: Error|null) => {
     if (err) {
       log(WARNING_HEADER);
       log('Error in sending custom get error to api');
@@ -75,7 +75,7 @@ function throwUncaughtError() {
 function reportManualError() {
   log('Reporting a manual error..');
   errorHandler.report(
-      new Error('This is a manually reported error'), null, null, err => {
+      new Error('This is a manually reported error'), null, null, (err: Error|null) => {
         if (err) {
           log(WARNING_HEADER);
           log('Got an error in sending error information to the API');
@@ -93,7 +93,7 @@ function reportManualError() {
       });
 }
 log('reporting a manual error first');
-errorHandler.report(new Error('This is a test'), err => {
+errorHandler.report(new Error('This is a test'), (err: Error|null) => {
   log('reported first manual error');
   if (err) {
     log('Error was unable to be reported', err);

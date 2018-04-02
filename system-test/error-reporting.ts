@@ -28,10 +28,10 @@ import {ErrorsApiTransport} from '../utils/errors-api-transport';
 const isObject = is.object;
 const isString = is.string;
 const isEmpty = is.empty;
-import * as forEach from 'lodash.foreach';
-import * as assign from 'lodash.assign';
-import * as pick from 'lodash.pick';
-import * as omitBy from 'lodash.omitby';
+import forEach = require('lodash.foreach');
+import assign = require('lodash.assign');
+import pick = require('lodash.pick');
+import omitBy = require('lodash.omitby');
 // eslint-disable-next-line node/no-extraneous-require
 import * as request from 'request';
 import * as util from 'util';
@@ -47,12 +47,12 @@ const envKeys = [
 ];
 
 class InstancedEnv {
-  injectedEnv: {[key: string]: {}};
-  _originalEnv: {[key: string]: {}};
+  injectedEnv: {[key: string]: string | undefined};
+  _originalEnv: Partial<Pick<{[key: string]: string | undefined}, string>>;
   apiKey!: string;
   projectId!: string;
 
-  constructor(injectedEnv) {
+  constructor(injectedEnv: {[key: string]: string | undefined}) {
     assign(this, injectedEnv);
     this.injectedEnv = injectedEnv;
     this._originalEnv = this._captureProcessProperties();
@@ -147,7 +147,7 @@ if (!shouldRun()) {
 describe('Request/Response lifecycle mocking', () => {
   const sampleError = new Error(ERR_TOKEN);
   const errorMessage = new ErrorMessage().setMessage(sampleError.message);
-  let fakeService, client, logger;
+  let fakeService: any, client: RequestHandler, logger;
   before(() => {
     env.sterilizeProcess();
   });
@@ -176,11 +176,11 @@ describe('Request/Response lifecycle mocking', () => {
 
   it('Should fail when receiving non-retryable errors', function(this, done) {
     this.timeout(5000);
-    client.sendError({}, (err, response) => {
+    client.sendError({} as ErrorMessage, (err, response) => {
       assert(err instanceof Error);
-      assert.strictEqual(err.message.toLowerCase(), 'message cannot be empty.');
+      assert.strictEqual(err!.message.toLowerCase(), 'message cannot be empty.');
       assert(isObject(response));
-      assert.strictEqual(response.statusCode, 400);
+      assert.strictEqual(response!.statusCode, 400);
       done();
     });
   });
@@ -209,7 +209,7 @@ describe('Request/Response lifecycle mocking', () => {
        const client = new RequestHandler(
            new Configuration({key, ignoreEnvironmentCheck: true}, logger),
            logger);
-       fakeService.query({key}).reply(200, uri => {
+       fakeService.query({key}).reply(200, (uri: string) => {
          assert(uri.indexOf('key=' + key) > -1);
          return {};
        });
@@ -434,16 +434,16 @@ describe('error-reporting', () => {
   const SRC_ROOT = path.join(__dirname, '..', 'src');
   const TIMESTAMP = Date.now();
   const BASE_NAME = 'error-reporting-system-test';
-  function buildName(suffix) {
+  function buildName(suffix: string) {
     return [TIMESTAMP, BASE_NAME, suffix].join('_');
   }
 
   const SERVICE = buildName('service-name');
   const VERSION = buildName('service-version');
 
-  let errors;
-  let transport;
-  let oldLogger;
+  let errors: ErrorReporting;
+  let transport: ErrorsApiTransport;
+  let oldLogger: (text: string) => void;
   let logOutput = '';
   before(() => {
     // This test assumes that only the error-reporting library will be
