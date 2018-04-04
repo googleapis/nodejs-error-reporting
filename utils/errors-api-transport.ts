@@ -18,6 +18,31 @@ import {RequestHandler as AuthClient} from '../src/google-apis/auth-client';
 import { Configuration } from '../src/configuration';
 import * as types from '../src/types';
 
+export interface ServiceContext {
+  service: string;
+  version: string;
+  resourceType: string;
+}
+
+export interface ErrorEvent {
+  eventTime: string;
+  serviceContext: ServiceContext;
+  message: string;
+  // other fields not used in the tests have been omitted
+}
+
+export interface ErrorGroupStats {
+  representative: ErrorEvent;
+  count: string;
+  // other fields not used in the tests have been omitted
+}
+
+export interface GroupStatesResponse {
+  errorGroupStats: ErrorGroupStats[];
+  nextPageToken: string;
+  timeRangeBegin: string;
+}
+
 /* @const {String} Base Error Reporting API */
 const API = 'https://clouderrorreporting.googleapis.com/v1beta1/projects';
 
@@ -50,7 +75,7 @@ export class ErrorsApiTransport extends AuthClient {
     });
   }
 
-  getAllGroups(cb: (err: Error|null, data?: {}) => Array<{}>) {
+  getAllGroups(cb: (err: Error|null, data?: ErrorGroupStats[]) => void) {
     const self = this;
     self.getProjectId((err, id) => {
       if (err) {

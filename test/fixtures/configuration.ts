@@ -19,7 +19,7 @@ import {Logger} from '../../src/types';
 import {Configuration, ConfigurationOptions} from '../../src/configuration';
 
 export class FakeConfiguration extends Configuration {
-  constructor(config: ConfigurationOptions, logger?: Logger) {
+  constructor(config: ConfigurationOptions|undefined, logger?: Logger) {
     super(config, logger || {warn() {}} as {} as Logger);
   }
 }

@@ -23,7 +23,7 @@ import {RequestHandler} from '../src/google-apis/auth-client';
 import {ErrorReporting} from '../src/index';
 import {createLogger} from '../src/logger';
 import {FakeConfiguration as Configuration} from '../test/fixtures/configuration';
-import {ErrorsApiTransport} from '../utils/errors-api-transport';
+import {ErrorsApiTransport, ErrorGroupStats} from '../utils/errors-api-transport';
 
 const isObject = is.object;
 const isString = is.string;
@@ -282,7 +282,7 @@ describe('Client creation', () => {
        const logger = createLogger({logLevel: 5});
        const cfg = new Configuration(
            {
-             projectId: Number(env.injected().projectNumber),
+             projectId: '' + Number(env.injected().projectNumber),
              ignoreEnvironmentCheck: true,
            },
            logger);
@@ -372,7 +372,7 @@ describe('Expected Behavior', () => {
     const logger = createLogger({logLevel: 5});
     const cfg = new Configuration(
         {
-          projectId: Number(env.injected().projectNumber),
+          projectId: '' + Number(env.injected().projectNumber),
           ignoreEnvironmentCheck: true,
         },
         logger);
@@ -464,7 +464,7 @@ describe('error-reporting', () => {
 
   function reinitialize(extraConfig?: {}) {
     process.removeAllListeners('unhandledRejection');
-    const config = Object.assign(
+    const initConfiguration = Object.assign(
         {
           ignoreEnvironmentCheck: true,
           serviceContext: {
@@ -473,8 +473,10 @@ describe('error-reporting', () => {
           },
         },
         extraConfig || {});
-    errors = new ErrorReporting(config);
-    transport = new ErrorsApiTransport(errors._config, errors._logger);
+    errors = new ErrorReporting(initConfiguration);
+    const logger = createLogger(initConfiguration);
+    const configuration = new Configuration(initConfiguration, logger);
+    transport = new ErrorsApiTransport(configuration, logger);
   }
 
   after(done => {
@@ -491,13 +493,13 @@ describe('error-reporting', () => {
     logOutput = '';
   });
 
-  function verifyAllGroups(messageTest, timeout, cb) {
+  function verifyAllGroups(messageTest: (message: string) => void, timeout: number, cb: (matchedErrors: ErrorGroupStats[]) => void) {
     setTimeout(() => {
       transport.getAllGroups((err, groups) => {
         assert.ifError(err);
         assert.ok(groups);
 
-        const matchedErrors = groups.filter(errItem => {
+        const matchedErrors = groups!.filter(errItem => {
           return (
               errItem && errItem.representative &&
               errItem.representative.serviceContext &&
@@ -511,7 +513,7 @@ describe('error-reporting', () => {
     }, timeout);
   }
 
-  function verifyServerResponse(messageTest, timeout, cb) {
+  function verifyServerResponse(messageTest: (message: string) => void, timeout: number, cb: () => void) {
     verifyAllGroups(messageTest, timeout, matchedErrors => {
       // The error should have been reported exactly once
       assert.strictEqual(matchedErrors.length, 1);
@@ -538,9 +540,9 @@ describe('error-reporting', () => {
     });
   }
 
-  function verifyReporting(errOb, messageTest, timeout, cb) {
+  function verifyReporting(errOb: {}|undefined|null, messageTest: (message: string) => void, timeout: number, cb: () => void) {
     (function expectedTopOfStack() {
-      errors.report(errOb, (err, response, body) => {
+      errors.report(errOb, undefined, undefined, (err, response, body) => {
         assert.ifError(err);
         assert(isObject(response));
         assert.deepEqual(body, {});

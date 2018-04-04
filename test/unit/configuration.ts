@@ -19,6 +19,7 @@ import * as is from 'is';
 const isNumber = is.number;
 import merge = require('lodash.merge');
 import {FakeConfiguration as Configuration, FakeConfiguration} from '../fixtures/configuration';
+import {ConfigurationOptions} from '../../src/configuration';
 import {Fuzzer} from '../../utils/fuzzer';
 const level = process.env.GCLOUD_ERRORS_LOGLEVEL;
 import {createLogger} from '../../src/logger';
@@ -61,11 +62,10 @@ describe('Configuration class', () => {
   });
   describe('Initialization', () => {
     const f = new Fuzzer();
-    const stubConfig = {test: true};
     describe('fuzzing the constructor', () => {
       it('Should return default values', () => {
         let c;
-        f.fuzzFunctionForTypes((givenConfigFuzz: Configuration) => {
+        f.fuzzFunctionForTypes((givenConfigFuzz: ConfigurationOptions) => {
           c = new Configuration(givenConfigFuzz, logger);
           assert.deepEqual(c._givenConfiguration, {});
         }, ['object']);
@@ -73,6 +73,7 @@ describe('Configuration class', () => {
     });
     describe('valid config and default values', () => {
       let c: Configuration;
+      const validConfig = {ignoreEnvironmentCheck: true};
       before(() => {
         process.env.NODE_ENV = 'development';
       });
@@ -81,11 +82,11 @@ describe('Configuration class', () => {
       });
       it('Should not throw with a valid configuration', () => {
         assert.doesNotThrow(() => {
-          c = new Configuration(stubConfig, logger);
+          c = new Configuration(validConfig, logger);
         });
       });
       it('Should have a property reflecting the config argument', () => {
-        assert.deepEqual(c._givenConfiguration, stubConfig);
+        assert.deepEqual(c._givenConfiguration, validConfig);
       });
       it('Should not have a project id', () => {
         assert.strictEqual(c._projectId, null);
@@ -104,7 +105,7 @@ describe('Configuration class', () => {
       });
     });
     describe('with ignoreEnvironmentCheck', () => {
-      const conf = merge({}, stubConfig, {ignoreEnvironmentCheck: true});
+      const conf = merge({}, {projectId: 'some-id'}, {ignoreEnvironmentCheck: true});
       const c = new Configuration(conf, logger);
       it('Should reportErrorsToAPI', () => {
         assert.strictEqual(c.getShouldReportErrorsToAPI(), true);
@@ -128,32 +129,42 @@ describe('Configuration class', () => {
       describe('exception behaviour', () => {
         it('Should throw if invalid type for key', () => {
           assert.throws(() => {
+            // we are intentionally providing an invalid configuration
+            // thus an explicit cast is needed
             // tslint:disable-next-line:no-unused-expression
-            new Configuration({key: null}, logger);
+            new Configuration({key: null} as {} as ConfigurationOptions, logger);
           });
         });
         it('Should throw if invalid for ignoreEnvironmentCheck', () => {
           assert.throws(() => {
+            // we are intentionally providing an invalid configuration
+            // thus an explicit cast is needed
             // tslint:disable-next-line:no-unused-expression
-            new Configuration({ignoreEnvironmentCheck: null}, logger);
+            new Configuration({ignoreEnvironmentCheck: null} as {} as ConfigurationOptions, logger);
           });
         });
         it('Should throw if invalid for serviceContext.service', () => {
           assert.throws(() => {
+            // we are intentionally providing an invalid configuration
+            // thus an explicit cast is needed
             // tslint:disable-next-line:no-unused-expression
-            new Configuration({serviceContext: {service: false}}, logger);
+            new Configuration({serviceContext: {service: false}} as {} as ConfigurationOptions, logger);
           });
         });
         it('Should throw if invalid for serviceContext.version', () => {
           assert.throws(() => {
+            // we are intentionally providing an invalid configuration
+            // thus an explicit cast is needed
             // tslint:disable-next-line:no-unused-expression
-            new Configuration({serviceContext: {version: true}}, logger);
+            new Configuration({serviceContext: {version: true}} as {} as ConfigurationOptions, logger);
           });
         });
         it('Should throw if invalid for reportUnhandledRejections', () => {
           assert.throws(() => {
+            // we are intentionally providing an invalid configuration
+            // thus an explicit cast is needed
             // tslint:disable-next-line:no-unused-expression
-            new Configuration({reportUnhandledRejections: 'INVALID'}, logger);
+            new Configuration({reportUnhandledRejections: 'INVALID'} as {} as ConfigurationOptions, logger);
           });
         });
         it('Should not throw given an empty object for serviceContext', () => {
@@ -187,7 +198,7 @@ describe('Configuration class', () => {
       let c: Configuration;
       before(() => {
         sterilizeConfigEnv();
-        c = new Configuration({projectId: pn}, logger);
+        c = new Configuration({projectId: pn} as {} as ConfigurationOptions, logger);
       });
       after(() => {
         nock.cleanAll();
@@ -219,7 +230,9 @@ describe('Configuration class', () => {
       before(() => {
         sterilizeConfigEnv();
         createDeadMetadataService();
-        c = new Configuration({projectId: null}, logger);
+        // we are intentionally providing an invalid configuration
+        // thus an explicit cast is needed
+        c = new Configuration({projectId: null} as {} as ConfigurationOptions, logger);
       });
       after(() => {
         nock.cleanAll();

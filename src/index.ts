@@ -100,7 +100,7 @@ export class ErrorReporting {
   private _config: Configuration;
   private _client: AuthClient;
   report:
-      (err: {}, request?: manualRequestExtractor.Request,
+      (err: {}|undefined|null, request?: manualRequestExtractor.Request,
        additionalMessage?: string|{},
        callback?: manualInterface.Callback|{}|string) => ErrorMessage;
   event: () => ErrorMessage;
