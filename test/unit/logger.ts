@@ -60,7 +60,7 @@ describe('logger', () => {
     });
     describe('Default log level', () => {
       let oldLog: (text: string) => void;
-      let text: string | undefined;
+      let text: string|undefined;
       beforeEach(() => {
         // eslint-disable-next-line no-console
         oldLog = console.log;

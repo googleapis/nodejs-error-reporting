@@ -72,7 +72,7 @@ export class Fuzzer {
       return chars.join('');
     },
 
-    function(this: { [key: string]: () => void; types: () => string[]; }) {
+    function(this: {[key: string]: () => void; types: () => string[];}) {
       const availableTypes = without(this.types(), 'function');
       const typeToGen = this.types()[random(0, availableTypes.length - 1)];
       const fnToCall = this[typeToGen];
@@ -97,16 +97,18 @@ export class Fuzzer {
       return undefined;
     },
 
-    array(len?: number, ofOneType?: string, currentDepth?: number, allowedDepth?: number) {
+    array(
+        len?: number, ofOneType?: string, currentDepth?: number,
+        allowedDepth?: number) {
       const lenChecked = (isNumber(len) ? len : random(1, 10))!;
       let availableTypes =
           (isString(ofOneType) && indexOf(this.types(), ofOneType) > -1 ?
-           [ofOneType] :
-           this.types())!;
+               [ofOneType] :
+               this.types())!;
       let currentDepthChecked = (isNumber(currentDepth) ? currentDepth : 0)!;
       const allowedDepthChecked = (isNumber(allowedDepth) ? allowedDepth : 3)!;
       const arr: Array<{}> = [];
-      let currentTypeBeingGenerated: string | undefined = '';
+      let currentTypeBeingGenerated: string|undefined = '';
       currentDepthChecked += 1;
 
       // Deny the ability to nest more objects
@@ -125,19 +127,21 @@ export class Fuzzer {
           arr.push(this[currentTypeBeingGenerated](
               null!, ofOneType, currentDepthChecked, allowedDepthChecked));
         } else {
-          arr.push((this as {[key: string]: Function})[currentTypeBeingGenerated!]());
+          arr.push((
+              this as {[key: string]: Function})[currentTypeBeingGenerated!]());
         }
       }
 
       return arr;
     },
 
-    object(numProperties?: number, currentDepth?: number, allowedDepth?: number) {
+    object(
+        numProperties?: number, currentDepth?: number, allowedDepth?: number) {
       const numPropertiesChecked =
           (isNumber(numProperties) ? numProperties : random(1, 10))!;
       let currentDepthChecked = (isNumber(currentDepth) ? currentDepth : 0)!;
       const allowedDepthChecked = (isNumber(allowedDepth) ? allowedDepth : 3)!;
-      const obj: { [key: string]: {} } = {};
+      const obj: {[key: string]: {}} = {};
       currentDepthChecked += 1;
 
       let availableTypes = this.types();
@@ -162,7 +166,8 @@ export class Fuzzer {
           obj[currentKey] = this[currentTypeBeingGenerated](
               null!, null!, currentDepthChecked, allowedDepthChecked);
         } else {
-          obj[currentKey] = (this as {[key: string]: Function})[currentTypeBeingGenerated]();
+          obj[currentKey] =
+              (this as {[key: string]: Function})[currentTypeBeingGenerated]();
         }
       }
 
@@ -205,7 +210,7 @@ export class Fuzzer {
     return this._backFillUnevenTypesArrays(argsTypesArray);
   }
 
-  _generateTypesToFuzzWith(expectsArgTypes: Array<string | string[]>) {
+  _generateTypesToFuzzWith(expectsArgTypes: Array<string|string[]>) {
     let argsTypesArray: Array<Array<{}>> = [];
     let tmpArray = this.generate.types();
 
@@ -226,7 +231,7 @@ export class Fuzzer {
     return argsTypesArray;
   }
 
-  _generateValuesForFuzzTyping(typesToFuzzOnEach: Array<string[]>, index: number) {
+  _generateValuesForFuzzTyping(typesToFuzzOnEach: string[][], index: number) {
     const args: Array<{}> = [];
     let typeToGen = '';
     const gen = this.generate as {[key: string]: Function};
@@ -241,11 +246,12 @@ export class Fuzzer {
   }
 
   fuzzFunctionForTypes(
-      fnToFuzz: Function, expectsArgTypes?: string[], cb?: Function, withContext?: {}) {
+      fnToFuzz: Function, expectsArgTypes?: string[], cb?: Function,
+      withContext?: {}) {
     const expectsArgTypesChecked =
         (isArray(expectsArgTypes) ? expectsArgTypes : [])!;
     const typesToFuzzOnEach =
-        this._generateTypesToFuzzWith(expectsArgTypesChecked) as Array<string[]>;
+        this._generateTypesToFuzzWith(expectsArgTypesChecked) as string[][];
 
     let returnValue = undefined;
 

@@ -23,7 +23,7 @@ import {RequestHandler} from '../src/google-apis/auth-client';
 import {ErrorReporting} from '../src/index';
 import {createLogger} from '../src/logger';
 import {FakeConfiguration as Configuration} from '../test/fixtures/configuration';
-import {ErrorsApiTransport, ErrorGroupStats} from '../utils/errors-api-transport';
+import {ErrorGroupStats, ErrorsApiTransport} from '../utils/errors-api-transport';
 
 const isObject = is.object;
 const isString = is.string;
@@ -47,12 +47,12 @@ const envKeys = [
 ];
 
 class InstancedEnv {
-  injectedEnv: {[key: string]: string | undefined};
+  injectedEnv: {[key: string]: string|undefined};
   _originalEnv: Partial<Pick<{[key: string]: string | undefined}, string>>;
   apiKey!: string;
   projectId!: string;
 
-  constructor(injectedEnv: {[key: string]: string | undefined}) {
+  constructor(injectedEnv: {[key: string]: string|undefined}) {
     assign(this, injectedEnv);
     this.injectedEnv = injectedEnv;
     this._originalEnv = this._captureProcessProperties();
@@ -147,7 +147,8 @@ if (!shouldRun()) {
 describe('Request/Response lifecycle mocking', () => {
   const sampleError = new Error(ERR_TOKEN);
   const errorMessage = new ErrorMessage().setMessage(sampleError.message);
-  let fakeService: any, client: RequestHandler, logger;
+  let fakeService: {reply: Function; query: Function;}, client: RequestHandler,
+      logger;
   before(() => {
     env.sterilizeProcess();
   });
@@ -178,7 +179,8 @@ describe('Request/Response lifecycle mocking', () => {
     this.timeout(5000);
     client.sendError({} as ErrorMessage, (err, response) => {
       assert(err instanceof Error);
-      assert.strictEqual(err!.message.toLowerCase(), 'message cannot be empty.');
+      assert.strictEqual(
+          err!.message.toLowerCase(), 'message cannot be empty.');
       assert(isObject(response));
       assert.strictEqual(response!.statusCode, 400);
       done();
@@ -493,7 +495,9 @@ describe('error-reporting', () => {
     logOutput = '';
   });
 
-  function verifyAllGroups(messageTest: (message: string) => void, timeout: number, cb: (matchedErrors: ErrorGroupStats[]) => void) {
+  function verifyAllGroups(
+      messageTest: (message: string) => void, timeout: number,
+      cb: (matchedErrors: ErrorGroupStats[]) => void) {
     setTimeout(() => {
       transport.getAllGroups((err, groups) => {
         assert.ifError(err);
@@ -513,7 +517,8 @@ describe('error-reporting', () => {
     }, timeout);
   }
 
-  function verifyServerResponse(messageTest: (message: string) => void, timeout: number, cb: () => void) {
+  function verifyServerResponse(
+      messageTest: (message: string) => void, timeout: number, cb: () => void) {
     verifyAllGroups(messageTest, timeout, matchedErrors => {
       // The error should have been reported exactly once
       assert.strictEqual(matchedErrors.length, 1);
@@ -540,7 +545,9 @@ describe('error-reporting', () => {
     });
   }
 
-  function verifyReporting(errOb: {}|undefined|null, messageTest: (message: string) => void, timeout: number, cb: () => void) {
+  function verifyReporting(
+      errOb: {}|undefined|null, messageTest: (message: string) => void,
+      timeout: number, cb: () => void) {
     (function expectedTopOfStack() {
       errors.report(errOb, undefined, undefined, (err, response, body) => {
         assert.ifError(err);

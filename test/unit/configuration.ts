@@ -105,7 +105,8 @@ describe('Configuration class', () => {
       });
     });
     describe('with ignoreEnvironmentCheck', () => {
-      const conf = merge({}, {projectId: 'some-id'}, {ignoreEnvironmentCheck: true});
+      const conf =
+          merge({}, {projectId: 'some-id'}, {ignoreEnvironmentCheck: true});
       const c = new Configuration(conf, logger);
       it('Should reportErrorsToAPI', () => {
         assert.strictEqual(c.getShouldReportErrorsToAPI(), true);
@@ -132,7 +133,8 @@ describe('Configuration class', () => {
             // we are intentionally providing an invalid configuration
             // thus an explicit cast is needed
             // tslint:disable-next-line:no-unused-expression
-            new Configuration({key: null} as {} as ConfigurationOptions, logger);
+            new Configuration(
+                {key: null} as {} as ConfigurationOptions, logger);
           });
         });
         it('Should throw if invalid for ignoreEnvironmentCheck', () => {
@@ -140,7 +142,9 @@ describe('Configuration class', () => {
             // we are intentionally providing an invalid configuration
             // thus an explicit cast is needed
             // tslint:disable-next-line:no-unused-expression
-            new Configuration({ignoreEnvironmentCheck: null} as {} as ConfigurationOptions, logger);
+            new Configuration(
+                {ignoreEnvironmentCheck: null} as {} as ConfigurationOptions,
+                logger);
           });
         });
         it('Should throw if invalid for serviceContext.service', () => {
@@ -148,7 +152,10 @@ describe('Configuration class', () => {
             // we are intentionally providing an invalid configuration
             // thus an explicit cast is needed
             // tslint:disable-next-line:no-unused-expression
-            new Configuration({serviceContext: {service: false}} as {} as ConfigurationOptions, logger);
+            new Configuration(
+                {serviceContext: {service: false}} as {} as
+                    ConfigurationOptions,
+                logger);
           });
         });
         it('Should throw if invalid for serviceContext.version', () => {
@@ -156,7 +163,9 @@ describe('Configuration class', () => {
             // we are intentionally providing an invalid configuration
             // thus an explicit cast is needed
             // tslint:disable-next-line:no-unused-expression
-            new Configuration({serviceContext: {version: true}} as {} as ConfigurationOptions, logger);
+            new Configuration(
+                {serviceContext: {version: true}} as {} as ConfigurationOptions,
+                logger);
           });
         });
         it('Should throw if invalid for reportUnhandledRejections', () => {
@@ -164,7 +173,10 @@ describe('Configuration class', () => {
             // we are intentionally providing an invalid configuration
             // thus an explicit cast is needed
             // tslint:disable-next-line:no-unused-expression
-            new Configuration({reportUnhandledRejections: 'INVALID'} as {} as ConfigurationOptions, logger);
+            new Configuration(
+                {reportUnhandledRejections: 'INVALID'} as {} as
+                    ConfigurationOptions,
+                logger);
           });
         });
         it('Should not throw given an empty object for serviceContext', () => {
@@ -198,7 +210,8 @@ describe('Configuration class', () => {
       let c: Configuration;
       before(() => {
         sterilizeConfigEnv();
-        c = new Configuration({projectId: pn} as {} as ConfigurationOptions, logger);
+        c = new Configuration(
+            {projectId: pn} as {} as ConfigurationOptions, logger);
       });
       after(() => {
         nock.cleanAll();
@@ -232,7 +245,8 @@ describe('Configuration class', () => {
         createDeadMetadataService();
         // we are intentionally providing an invalid configuration
         // thus an explicit cast is needed
-        c = new Configuration({projectId: null} as {} as ConfigurationOptions, logger);
+        c = new Configuration(
+            {projectId: null} as {} as ConfigurationOptions, logger);
       });
       after(() => {
         nock.cleanAll();

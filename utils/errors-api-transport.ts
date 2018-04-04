@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import {Configuration} from '../src/configuration';
 import {RequestHandler as AuthClient} from '../src/google-apis/auth-client';
-import { Configuration } from '../src/configuration';
 import * as types from '../src/types';
 
 export interface ServiceContext {

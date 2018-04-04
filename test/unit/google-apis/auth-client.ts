@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import {Logger} from '../../../src/types';
 import * as assert from 'assert';
 import * as proxyquire from 'proxyquire';
 
 import {Configuration, ConfigurationOptions} from '../../../src/configuration';
+import {Logger} from '../../../src/types';
 
-function verifyReportedMessage(config1: ConfigurationOptions, errToReturn: Error|null|undefined, expectedLogs: {error?: string; info?: string;}) {
+function verifyReportedMessage(
+    config1: ConfigurationOptions, errToReturn: Error|null|undefined,
+    expectedLogs: {error?: string; info?: string;}) {
   class ServiceStub {
     authClient: {};
     request: {};

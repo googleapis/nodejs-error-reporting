@@ -174,7 +174,8 @@ export class ErrorMessage {
    * @returns {this} - returns the instance for chaining
    */
   setUserAgent(userAgent?: string) {
-    this.context.httpRequest.userAgent = (isString(userAgent) ? userAgent : '')!;
+    this.context.httpRequest.userAgent =
+        (isString(userAgent) ? userAgent : '')!;
 
     return this;
   }
@@ -235,7 +236,8 @@ export class ErrorMessage {
    * @returns {this} - returns the instance for chaining
    */
   setFilePath(filePath?: string) {
-    this.context.reportLocation.filePath = (isString(filePath) ? filePath : '')!;
+    this.context.reportLocation.filePath =
+        (isString(filePath) ? filePath : '')!;
 
     return this;
   }

@@ -102,6 +102,7 @@ describe('Behaviour under varying input', () => {
       remoteAddress: '',
       statusCode: 201,
     };
+    // tslint:disable-next-line:no-any
     const headerFactory = (toDeriveFrom: any) => {
       const lrn = extend({}, toDeriveFrom);
       lrn.header = (toRet: string) => {

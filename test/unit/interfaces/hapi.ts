@@ -27,7 +27,12 @@ import * as config from '../../../src/configuration';
 import {RequestHandler} from '../../../src/google-apis/auth-client';
 import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
 
-type HapiPlugin = { register: ((server: {}, options: {}, next: Function) => any) & { attributes?: { name: string; version: string; } }};
+type HapiPlugin = {
+  register:
+      ((server: {}, options: {}, next: Function) => void)&{
+        attributes?: {name: string; version: string;}
+      }
+};
 
 describe('Hapi interface', () => {
   describe('Fuzzing the setup handler', () => {
@@ -64,7 +69,7 @@ describe('Hapi interface', () => {
     it('the plugin\'s attribute property should have a name property', () => {
       assert(has(plugin.register.attributes, 'name'));
       assert.strictEqual(
-          plugin.register!.attributes!.name, '@google-cloud/error-reporting');
+          plugin.register !.attributes!.name, '@google-cloud/error-reporting');
     });
     it('the plugin\'s attribute property should have a version property',
        () => {
@@ -102,7 +107,9 @@ describe('Hapi interface', () => {
   describe('Behaviour around the request/response lifecycle', () => {
     const EVENT = 'onPreResponse';
     const fakeClient = {sendError() {}} as {} as RequestHandler;
-    let fakeServer: EventEmitter & {ext?: Function}, config: Configuration & {lacksCredentials?: () => boolean }, plugin: HapiPlugin;
+    let fakeServer: EventEmitter&{ext?: Function},
+        config: Configuration&{lacksCredentials?: () => boolean},
+        plugin: HapiPlugin;
     before(() => {
       config = new Configuration({
         projectId: 'xyz',
