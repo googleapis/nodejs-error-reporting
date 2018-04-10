@@ -546,10 +546,9 @@ describe('error-reporting', () => {
   }
 
   // the `errOb` argument can be anything, including `null` and `undefined`
-  // tslint:disable-next-line:no-any
   function verifyReporting(
-      errOb: any, messageTest: (message: string) => void,
-      timeout: number, cb: () => void) {
+      errOb: any,  // tslint:disable-line:no-any
+      messageTest: (message: string) => void, timeout: number, cb: () => void) {
     (function expectedTopOfStack() {
       errors.report(errOb, undefined, undefined, (err, response, body) => {
         assert.ifError(err);

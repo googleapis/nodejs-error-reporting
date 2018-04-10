@@ -65,10 +65,10 @@ export function handlerSetup(
    * the parameters given.
    */
   // the `err` argument can be anything, including `null` and `undefined`
-  // tslint:disable-next-line:no-any
   function reportManualError(
-      err: any, request?: Request|Callback|string,
-      additionalMessage?: Callback|string|{}, callback?: Callback|{}|string) {
+      err: any,  // tslint:disable-line:no-any
+      request?: Request|Callback|string, additionalMessage?: Callback|string|{},
+      callback?: Callback|{}|string) {
     let em;
     if (isString(request)) {
       // no request given
