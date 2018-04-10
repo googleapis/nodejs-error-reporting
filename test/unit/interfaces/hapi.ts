@@ -69,7 +69,7 @@ describe('Hapi interface', () => {
     it('the plugin\'s attribute property should have a name property', () => {
       assert(has(plugin.register.attributes, 'name'));
       assert.strictEqual(
-          plugin.register!.attributes!.name, '@google-cloud/error-reporting');
+          plugin.register !.attributes!.name, '@google-cloud/error-reporting');
     });
     it('the plugin\'s attribute property should have a version property',
        () => {
