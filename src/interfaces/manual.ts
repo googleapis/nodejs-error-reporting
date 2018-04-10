@@ -64,8 +64,10 @@ export function handlerSetup(
    * @returns {ErrorMessage} - returns the error message created through with
    * the parameters given.
    */
+  // the `err` argument can be anything, including `null` and `undefined`
+  // tslint:disable-next-line:no-any
   function reportManualError(
-      err: {}|undefined|null, request?: Request|Callback|string,
+      err: any, request?: Request|Callback|string,
       additionalMessage?: Callback|string|{}, callback?: Callback|{}|string) {
     let em;
     if (isString(request)) {

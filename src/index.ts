@@ -99,8 +99,10 @@ export class ErrorReporting {
   private _logger: types.Logger;
   private _config: Configuration;
   private _client: AuthClient;
+  // the `err` argument can be anything, including `null` and `undefined`
+  // tslint:disable-next-line:no-any
   report:
-      (err: {}|undefined|null, request?: manualRequestExtractor.Request,
+      (err: any, request?: manualRequestExtractor.Request,
        additionalMessage?: string|{},
        callback?: manualInterface.Callback|{}|string) => ErrorMessage;
   event: () => ErrorMessage;
