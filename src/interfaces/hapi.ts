@@ -82,13 +82,13 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
     if (server) {
       if (server.events && server.events.on) {
         // Hapi 17 is being used
-        server.events.on('log', function(event, tags) {
+        server.events.on('log', function(event: {error?: {}}, tags: {}) {
           if (event.error) {
             client.sendError(hapiErrorHandler(event.error));
           }
         });
 
-        server.events.on('request', (request, event, tags) => {
+        server.events.on('request', (request: hapi.Request, event: {error?: {}}, tags: {}) => {
           if (event.error) {
             client.sendError(hapiErrorHandler(event.error, request));
           }
@@ -96,13 +96,13 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
       }
       else {
         if (isFunction(server.on)) {
-          server.on('request-error', (req, err) => {
+          server.on('request-error', (req: hapi.Request, err: {}) => {
             client.sendError(hapiErrorHandler(err, req, config));
           });
         }
 
         if (isFunction(server.ext)) {
-          server.ext('onPreResponse', (request, reply) => {
+          server.ext('onPreResponse', (request: hapi.Request, reply: hapi.ReplyWithContinue) => {
             if (isObject(request) && isObject(request.response) &&
                 // TODO: Handle the case when `request.response` is null
                 request.response!.isBoom) {
