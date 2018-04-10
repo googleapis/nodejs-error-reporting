@@ -78,23 +78,26 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
    *  plugin
    * @returns {Undefined} - returns the execution of the next callback
    */
-  function hapiRegisterFunction(server: any, options: {}, next?: Function) {
+  function hapiRegisterFunction(
+      server: any,  // tslint:disable-line:no-any
+      options: {}, next?: Function) {
     if (server) {
       if (server.events && server.events.on) {
         // Hapi 17 is being used
-        server.events.on('log', function(event: {error?: {}}, tags: {}) {
+        server.events.on('log', (event: {error?: {}}, tags: {}) => {
           if (event.error) {
             client.sendError(hapiErrorHandler(event.error));
           }
         });
 
-        server.events.on('request', (request: hapi.Request, event: {error?: {}}, tags: {}) => {
-          if (event.error) {
-            client.sendError(hapiErrorHandler(event.error, request));
-          }
-        });
-      }
-      else {
+        server.events.on(
+            'request',
+            (request: hapi.Request, event: {error?: {}}, tags: {}) => {
+              if (event.error) {
+                client.sendError(hapiErrorHandler(event.error, request));
+              }
+            });
+      } else {
         if (isFunction(server.on)) {
           server.on('request-error', (req: hapi.Request, err: {}) => {
             client.sendError(hapiErrorHandler(err, req, config));
@@ -102,21 +105,25 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
         }
 
         if (isFunction(server.ext)) {
-          server.ext('onPreResponse', (request: hapi.Request, reply: hapi.ReplyWithContinue) => {
-            if (isObject(request) && isObject(request.response) &&
-                // TODO: Handle the case when `request.response` is null
-                request.response!.isBoom) {
-              const em = hapiErrorHandler(
-                  // TODO: Handle the case when `request.response` is null
-                  // TODO: Handle the type conflict that requires a cast to string
-                  new Error(request.response!.message as {} as string), request, config);
-              client.sendError(em);
-            }
+          server.ext(
+              'onPreResponse',
+              (request: hapi.Request, reply: hapi.ReplyWithContinue) => {
+                if (isObject(request) && isObject(request.response) &&
+                    // TODO: Handle the case when `request.response` is null
+                    request.response!.isBoom) {
+                  const em = hapiErrorHandler(
+                      // TODO: Handle the case when `request.response` is null
+                      // TODO: Handle the type conflict that requires a cast to
+                      // string
+                      new Error(request.response!.message as {} as string),
+                      request, config);
+                  client.sendError(em);
+                }
 
-            if (reply && isFunction(reply.continue)) {
-              reply.continue();
-            }
-          });
+                if (reply && isFunction(reply.continue)) {
+                  reply.continue();
+                }
+              });
         }
       }
     }
