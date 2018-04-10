@@ -18,7 +18,7 @@ import * as assert from 'assert';
 import * as is from 'is';
 const isNumber = is.number;
 import merge = require('lodash.merge');
-import {FakeConfiguration as Configuration, FakeConfiguration} from '../fixtures/configuration';
+import {FakeConfiguration as Configuration} from '../fixtures/configuration';
 import {ConfigurationOptions} from '../../src/configuration';
 import {Fuzzer} from '../../utils/fuzzer';
 const level = process.env.GCLOUD_ERRORS_LOGLEVEL;

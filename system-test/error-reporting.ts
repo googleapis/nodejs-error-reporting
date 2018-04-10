@@ -147,8 +147,9 @@ if (!shouldRun()) {
 describe('Request/Response lifecycle mocking', () => {
   const sampleError = new Error(ERR_TOKEN);
   const errorMessage = new ErrorMessage().setMessage(sampleError.message);
-  let fakeService: {reply: Function; query: Function;}, client: RequestHandler,
-      logger;
+  let fakeService: {reply: Function; query: Function;};
+  let client: RequestHandler;
+  let logger;
   before(() => {
     env.sterilizeProcess();
   });
