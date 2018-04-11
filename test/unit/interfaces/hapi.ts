@@ -182,12 +182,13 @@ describe('Hapi interface', () => {
     const errorsSent: ErrorMessage[] = [];
     // the only method in the client that should be used is `sendError`
     const fakeClient = {
-      sendError: (errorMessage: ErrorMessage,
-                  userCb?:
-                    (err: Error|null, response: http.ServerResponse|null,
-                     body: {}) => void) => {
-        errorsSent.push(errorMessage);
-      }
+      sendError:
+          (errorMessage: ErrorMessage,
+           userCb?: (
+               err: Error|null, response: http.ServerResponse|null, body: {}) =>
+               void) => {
+            errorsSent.push(errorMessage);
+          }
     } as {} as RequestHandler;
 
     // the configuration should be not be needed to send errors correctly
@@ -197,24 +198,20 @@ describe('Hapi interface', () => {
       errorsSent.length = 0;
     });
 
-    it (`Plugin should have name and version properties`, () => {
+    it(`Plugin should have name and version properties`, () => {
       assert.strictEqual(plugin.name, packageJson.name);
       assert.strictEqual(plugin.version, packageJson.version);
     });
 
     it(`Should record 'log' events correctly`, () => {
-      const fakeServer = {
-        events: new EventEmitter()
-      };
+      const fakeServer = {events: new EventEmitter()};
 
       // emulate how the hapi server would register itself
       plugin.register(fakeServer, {});
 
       // emulate the hapi server emitting a log event
       const testError = new Error('Error emitted through a log event');
-      fakeServer.events.emit('log', {
-        error: testError
-      });
+      fakeServer.events.emit('log', {error: testError});
 
       assert.strictEqual(errorsSent.length, 1);
       const errorMessage = errorsSent[0];
@@ -224,9 +221,7 @@ describe('Hapi interface', () => {
     });
 
     it(`Should record 'request' events correctly`, () => {
-      const fakeServer = {
-        events: new EventEmitter()
-      };
+      const fakeServer = {events: new EventEmitter()};
 
       // emulate how the hapi server would register itself
       plugin.register(fakeServer, {});
@@ -244,25 +239,28 @@ describe('Hapi interface', () => {
           referrer: 'custom-referrer',
           'x-forwarded-for': 'some-remote-address'
         },
-        response: {
-          statusCode: 42
-        }
+        response: {statusCode: 42}
       } as {} as hapi.Request;
 
       const testError = new Error('Error emitted through a request event');
-      fakeServer.events.emit('request', fakeRequest, { error: testError });
+      fakeServer.events.emit('request', fakeRequest, {error: testError});
 
       assert.strictEqual(errorsSent.length, 1);
       const errorMessage = errorsSent[0];
 
       // note: the error's stack contains the error message
       assert.strictEqual(errorMessage.message, testError.stack);
-      assert.strictEqual(errorMessage.context.httpRequest.method, 'custom-method');
+      assert.strictEqual(
+          errorMessage.context.httpRequest.method, 'custom-method');
       assert.strictEqual(errorMessage.context.httpRequest.url, 'custom-url');
-      assert.strictEqual(errorMessage.context.httpRequest.userAgent, 'custom-user-agent');
-      assert.strictEqual(errorMessage.context.httpRequest.referrer, 'custom-referrer');
-      assert.strictEqual(errorMessage.context.httpRequest.remoteIp, 'some-remote-address');
-      assert.strictEqual(errorMessage.context.httpRequest.responseStatusCode, 42);
+      assert.strictEqual(
+          errorMessage.context.httpRequest.userAgent, 'custom-user-agent');
+      assert.strictEqual(
+          errorMessage.context.httpRequest.referrer, 'custom-referrer');
+      assert.strictEqual(
+          errorMessage.context.httpRequest.remoteIp, 'some-remote-address');
+      assert.strictEqual(
+          errorMessage.context.httpRequest.responseStatusCode, 42);
     });
   });
 });
