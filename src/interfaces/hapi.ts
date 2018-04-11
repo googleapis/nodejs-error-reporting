@@ -84,16 +84,18 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
     if (server) {
       if (server.events && server.events.on) {
         // Hapi 17 is being used
-        server.events.on('log', (event: {error?: {}}, tags: {}) => {
-          if (event.error) {
-            client.sendError(hapiErrorHandler(event.error));
-          }
-        });
+        server.events.on(
+            'log', (event: {error?: {}; channel: string;}, tags: {}) => {
+              if (event.error && event.channel === 'app') {
+                client.sendError(hapiErrorHandler(event.error));
+              }
+            });
 
         server.events.on(
             'request',
-            (request: hapi.Request, event: {error?: {}}, tags: {}) => {
-              if (event.error) {
+            (request: hapi.Request, event: {error?: {}; channel: string;},
+             tags: {}) => {
+              if (event.error && event.channel === 'error') {
                 client.sendError(hapiErrorHandler(event.error, request));
               }
             });

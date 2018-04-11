@@ -211,7 +211,12 @@ describe('Hapi interface', () => {
 
       // emulate the hapi server emitting a log event
       const testError = new Error('Error emitted through a log event');
-      fakeServer.events.emit('log', {error: testError});
+
+      // this event should not be recorded
+      fakeServer.events.emit('log', {error: testError, channel: 'internal'});
+
+      // this event should be recorded
+      fakeServer.events.emit('log', {error: testError, channel: 'app'});
 
       assert.strictEqual(errorsSent.length, 1);
       const errorMessage = errorsSent[0];
@@ -243,7 +248,14 @@ describe('Hapi interface', () => {
       } as {} as hapi.Request;
 
       const testError = new Error('Error emitted through a request event');
-      fakeServer.events.emit('request', fakeRequest, {error: testError});
+
+      // this event should not be recorded
+      fakeServer.events.emit(
+          'request', fakeRequest, {error: testError, channel: 'internal'});
+
+      // this event should be recorded
+      fakeServer.events.emit(
+          'request', fakeRequest, {error: testError, channel: 'error'});
 
       assert.strictEqual(errorsSent.length, 1);
       const errorMessage = errorsSent[0];
