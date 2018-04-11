@@ -198,7 +198,7 @@ describe('Hapi interface', () => {
       errorsSent.length = 0;
     });
 
-    it(`Plugin should have name and version properties`, () => {
+    it('Plugin should have name and version properties', () => {
       assert.strictEqual(plugin.name, packageJson.name);
       assert.strictEqual(plugin.version, packageJson.version);
     });
