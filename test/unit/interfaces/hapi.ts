@@ -26,6 +26,17 @@ import {EventEmitter} from 'events';
 import * as config from '../../../src/configuration';
 import {RequestHandler} from '../../../src/google-apis/auth-client';
 import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
+import * as http from 'http';
+import * as hapi from 'hapi';
+
+const packageJson = require('../../../../package.json');
+
+type HapiPlugin = {
+  register:
+      ((server: {}, options: {}, next: Function) => void)&{
+        attributes?: {name: string; version: string;}
+      }
+};
 
 describe('Hapi interface', () => {
   describe('Fuzzing the setup handler', () => {
@@ -43,7 +54,7 @@ describe('Hapi interface', () => {
         return '1';
       },
     };
-    let plugin;
+    let plugin: HapiPlugin;
     beforeEach(() => {
       plugin = hapiInterface(null!, givenConfig as {} as config.Configuration);
     });
@@ -62,7 +73,7 @@ describe('Hapi interface', () => {
     it('the plugin\'s attribute property should have a name property', () => {
       assert(has(plugin.register.attributes, 'name'));
       assert.strictEqual(
-          plugin.register.attributes.name, '@google-cloud/error-reporting');
+          plugin.register !.attributes!.name, '@google-cloud/error-reporting');
     });
     it('the plugin\'s attribute property should have a version property',
        () => {
@@ -70,13 +81,13 @@ describe('Hapi interface', () => {
        });
   });
   describe('hapiRegisterFunction behaviour', () => {
-    let fakeServer;
+    let fakeServer: EventEmitter;
     beforeEach(() => {
       fakeServer = new EventEmitter();
     });
     it('Should call fn when the request-error event is emitted', () => {
       const fakeClient = {
-        sendError(errMsg) {
+        sendError(errMsg: ErrorMessage) {
           assert(
               errMsg instanceof ErrorMessage,
               'should be an instance of Error message');
@@ -100,7 +111,9 @@ describe('Hapi interface', () => {
   describe('Behaviour around the request/response lifecycle', () => {
     const EVENT = 'onPreResponse';
     const fakeClient = {sendError() {}} as {} as RequestHandler;
-    let fakeServer, config, plugin;
+    let fakeServer: EventEmitter&{ext?: Function},
+        config: Configuration&{lacksCredentials?: () => boolean},
+        plugin: HapiPlugin;
     before(() => {
       config = new Configuration({
         projectId: 'xyz',
@@ -123,7 +136,7 @@ describe('Hapi interface', () => {
     });
     it('Should call continue when a boom is emitted if reply is an object',
        done => {
-         plugin.register(fakeServer, null, () => {});
+         plugin.register(fakeServer, null!, () => {});
          fakeServer.emit(EVENT, {response: {isBoom: true}}, {
            continue() {
              // The continue function should be called
@@ -138,7 +151,7 @@ describe('Hapi interface', () => {
          // that has a `continue` property that is a function.
          // If `reply.continue()` is not invoked in this situation, the Hapi
          // app will become unresponsive.
-         plugin.register(fakeServer, null, () => {});
+         plugin.register(fakeServer, null!, () => {});
          const reply: Function&{continue?: Function} = () => {};
          reply.continue = () => {
            // The continue function should be called
@@ -148,7 +161,7 @@ describe('Hapi interface', () => {
        });
     it('Should call sendError when a boom is received', done => {
       const fakeClient = {
-        sendError(err) {
+        sendError(err: ErrorMessage) {
           assert(err instanceof ErrorMessage);
           done();
         },
@@ -158,11 +171,108 @@ describe('Hapi interface', () => {
       fakeServer.emit('onPreResponse', {response: {isBoom: true}});
     });
     it('Should call next when completing a request', done => {
-      plugin.register(fakeServer, null, () => {
+      plugin.register(fakeServer, null!, () => {
         // The next function should be called
         done();
       });
       fakeServer.emit(EVENT, {response: {isBoom: true}}, {continue() {}});
+    });
+  });
+  describe('Hapi17', () => {
+    const errorsSent: ErrorMessage[] = [];
+    // the only method in the client that should be used is `sendError`
+    const fakeClient = {
+      sendError:
+          (errorMessage: ErrorMessage,
+           userCb?: (
+               err: Error|null, response: http.ServerResponse|null, body: {}) =>
+               void) => {
+            errorsSent.push(errorMessage);
+          }
+    } as {} as RequestHandler;
+
+    // the configuration should be not be needed to send errors correctly
+    const plugin = hapiInterface(fakeClient, {} as Configuration);
+
+    afterEach(() => {
+      errorsSent.length = 0;
+    });
+
+    it('Plugin should have name and version properties', () => {
+      assert.strictEqual(plugin.name, packageJson.name);
+      assert.strictEqual(plugin.version, packageJson.version);
+    });
+
+    it(`Should record 'log' events correctly`, () => {
+      const fakeServer = {events: new EventEmitter()};
+
+      // emulate how the hapi server would register itself
+      plugin.register(fakeServer, {});
+
+      // emulate the hapi server emitting a log event
+      const testError = new Error('Error emitted through a log event');
+
+      // this event should not be recorded
+      fakeServer.events.emit('log', {error: testError, channel: 'internal'});
+
+      // this event should be recorded
+      fakeServer.events.emit('log', {error: testError, channel: 'app'});
+
+      assert.strictEqual(errorsSent.length, 1);
+      const errorMessage = errorsSent[0];
+
+      // note: the error's stack contains the error message
+      assert.strictEqual(errorMessage.message, testError.stack);
+    });
+
+    it(`Should record 'request' events correctly`, () => {
+      const fakeServer = {events: new EventEmitter()};
+
+      // emulate how the hapi server would register itself
+      plugin.register(fakeServer, {});
+
+      // emulate the hapi server emitting a request event
+      // a cast to hapi.Request is being done since only the listed
+      // properties are the properties that are being tested.  In
+      // addition other properties of hapi.Request should be needed
+      // to properly send the error.
+      const fakeRequest = {
+        method: 'custom-method',
+        url: 'custom-url',
+        headers: {
+          'user-agent': 'custom-user-agent',
+          referrer: 'custom-referrer',
+          'x-forwarded-for': 'some-remote-address'
+        },
+        response: {statusCode: 42}
+      } as {} as hapi.Request;
+
+      const testError = new Error('Error emitted through a request event');
+
+      // this event should not be recorded
+      fakeServer.events.emit(
+          'request', fakeRequest, {error: testError, channel: 'internal'});
+
+      // this event should be recorded
+      fakeServer.events.emit(
+          'request', fakeRequest, {error: testError, channel: 'error'});
+
+      assert.strictEqual(errorsSent.length, 1);
+      const errorMessage = errorsSent[0];
+
+      // note: the error's stack contains the error message
+      assert.strictEqual(errorMessage.message, testError.stack);
+      assert.strictEqual(
+          errorMessage.context.httpRequest.method, 'custom-method');
+      assert.strictEqual(errorMessage.context.httpRequest.url, 'custom-url');
+      assert.strictEqual(
+          errorMessage.context.httpRequest.userAgent, 'custom-user-agent');
+      assert.strictEqual(
+          errorMessage.context.httpRequest.referrer, 'custom-referrer');
+      assert.strictEqual(
+          errorMessage.context.httpRequest.remoteIp, 'some-remote-address');
+      assert.strictEqual(
+          errorMessage.context.httpRequest.responseStatusCode, 42);
     });
   });
 });
