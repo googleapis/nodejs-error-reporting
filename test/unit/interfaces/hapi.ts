@@ -28,6 +28,7 @@ import {RequestHandler} from '../../../src/google-apis/auth-client';
 import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
 import * as http from 'http';
 import * as hapi from 'hapi';
+import * as Boom from 'boom';
 
 const packageJson = require('../../../../package.json');
 
@@ -137,7 +138,7 @@ describe('Hapi interface', () => {
     it('Should call continue when a boom is emitted if reply is an object',
        done => {
          plugin.register(fakeServer, null!, () => {});
-         fakeServer.emit(EVENT, {response: {isBoom: true}}, {
+         fakeServer.emit(EVENT, {response: new Boom('message')}, {
            continue() {
              // The continue function should be called
              done();
@@ -157,7 +158,7 @@ describe('Hapi interface', () => {
            // The continue function should be called
            done();
          };
-         fakeServer.emit(EVENT, {response: {isBoom: true}}, reply);
+         fakeServer.emit(EVENT, {response: new Boom('message')}, reply);
        });
     it('Should call sendError when a boom is received', done => {
       const fakeClient = {
@@ -168,14 +169,14 @@ describe('Hapi interface', () => {
       } as {} as RequestHandler;
       const plugin = hapiInterface(fakeClient, config);
       plugin.register(fakeServer, null!, () => {});
-      fakeServer.emit('onPreResponse', {response: {isBoom: true}});
+      fakeServer.emit('onPreResponse', {response: new Boom('message')});
     });
     it('Should call next when completing a request', done => {
       plugin.register(fakeServer, null!, () => {
         // The next function should be called
         done();
       });
-      fakeServer.emit(EVENT, {response: {isBoom: true}}, {continue() {}});
+      fakeServer.emit(EVENT, {response: new Boom('message')}, {continue() {}});
     });
   });
   describe('Hapi17', () => {
