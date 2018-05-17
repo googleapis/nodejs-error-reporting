@@ -105,7 +105,7 @@ jobs:
             NPM_CONFIG_PREFIX: /home/node/.npm-global
       - run:
           name: Run unit tests.
-          command: npm test
+          command: npm run test-only
   node6:
     docker:
       - image: 'node:6'
