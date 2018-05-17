@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Request, Response} from 'koa';
+import {Middleware, Request, Response} from 'koa';
 
 import {ErrorMessage} from '../classes/error-message';
 import {Configuration} from '../configuration';
@@ -42,8 +42,7 @@ export function koaErrorHandler(client: RequestHandler, config: Configuration) {
    * @param {Function} next - the result of the request handlers to yield
    * @returns {Undefined} does not return anything
    */
-  return function*(
-      this: {request: Request; response: Response;}, next: Function) {
+  return function*(this: {request: Request; response: Response;}, next: {}) {
     const svc = config.getServiceContext();
 
     try {

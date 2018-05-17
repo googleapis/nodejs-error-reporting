@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-'use strict';
-
-var assert = require('assert');
-var path = require('path');
-var buildStackTrace = require('../../src/build-stack-trace.js').buildStackTrace;
+import * as assert from 'assert';
+import * as path from 'path';
+import {buildStackTrace} from '../../src/build-stack-trace';
 
 const SRC_ROOT = path.join(__dirname, '..', '..', 'src');
 
-describe('build-stack-trace', function() {
-  it('Should not have a message attached if none is given', function() {
+describe('build-stack-trace', () => {
+  it('Should not have a message attached if none is given', () => {
     assert(buildStackTrace().startsWith('    at'));
     assert(!buildStackTrace(undefined).startsWith('undefined'));
     assert(!buildStackTrace(null).startsWith('null'));
   });
 
-  it('Should attach a message if given', function() {
+  it('Should attach a message if given', () => {
     assert(buildStackTrace('Some Message').startsWith('Some Message\n'));
   });
 
-  it('Should not contain error-reporting specific frames', function() {
+  it('Should not contain error-reporting specific frames', () => {
     (function functionA() {
       (function functionB() {
         (function functionC() {
-          var stackTrace = buildStackTrace();
+          const stackTrace = buildStackTrace();
           assert(stackTrace);
           assert.strictEqual(stackTrace.indexOf(SRC_ROOT), -1);
         })();
@@ -45,11 +43,11 @@ describe('build-stack-trace', function() {
     })();
   });
 
-  it('Should return the stack trace', function() {
+  it('Should return the stack trace', () => {
     (function functionA() {
       (function functionB() {
         (function functionC() {
-          var stackTrace = buildStackTrace();
+          const stackTrace = buildStackTrace();
           assert(stackTrace);
           assert.notStrictEqual(stackTrace.indexOf('functionA'), -1);
           assert.notStrictEqual(stackTrace.indexOf('functionB'), -1);

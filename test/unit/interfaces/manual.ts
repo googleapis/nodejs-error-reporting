@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-'use strict';
-
-var assert = require('assert');
-var manual = require('../../../src/interfaces/manual.js');
-var Configuration = require('../../fixtures/configuration.js');
-var config = new Configuration({});
-config.lacksCredentials = function() {
+import * as assert from 'assert';
+import * as manual from '../../../src/interfaces/manual';
+import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
+const config = new Configuration({});
+(config as {} as {lacksCredentials: Function}).lacksCredentials = () => {
   return false;
 };
-var ErrorMessage =
-    require('../../../src/classes/error-message.js').ErrorMessage;
-// var nock = require('nock');
+import {ErrorMessage} from '../../../src/classes/error-message';
+import {RequestHandler} from '../../../src/google-apis/auth-client';
+import {Logger} from '../../../src/types';
+import {RequestInformationContainer} from '../../../src/classes/request-information-container';
 
-describe('Manual handler', function() {
+describe('Manual handler', () => {
   // nock.disableNetConnect();
   // Mocked client
-  var client = {
-    sendError: function(e, cb) {
+  const client: RequestHandler = {
+    sendError(e: ErrorMessage, cb: () => void) {
       // immediately callback
       if (cb) {
         setImmediate(cb);
       }
     },
-  };
-  var report = manual.handlerSetup(client, config, {
-    warn: function(message) {
+  } as {} as RequestHandler;
+  const report = manual.handlerSetup(client, config, {
+    warn(message) {
       // The use of `report` in this class should issue the following warning
       // becasue the `report` class is used directly and, as such, cannot
       // by itself have information where a ErrorMesasge was constructed.  It
@@ -54,59 +53,60 @@ describe('Manual handler', function() {
               'trace.  This error might not be visible in the error reporting ' +
               'console.');
     },
-  });
-  describe('Report invocation behaviour', function() {
-    it('Should allow argument-less invocation', function() {
-      var r = report();
+  } as Logger);
+  describe('Report invocation behaviour', () => {
+    it('Should allow argument-less invocation', () => {
+      const r = report(null!);
       assert(r instanceof ErrorMessage, 'should be an inst of ErrorMessage');
     });
-    it('Should allow single string', function() {
-      var r = report('doohickey');
+    it('Should allow single string', () => {
+      const r = report('doohickey');
       assert(r instanceof ErrorMessage, 'should be an inst of ErrorMessage');
       assert(r.message.match(/doohickey/), 'string error should propagate');
     });
-    it('Should allow single inst of Error', function() {
-      var r = report(new Error('hokeypokey'));
+    it('Should allow single inst of Error', () => {
+      const r = report(new Error('hokeypokey'));
       assert(r.message.match(/hokeypokey/));
     });
-    it('Should allow a function as a malformed error input', function(done) {
-      this.timeout(2000);
-      var r = report(function() {
-        assert(false, 'callback should not be called');
-        done();
-      });
-      assert(r instanceof ErrorMessage, 'should be an inst of ErrorMessage');
-      setTimeout(function() {
-        done();
-      }, 1000);
-    });
-    it('Should callback to the supplied function', function(done) {
-      var r = report('malarkey', function() {
+    it('Should allow a function as a malformed error input',
+       function(this, done) {
+         this.timeout(2000);
+         const r = report(() => {
+           assert(false, 'callback should not be called');
+           done();
+         });
+         assert(r instanceof ErrorMessage, 'should be an inst of ErrorMessage');
+         setTimeout(() => {
+           done();
+         }, 1000);
+       });
+    it('Should callback to the supplied function', done => {
+      const r = report('malarkey', () => {
         done();
       });
       assert(r.message.match(/malarkey/), 'string error should propagate');
     });
-    it('replace the error string with the additional message', function(done) {
-      var r = report('monkey', 'wrench', function() {
+    it('replace the error string with the additional message', done => {
+      const r = report('monkey', 'wrench', () => {
         done();
       });
       assert.strictEqual(
           r.message, 'wrench', 'additional message should replace');
     });
-    it('Should allow a full array of optional arguments', function(done) {
-      var r = report('donkey', {method: 'FETCH'}, 'cart', function() {
+    it('Should allow a full array of optional arguments', done => {
+      const r = report('donkey', {method: 'FETCH'}, 'cart', () => {
         done();
       });
       assert.strictEqual(r.message, 'cart', 'additional message replace');
       assert.strictEqual(r.context.httpRequest.method, 'FETCH');
     });
-    it('Should allow all optional arguments except the callback', function() {
-      var r = report('whiskey', {method: 'SIP'}, 'sour');
+    it('Should allow all optional arguments except the callback', () => {
+      const r = report('whiskey', {method: 'SIP'}, 'sour');
       assert.strictEqual(r.message, 'sour', 'additional message replace');
       assert.strictEqual(r.context.httpRequest.method, 'SIP');
     });
-    it('Should allow a lack of additional message', function(done) {
-      var r = report('ticky', {method: 'TACKEY'}, function() {
+    it('Should allow a lack of additional message', done => {
+      const r = report('ticky', {method: 'TACKEY'}, () => {
         done();
       });
       assert(
@@ -114,40 +114,40 @@ describe('Manual handler', function() {
           'original message should be preserved');
       assert.strictEqual(r.context.httpRequest.method, 'TACKEY');
     });
-    it('Should ignore arguments', function(done) {
-      var r = report('hockey', function() {
+    it('Should ignore arguments', done => {
+      const r = report('hockey', () => {
         done();
       }, 'field');
       assert(
           r.message.match('hockey') && !r.message.match('field'),
           'string after callback should be ignored');
     });
-    it('Should ignore arguments', function(done) {
-      var r = report('passkey', function() {
+    it('Should ignore arguments', done => {
+      const r = report('passkey', () => {
         done();
       }, {method: 'HONK'});
       assert.notEqual(r.context.httpRequest.method, 'HONK');
     });
-    it('Should allow null arguments as placeholders', function(done) {
-      var r = report('pokey', null, null, function() {
+    it('Should allow null arguments as placeholders', done => {
+      const r = report('pokey', null!, null!, () => {
         done();
       });
       assert(r.message.match(/pokey/), 'string error should propagate');
     });
-    it('Should allow explicit undefined', function(done) {
-      var r = report('Turkey', undefined, undefined, function() {
+    it('Should allow explicit undefined', done => {
+      const r = report('Turkey', undefined, undefined, () => {
         done();
       });
       assert(r.message.match(/Turkey/), 'string error should propagate');
     });
-    it('Should allow request to be supplied as undefined', function(done) {
-      var r = report('turnkey', undefined, 'solution', function() {
+    it('Should allow request to be supplied as undefined', done => {
+      const r = report('turnkey', undefined, 'solution', () => {
         done();
       });
       assert.strictEqual(r.message, 'solution', 'error should propagate');
     });
-    it('Should allow additional message', function(done) {
-      var r = report('Mickey', {method: 'SNIFF'}, undefined, function() {
+    it('Should allow additional message', done => {
+      const r = report('Mickey', {method: 'SNIFF'}, undefined, () => {
         done();
       });
       assert(
@@ -157,20 +157,21 @@ describe('Manual handler', function() {
     });
   });
 
-  describe('Custom Payload Builder', function() {
-    it('Should accept builder inst as only argument', function() {
-      var msg = 'builder test';
-      var r = report(new ErrorMessage().setMessage(msg));
+  describe('Custom Payload Builder', () => {
+    it('Should accept builder inst as only argument', () => {
+      const msg = 'builder test';
+      const r = report(new ErrorMessage().setMessage(msg));
       assert(
           r.message.startsWith(msg),
           'string message should propagate from error message inst');
     });
-    it('Should accept builder and request as arguments', function() {
-      var msg = 'builder test';
-      var oldReq = {method: 'GET'};
-      var newReq = {method: 'POST'};
-      var r = report(
-          new ErrorMessage().setMessage(msg).consumeRequestInformation(oldReq),
+    it('Should accept builder and request as arguments', () => {
+      const msg = 'builder test';
+      const oldReq = {method: 'GET'};
+      const newReq = {method: 'POST'};
+      const r = report(
+          new ErrorMessage().setMessage(msg).consumeRequestInformation(
+              oldReq as RequestInformationContainer),
           newReq);
       assert(
           r.message.startsWith(msg),
@@ -180,18 +181,18 @@ describe('Manual handler', function() {
         'if supplied, should overwrite any prexisting data in the field.',
       ].join('\n'));
     });
-    it('Should accept message and additional message params as', function() {
-      var oldMsg = 'builder test';
-      var newMsg = 'analysis';
-      var r = report(new ErrorMessage().setMessage(oldMsg), newMsg);
+    it('Should accept message and additional message params as', () => {
+      const oldMsg = 'builder test';
+      const newMsg = 'analysis';
+      const r = report(new ErrorMessage().setMessage(oldMsg), newMsg);
       assert.strictEqual(r.message, newMsg, [
         'message supplied at report invocation should propagte and, if',
         'supplied, should overwrite any prexisting data in the message field.',
       ].join('\n'));
     });
-    it('Should accept message and callback function', function(done) {
-      var oldMsg = 'builder test';
-      report(new ErrorMessage().setMessage(oldMsg), function() {
+    it('Should accept message and callback function', done => {
+      const oldMsg = 'builder test';
+      report(new ErrorMessage().setMessage(oldMsg), () => {
         done();
       });
     });

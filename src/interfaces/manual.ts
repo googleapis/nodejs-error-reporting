@@ -24,7 +24,7 @@ import {manualRequestInformationExtractor} from '../request-extractors/manual';
 import {populateErrorMessage} from '../populate-error-message';
 import {RequestHandler} from '../google-apis/auth-client';
 import {Configuration} from '../configuration';
-import {Logger} from '@google-cloud/common';
+import * as types from '../types';
 import * as http from 'http';
 import {Request} from '../request-extractors/manual';
 
@@ -46,7 +46,7 @@ export type Callback =
  *  function
  */
 export function handlerSetup(
-    client: RequestHandler, config: Configuration, logger: Logger) {
+    client: RequestHandler, config: Configuration, logger: types.Logger) {
   /**
    * The interface for manually reporting errors to the Google Error API in
    * application code.
@@ -64,8 +64,10 @@ export function handlerSetup(
    * @returns {ErrorMessage} - returns the error message created through with
    * the parameters given.
    */
+  // the `err` argument can be anything, including `null` and `undefined`
   function reportManualError(
-      err: {}, request?: Request, additionalMessage?: string|{},
+      err: any,  // tslint:disable-line:no-any
+      request?: Request|Callback|string, additionalMessage?: Callback|string|{},
       callback?: Callback|{}|string) {
     let em;
     if (isString(request)) {

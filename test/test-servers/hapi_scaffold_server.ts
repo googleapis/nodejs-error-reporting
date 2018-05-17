@@ -13,31 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var hapi = require('hapi');
-var errorHandler = require('../../src/index.js')();
+import * as hapi from 'hapi';
+import {ErrorReporting} from '../../src/index';
+const errorHandler = new ErrorReporting();
 
-var server = new hapi.Server();
+const server = new hapi.Server();
 server.connection({port: 3000});
 
 // eslint-disable-next-line no-console
-var log = console.log;
+const log = console.log;
 
 // eslint-disable-next-line no-console
-var error = console.error;
+const error = console.error;
 
 server.start(err => {
   if (err) {
     throw err;
   }
-  log('Server running at', server.info.uri);
+  log('Server running at', server.info!.uri);
 });
 
 server.route({
   method: 'GET',
   path: '/get',
-  handler: function() {
+  handler() {
     log('Got a GET');
     throw new Error('an error');
   },
@@ -46,14 +46,15 @@ server.route({
 server.route({
   method: 'POST',
   path: '/post',
-  handler: function(request) {
+  handler(request) {
     log('Got a POST', request.payload);
     throw new Error('An error on the hapi post route');
   },
 });
 
-server.register({register: errorHandler.hapi}, err => {
-  if (err) {
-    error('There was an error in registering the plugin', err);
-  }
-});
+server.register(
+    {register: errorHandler.hapi} as {} as hapi.PluginFunction<{}>, err => {
+      if (err) {
+        error('There was an error in registering the plugin', err);
+      }
+    });

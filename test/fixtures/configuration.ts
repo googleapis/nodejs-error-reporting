@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-const errors = require('../../src/index.js')();
-errors.report('Sample test string', err => {
-  // eslint-disable-next-line no-console
-  console.log(
-      'Callback from report:\n', '\tError: ', err, '\n', '\tResponse Body:');
-});
+import {Configuration, ConfigurationOptions} from '../../src/configuration';
+import {Logger} from '../../src/types';
+
+export class FakeConfiguration extends Configuration {
+  constructor(config: ConfigurationOptions|undefined, logger?: Logger) {
+    super(config, logger || {warn() {}} as {} as Logger);
+  }
+}
