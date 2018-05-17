@@ -143,11 +143,7 @@ jobs:
             cd ..
           environment:
             NPM_CONFIG_PREFIX: /home/node/.npm-global
-      - run:
-          name: Run linting.
-          command: npm run lint
-          environment:
-            NPM_CONFIG_PREFIX: /home/node/.npm-global
+      - run: npm run lint
   docs:
     docker:
       - image: 'node:8'
