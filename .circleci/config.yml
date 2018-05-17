@@ -101,8 +101,6 @@ jobs:
           command: |
             npm install
             npm link
-          environment:
-            NPM_CONFIG_PREFIX: /home/node/.npm-global
       - run:
           name: Run unit tests.
           command: npm run test-only
@@ -141,8 +139,6 @@ jobs:
             npm link @google-cloud/error-reporting
             npm install
             cd ..
-          environment:
-            NPM_CONFIG_PREFIX: /home/node/.npm-global
       - run: npm run lint
   docs:
     docker:
@@ -176,7 +172,6 @@ jobs:
           environment:
             GCLOUD_PROJECT: long-door-651
             GOOGLE_APPLICATION_CREDENTIALS: /home/node/error-reporting/.circleci/key.json
-            NPM_CONFIG_PREFIX: /home/node/.npm-global
       - run:
           name: Remove unencrypted key.
           command: rm .circleci/key.json
