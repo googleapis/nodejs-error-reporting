@@ -134,6 +134,7 @@ jobs:
       - checkout
       - run: *remove_package_lock
       - run: npm install
+      - run: cd samples && npm install && cd ../
       - run: npm run lint
   docs:
     docker:
