@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// jscs doesn't understand koa..
-// jscs:disable
 
 import {ErrorReporting} from '../../src';
 const errorHandler = new ErrorReporting({
@@ -22,7 +20,7 @@ const errorHandler = new ErrorReporting({
   //       option is now invalid.
   onUncaughtException: 'report',
 } as {});
-import * as koa from 'koa';
+import koa from 'koa';
 const app = (koa as Function)();
 
 app.use(errorHandler.koa);

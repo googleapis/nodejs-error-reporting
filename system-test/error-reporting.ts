@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import * as assert from 'assert';
+import assert from 'assert';
 import * as is from 'is';
-import * as nock from 'nock';
+import nock from 'nock';
 
 import {ErrorMessage} from '../src/classes/error-message';
 import {RequestHandler} from '../src/google-apis/auth-client';
@@ -28,7 +28,6 @@ import {ErrorGroupStats, ErrorsApiTransport} from '../utils/errors-api-transport
 const isObject = is.object;
 const isString = is.string;
 const isEmpty = is.empty;
-import forEach = require('lodash.foreach');
 import assign = require('lodash.assign');
 import pick = require('lodash.pick');
 import omitBy = require('lodash.omitby');
@@ -63,7 +62,7 @@ class InstancedEnv {
   }
 
   sterilizeProcess() {
-    forEach(envKeys, (v, k) => delete process.env[k]);
+    envKeys.forEach(key => delete process.env[key]);
     return this;
   }
 
