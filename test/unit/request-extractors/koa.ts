@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-'use strict';
+import assert from 'assert';
+import {Request, Response} from 'koa';
 
-var assert = require('assert');
-var koaRequestInformationExtractor =
-    require('../../../src/request-extractors/koa.js')
-        .koaRequestInformationExtractor;
-var Fuzzer = require('../../../utils/fuzzer.js');
+import {koaRequestInformationExtractor} from '../../../src/request-extractors/koa';
+import {Fuzzer} from '../../../utils/fuzzer';
 
-describe('koaRequestInformationExtractor', function() {
-  describe('Behaviour under invalid input', function() {
-    it('Should produce a default value', function() {
-      var DEFAULT_RETURN_VALUE = {
+describe('koaRequestInformationExtractor', () => {
+  describe('Behaviour under invalid input', () => {
+    it('Should produce a default value', () => {
+      const DEFAULT_RETURN_VALUE = {
         method: '',
         url: '',
         userAgent: '',
@@ -33,17 +31,17 @@ describe('koaRequestInformationExtractor', function() {
         statusCode: 0,
         remoteAddress: '',
       };
-      var f = new Fuzzer();
-      var cbFn = function(value) {
+      const f = new Fuzzer();
+      const cbFn = (value: {}) => {
         assert.deepEqual(value, DEFAULT_RETURN_VALUE);
       };
       f.fuzzFunctionForTypes(
           koaRequestInformationExtractor, ['object', 'object'], cbFn);
     });
   });
-  describe('Behaviour under valid input', function() {
-    it('Should produce the expected value', function() {
-      var FULL_REQ_DERIVATION_VALUE = {
+  describe('Behaviour under valid input', () => {
+    it('Should produce the expected value', () => {
+      const FULL_REQ_DERIVATION_VALUE = {
         method: 'STUB_METHOD',
         url: 'www.TEST-URL.com',
         headers: {
@@ -52,10 +50,10 @@ describe('koaRequestInformationExtractor', function() {
         },
         ip: '0.0.0.0',
       };
-      var FULL_RES_DERIVATION_VALUE = {
+      const FULL_RES_DERIVATION_VALUE = {
         status: 200,
       };
-      var FULL_REQ_EXPECTED_VALUE = {
+      const FULL_REQ_EXPECTED_VALUE = {
         method: 'STUB_METHOD',
         url: 'www.TEST-URL.com',
         userAgent: 'Something like Mozilla',
@@ -65,7 +63,8 @@ describe('koaRequestInformationExtractor', function() {
       };
       assert.deepEqual(
           koaRequestInformationExtractor(
-              FULL_REQ_DERIVATION_VALUE, FULL_RES_DERIVATION_VALUE),
+              FULL_REQ_DERIVATION_VALUE as Request,
+              FULL_RES_DERIVATION_VALUE as Response),
           FULL_REQ_EXPECTED_VALUE);
     });
   });

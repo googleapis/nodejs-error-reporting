@@ -13,43 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// jscs doesn't understand koa..
-// jscs:disable
-'use strict';
 
-var errorHandler = require('../../src/index.js')({
+import {ErrorReporting} from '../../src';
+const errorHandler = new ErrorReporting({
+  // TODO: Address the fact that this configuration
+  //       option is now invalid.
   onUncaughtException: 'report',
-});
-var koa = require('koa');
-var app = koa();
+} as {});
+import koa from 'koa';
+const app = (koa as Function)();
 
 app.use(errorHandler.koa);
 
-app.use(function*(next) {
+app.use(function*(this: {throw: Function}, next: {}) {
   // This will set status and message
   this.throw('Error Message', 500);
   yield next;
 });
 
-app.use(function*(next) {
-  var start = new Date();
+app.use(function*(this: {set: Function}, next: {}) {
+  const start = Date.now();
   yield next;
-  var ms = new Date() - start;
+  const ms = Date.now() - start;
   this.set('X-Response-Time', ms + 'ms');
 });
 
 // logger
 
-app.use(function*(next) {
-  var start = new Date();
+app.use(function*(this: {method: {}; url: {}}, next: {}) {
+  const start = Date.now();
   yield next;
-  var ms = new Date() - start;
+  const ms = Date.now() - start;
   // eslint-disable-next-line no-console
   console.log('%s %s - %s', this.method, this.url, ms);
 });
 
 // response
-app.use(function*(next) {
+app.use(function*(this: {body: string}, next: {}) {
   this.body = 'Hello World';
   yield next;
 });

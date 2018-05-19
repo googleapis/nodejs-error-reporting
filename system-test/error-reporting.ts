@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-'use strict';
+import assert from 'assert';
+import * as is from 'is';
+import nock from 'nock';
 
-var assert = require('assert');
-var nock = require('nock');
-var RequestHandler =
-    require('../src/google-apis/auth-client.js').RequestHandler;
-var ErrorsApiTransport = require('../utils/errors-api-transport.js');
-var ErrorMessage = require('../src/classes/error-message.js').ErrorMessage;
-var Configuration = require('../test/fixtures/configuration.js');
-var createLogger = require('../src/logger.js').createLogger;
-var is = require('is');
-var isObject = is.object;
-var isString = is.string;
-var isEmpty = is.empty;
-var forEach = require('lodash.foreach');
-var assign = require('lodash.assign');
-var pick = require('lodash.pick');
-var omitBy = require('lodash.omitby');
+import {ErrorMessage} from '../src/classes/error-message';
+import {RequestHandler} from '../src/google-apis/auth-client';
+import {ErrorReporting} from '../src/index';
+import {createLogger} from '../src/logger';
+import {FakeConfiguration as Configuration} from '../test/fixtures/configuration';
+import {ErrorGroupStats, ErrorsApiTransport} from '../utils/errors-api-transport';
+
+const isObject = is.object;
+const isString = is.string;
+const isEmpty = is.empty;
+import assign = require('lodash.assign');
+import pick = require('lodash.pick');
+import omitBy = require('lodash.omitby');
 // eslint-disable-next-line node/no-extraneous-require
-var request = require('request');
-var util = require('util');
-var path = require('path');
+import * as request from 'request';
+import * as util from 'util';
+import * as path from 'path';
 
 const ERR_TOKEN = '_@google_STACKDRIVER_INTEGRATION_TEST_ERROR__';
 const TIMEOUT = 30000;
@@ -47,7 +46,12 @@ const envKeys = [
 ];
 
 class InstancedEnv {
-  constructor(injectedEnv) {
+  injectedEnv: {[key: string]: string|undefined};
+  _originalEnv: Partial<Pick<{[key: string]: string | undefined}, string>>;
+  apiKey!: string;
+  projectId!: string;
+
+  constructor(injectedEnv: {[key: string]: string|undefined}) {
     assign(this, injectedEnv);
     this.injectedEnv = injectedEnv;
     this._originalEnv = this._captureProcessProperties();
@@ -58,7 +62,7 @@ class InstancedEnv {
   }
 
   sterilizeProcess() {
-    forEach(envKeys, (v, k) => delete process.env[k]);
+    envKeys.forEach(key => delete process.env[key]);
     return this;
   }
 
@@ -109,7 +113,7 @@ const env = new InstancedEnv({
 });
 
 function shouldRun() {
-  var shouldRun = true;
+  let shouldRun = true;
   if (!isString(env.injected().projectId)) {
     console.log('The project id (projectId) was not set in the env');
     shouldRun = false;
@@ -139,15 +143,17 @@ if (!shouldRun()) {
   process.exit(1);
 }
 
-describe('Request/Response lifecycle mocking', function() {
-  var sampleError = new Error(ERR_TOKEN);
-  var errorMessage = new ErrorMessage().setMessage(sampleError);
-  var fakeService, client, logger;
-  before(function() {
+describe('Request/Response lifecycle mocking', () => {
+  const sampleError = new Error(ERR_TOKEN);
+  const errorMessage = new ErrorMessage().setMessage(sampleError.message);
+  let fakeService: {reply: Function; query: Function;};
+  let client: RequestHandler;
+  let logger;
+  before(() => {
     env.sterilizeProcess();
   });
 
-  beforeEach(function() {
+  beforeEach(() => {
     env.setProjectId().setKeyFilename().setProduction();
     fakeService =
         nock(
@@ -160,36 +166,37 @@ describe('Request/Response lifecycle mocking', function() {
         new Configuration({ignoreEnvironmentCheck: true}, logger), logger);
   });
 
-  afterEach(function() {
+  afterEach(() => {
     env.sterilizeProcess();
     nock.cleanAll();
   });
 
-  after(function() {
+  after(() => {
     env.restoreProcessToOriginalState();
   });
 
-  it('Should fail when receiving non-retryable errors', function(done) {
+  it('Should fail when receiving non-retryable errors', function(this, done) {
     this.timeout(5000);
-    client.sendError({}, function(err, response) {
+    client.sendError({} as ErrorMessage, (err, response) => {
       assert(err instanceof Error);
-      assert.strictEqual(err.message.toLowerCase(), 'message cannot be empty.');
+      assert.strictEqual(
+          err!.message.toLowerCase(), 'message cannot be empty.');
       assert(isObject(response));
-      assert.strictEqual(response.statusCode, 400);
+      assert.strictEqual(response!.statusCode, 400);
       done();
     });
   });
 
-  it('Should retry when receiving retryable errors', function(done) {
+  it('Should retry when receiving retryable errors', function(this, done) {
     this.timeout(25000);
-    var tries = 0;
-    var intendedTries = 4;
-    fakeService.reply(429, function() {
+    let tries = 0;
+    const intendedTries = 4;
+    fakeService.reply(429, () => {
       tries += 1;
       console.log('Mock Server Received Request:', tries + '/' + intendedTries);
       return {error: 'Please try again later'};
     });
-    client.sendError(errorMessage, function() {
+    client.sendError(errorMessage, () => {
       assert.strictEqual(tries, intendedTries);
       done();
     });
@@ -197,55 +204,55 @@ describe('Request/Response lifecycle mocking', function() {
 
   it('Should provide the key as a query string on outgoing requests when ' +
          'using an API key',
-     function(done) {
+     done => {
        env.sterilizeProcess().setProjectId().setProduction();
-       var key = env.apiKey;
-       var logger = createLogger({logLevel: 5});
-       var client = new RequestHandler(
-           new Configuration({key: key, ignoreEnvironmentCheck: true}, logger),
+       const key = env.apiKey;
+       const logger = createLogger({logLevel: 5});
+       const client = new RequestHandler(
+           new Configuration({key, ignoreEnvironmentCheck: true}, logger),
            logger);
-       fakeService.query({key: key}).reply(200, function(uri) {
+       fakeService.query({key}).reply(200, (uri: string) => {
          assert(uri.indexOf('key=' + key) > -1);
          return {};
        });
-       client.sendError(errorMessage, function() {
+       client.sendError(errorMessage, () => {
          done();
        });
      });
 
   it('Should still execute the request with a callback-less invocation',
-     function(done) {
-       fakeService.reply(200, function() {
+     done => {
+       fakeService.reply(200, () => {
          done();
        });
        client.sendError(errorMessage);
      });
 });
 
-describe('Client creation', function() {
-  var sampleError = new Error(ERR_TOKEN);
-  var errorMessage = new ErrorMessage().setMessage(sampleError.stack);
-  after(function() {
+describe('Client creation', () => {
+  const sampleError = new Error(ERR_TOKEN);
+  const errorMessage = new ErrorMessage().setMessage(sampleError.stack!);
+  after(() => {
     env.sterilizeProcess();
   });
 
   it('Should not throw on initialization when using only project id as a ' +
          'runtime argument',
-     function(done) {
+     function(this, done) {
        env.sterilizeProcess().setKeyFilename();
-       var logger = createLogger({logLevel: 5});
-       var cfg = new Configuration(
+       const logger = createLogger({logLevel: 5});
+       const cfg = new Configuration(
            {
              projectId: env.injected().projectId,
              ignoreEnvironmentCheck: true,
            },
            logger);
        this.timeout(10000);
-       assert.doesNotThrow(function() {
+       assert.doesNotThrow(() => {
          new RequestHandler(cfg, logger)
-             .sendError(errorMessage, function(err, response, body) {
+             .sendError(errorMessage, (err, response, body) => {
                assert.strictEqual(err, null);
-               assert.strictEqual(response.statusCode, 200);
+               assert.strictEqual(response!.statusCode, 200);
                assert(isObject(body) && isEmpty(body));
                done();
              });
@@ -254,16 +261,16 @@ describe('Client creation', function() {
 
   it('Should not throw on initialization when using only project id as an ' +
          'env variable',
-     function(done) {
+     function(this, done) {
        env.sterilizeProcess().setProjectId().setKeyFilename();
-       var logger = createLogger({logLevel: 5});
-       var cfg = new Configuration({ignoreEnvironmentCheck: true}, logger);
+       const logger = createLogger({logLevel: 5});
+       const cfg = new Configuration({ignoreEnvironmentCheck: true}, logger);
        this.timeout(10000);
-       assert.doesNotThrow(function() {
+       assert.doesNotThrow(() => {
          new RequestHandler(cfg, logger)
-             .sendError(errorMessage, function(err, response, body) {
+             .sendError(errorMessage, (err, response, body) => {
                assert.strictEqual(err, null);
-               assert.strictEqual(response.statusCode, 200);
+               assert.strictEqual(response!.statusCode, 200);
                assert(isObject(body) && isEmpty(body));
                done();
              });
@@ -272,21 +279,21 @@ describe('Client creation', function() {
 
   it('Should not throw on initialization when using only project number as ' +
          'a runtime argument',
-     function(done) {
+     function(this, done) {
        env.sterilizeProcess().setKeyFilename();
-       var logger = createLogger({logLevel: 5});
-       var cfg = new Configuration(
+       const logger = createLogger({logLevel: 5});
+       const cfg = new Configuration(
            {
-             projectId: parseInt(env.injected().projectNumber),
+             projectId: '' + Number(env.injected().projectNumber),
              ignoreEnvironmentCheck: true,
            },
            logger);
        this.timeout(10000);
-       assert.doesNotThrow(function() {
+       assert.doesNotThrow(() => {
          new RequestHandler(cfg, logger)
-             .sendError(errorMessage, function(err, response, body) {
+             .sendError(errorMessage, (err, response, body) => {
                assert.strictEqual(err, null);
-               assert.strictEqual(response.statusCode, 200);
+               assert.strictEqual(response!.statusCode, 200);
                assert(isObject(body) && isEmpty(body));
                done();
              });
@@ -295,16 +302,16 @@ describe('Client creation', function() {
 
   it('Should not throw on initialization when using only project number as ' +
          'an env variable',
-     function(done) {
+     function(this, done) {
        env.sterilizeProcess().setKeyFilename().setProjectNumber();
-       var logger = createLogger({logLevel: 5});
-       var cfg = new Configuration({ignoreEnvironmentCheck: true}, logger);
+       const logger = createLogger({logLevel: 5});
+       const cfg = new Configuration({ignoreEnvironmentCheck: true}, logger);
        this.timeout(10000);
-       assert.doesNotThrow(function() {
+       assert.doesNotThrow(() => {
          new RequestHandler(cfg, logger)
-             .sendError(errorMessage, function(err, response, body) {
+             .sendError(errorMessage, (err, response, body) => {
                assert.strictEqual(err, null);
-               assert.strictEqual(response.statusCode, 200);
+               assert.strictEqual(response!.statusCode, 200);
                assert(isObject(body) && isEmpty(body));
                done();
              });
@@ -312,78 +319,77 @@ describe('Client creation', function() {
      });
 });
 
-describe('Expected Behavior', function() {
-  var ERROR_STRING = [
+describe('Expected Behavior', () => {
+  const ERROR_STRING = [
     'Stackdriver error reporting client has not been configured to send',
     'errors, please check the NODE_ENV environment variable and make',
     'sure it is set to "production" or set the ignoreEnvironmentCheck',
     'property to true in the runtime configuration object',
   ].join(' ');
 
-  var er = new Error(ERR_TOKEN);
-  var em = new ErrorMessage().setMessage(er.stack);
+  const er = new Error(ERR_TOKEN);
+  const em = new ErrorMessage().setMessage(er.stack!);
 
-  after(function() {
+  after(() => {
     env.sterilizeProcess();
   });
 
   it('Should callback with an error with a configuration to not report errors',
-     function(done) {
+     done => {
        env.sterilizeProcess().setKeyFilename().setProjectId();
        process.env.NODE_ENV = 'null';
-       var logger = createLogger({logLevel: 5});
-       var client =
+       const logger = createLogger({logLevel: 5});
+       const client =
            new RequestHandler(new Configuration(undefined, logger), logger);
-       client.sendError({}, function(err, response) {
+       client.sendError({} as ErrorMessage, (err, response) => {
          assert(err instanceof Error);
-         assert.strictEqual(err.message, ERROR_STRING);
+         assert.strictEqual(err!.message, ERROR_STRING);
          assert.strictEqual(response, null);
          done();
        });
      });
 
-  it('Should succeed in its request given a valid project id', function(done) {
+  it('Should succeed in its request given a valid project id', done => {
     env.sterilizeProcess();
-    var logger = createLogger({logLevel: 5});
-    var cfg = new Configuration(
+    const logger = createLogger({logLevel: 5});
+    const cfg = new Configuration(
         {
           projectId: env.injected().projectId,
           ignoreEnvironmentCheck: true,
         },
         logger);
-    var client = new RequestHandler(cfg, logger);
+    const client = new RequestHandler(cfg, logger);
 
-    client.sendError(em, function(err, response, body) {
+    client.sendError(em, (err, response, body) => {
       assert.strictEqual(err, null);
       assert(isObject(body));
       assert(isEmpty(body));
-      assert.strictEqual(response.statusCode, 200);
+      assert.strictEqual(response!.statusCode, 200);
       done();
     });
   });
 
-  it('Should succeed in its request given a valid project number',
-     function(done) {
-       env.sterilizeProcess();
-       var logger = createLogger({logLevel: 5});
-       var cfg = new Configuration(
-           {
-             projectId: parseInt(env.injected().projectNumber),
-             ignoreEnvironmentCheck: true,
-           },
-           logger);
-       var client = new RequestHandler(cfg, logger);
-       client.sendError(em, function(err, response, body) {
-         assert.strictEqual(err, null);
-         assert(isObject(body));
-         assert(isEmpty(body));
-         assert.strictEqual(response.statusCode, 200);
-         done();
-       });
-     });
+  it('Should succeed in its request given a valid project number', done => {
+    env.sterilizeProcess();
+    const logger = createLogger({logLevel: 5});
+    const cfg = new Configuration(
+        {
+          projectId: '' + Number(env.injected().projectNumber),
+          ignoreEnvironmentCheck: true,
+        },
+        logger);
+    const client = new RequestHandler(cfg, logger);
+    client.sendError(em, (err, response, body) => {
+      assert.strictEqual(err, null);
+      assert(isObject(body));
+      assert(isEmpty(body));
+      assert.strictEqual(response!.statusCode, 200);
+      done();
+    });
+  });
 });
 
-describe('Error Reporting API', function() {
+describe('Error Reporting API', () => {
   [{
     name: 'when a valid API key is given',
     getKey: () => env.apiKey,
@@ -405,42 +411,43 @@ describe('Error Reporting API', function() {
      message: 'API key not valid. Please pass a valid API key.',
      statusCode: 400
    },
-  ].forEach(function(testCase) {
-    it(`should return an expected message ${testCase.name}`, function(done) {
-      this.timeout(30000);
-      const API = 'https://clouderrorreporting.googleapis.com/v1beta1';
-      const key = testCase.getKey();
-      request.post(
-          {
-            url: `${API}/projects/${env.projectId}/events:report?key=${key}`,
-            json: {},
-          },
-          (err, response, body) => {
-            assert.ok(!err && body.error);
-            assert.strictEqual(response.statusCode, testCase.statusCode);
-            assert.strictEqual(body.error.message, testCase.message);
-            done();
-          });
-    });
+  ].forEach(testCase => {
+    it(`should return an expected message ${testCase.name}`,
+       function(this, done) {
+         this.timeout(30000);
+         const API = 'https://clouderrorreporting.googleapis.com/v1beta1';
+         const key = testCase.getKey();
+         request.post(
+             {
+               url: `${API}/projects/${env.projectId}/events:report?key=${key}`,
+               json: {},
+             },
+             (err, response, body) => {
+               assert.ok(!err && body.error);
+               assert.strictEqual(response.statusCode, testCase.statusCode);
+               assert.strictEqual(body.error.message, testCase.message);
+               done();
+             });
+       });
   });
 });
 
-describe('error-reporting', function() {
+describe('error-reporting', () => {
   const SRC_ROOT = path.join(__dirname, '..', 'src');
   const TIMESTAMP = Date.now();
   const BASE_NAME = 'error-reporting-system-test';
-  function buildName(suffix) {
+  function buildName(suffix: string) {
     return [TIMESTAMP, BASE_NAME, suffix].join('_');
   }
 
   const SERVICE = buildName('service-name');
   const VERSION = buildName('service-version');
 
-  var errors;
-  var transport;
-  var oldLogger;
-  var logOutput = '';
-  before(function() {
+  let errors: ErrorReporting;
+  let transport: ErrorsApiTransport;
+  let oldLogger: (text: string) => void;
+  let logOutput = '';
+  before(() => {
     // This test assumes that only the error-reporting library will be
     // adding listeners to the 'unhandledRejection' event.  Thus we need to
     // make sure that no listeners for that event exist.  If this check
@@ -449,17 +456,17 @@ describe('error-reporting', function() {
     // interfering with existing listeners of the 'unhandledRejection' event.
     assert.strictEqual(process.listenerCount('unhandledRejection'), 0);
     oldLogger = console.log;
-    console.log = function() {
-      var text = util.format.apply(null, arguments);
+    console.log = function(this) {
+      const text = util.format.apply(null, arguments);
       oldLogger(text);
       logOutput += text;
     };
     reinitialize();
   });
 
-  function reinitialize(extraConfig) {
+  function reinitialize(extraConfig?: {}) {
     process.removeAllListeners('unhandledRejection');
-    var config = Object.assign(
+    const initConfiguration = Object.assign(
         {
           ignoreEnvironmentCheck: true,
           serviceContext: {
@@ -468,32 +475,35 @@ describe('error-reporting', function() {
           },
         },
         extraConfig || {});
-    const ErrorReporting = require('../src/index.js').ErrorReporting;
-    errors = new ErrorReporting(config);
-    transport = new ErrorsApiTransport(errors._config, errors._logger);
+    errors = new ErrorReporting(initConfiguration);
+    const logger = createLogger(initConfiguration);
+    const configuration = new Configuration(initConfiguration, logger);
+    transport = new ErrorsApiTransport(configuration, logger);
   }
 
-  after(function(done) {
+  after(done => {
     console.log = oldLogger;
     if (transport) {
-      transport.deleteAllEvents(function(err) {
+      transport.deleteAllEvents(err => {
         assert.ifError(err);
         done();
       });
     }
   });
 
-  afterEach(function() {
+  afterEach(() => {
     logOutput = '';
   });
 
-  function verifyAllGroups(messageTest, timeout, cb) {
-    setTimeout(function() {
-      transport.getAllGroups(function(err, groups) {
+  function verifyAllGroups(
+      messageTest: (message: string) => void, timeout: number,
+      cb: (matchedErrors: ErrorGroupStats[]) => void) {
+    setTimeout(() => {
+      transport.getAllGroups((err, groups) => {
         assert.ifError(err);
         assert.ok(groups);
 
-        var matchedErrors = groups.filter(function(errItem) {
+        const matchedErrors = groups!.filter(errItem => {
           return (
               errItem && errItem.representative &&
               errItem.representative.serviceContext &&
@@ -507,14 +517,15 @@ describe('error-reporting', function() {
     }, timeout);
   }
 
-  function verifyServerResponse(messageTest, timeout, cb) {
-    verifyAllGroups(messageTest, timeout, function(matchedErrors) {
+  function verifyServerResponse(
+      messageTest: (message: string) => void, timeout: number, cb: () => void) {
+    verifyAllGroups(messageTest, timeout, matchedErrors => {
       // The error should have been reported exactly once
       assert.strictEqual(matchedErrors.length, 1);
-      var errItem = matchedErrors[0];
+      const errItem = matchedErrors[0];
       assert.ok(errItem);
       assert.equal(errItem.count, 1);
-      var rep = errItem.representative;
+      const rep = errItem.representative;
       assert.ok(rep);
       // Ensure the stack trace in the message does not contain any frames
       // specific to the error-reporting library.
@@ -526,7 +537,7 @@ describe('error-reporting', function() {
       // This ensures that only the frames specific to the
       // error-reporting library are removed from the stack trace.
       assert.notStrictEqual(rep.message.indexOf('expectedTopOfStack'), -1);
-      var context = rep.serviceContext;
+      const context = rep.serviceContext;
       assert.ok(context);
       assert.strictEqual(context.service, SERVICE);
       assert.strictEqual(context.version, VERSION);
@@ -534,9 +545,12 @@ describe('error-reporting', function() {
     });
   }
 
-  function verifyReporting(errOb, messageTest, timeout, cb) {
+  // the `errOb` argument can be anything, including `null` and `undefined`
+  function verifyReporting(
+      errOb: any,  // tslint:disable-line:no-any
+      messageTest: (message: string) => void, timeout: number, cb: () => void) {
     (function expectedTopOfStack() {
-      errors.report(errOb, function(err, response, body) {
+      errors.report(errOb, undefined, undefined, (err, response, body) => {
         assert.ifError(err);
         assert(isObject(response));
         assert.deepEqual(body, {});
@@ -554,94 +568,97 @@ describe('error-reporting', function() {
   it('Should correctly publish an error that is an Error object',
      function verifyErrors(done) {
        this.timeout(TIMEOUT * 2);
-       var errorId = buildName('with-error-constructor');
-       var errOb = (function expectedTopOfStack() {
+       const errorId = buildName('with-error-constructor');
+       const errOb = (function expectedTopOfStack() {
          return new Error(errorId);
        })();
-       verifyReporting(errOb, function(message) {
+       verifyReporting(errOb, message => {
          return message.startsWith('Error: ' + errorId + '\n');
        }, TIMEOUT, done);
      });
 
-  it('Should correctly publish an error that is a string', function(done) {
-    this.timeout(TIMEOUT * 2);
-    var errorId = buildName('with-string');
-    verifyReporting(errorId, function(message) {
-      return message.startsWith(errorId + '\n');
-    }, TIMEOUT, done);
-  });
+  it('Should correctly publish an error that is a string',
+     function(this, done) {
+       this.timeout(TIMEOUT * 2);
+       const errorId = buildName('with-string');
+       verifyReporting(errorId, message => {
+         return message.startsWith(errorId + '\n');
+       }, TIMEOUT, done);
+     });
 
-  it('Should correctly publish an error that is undefined', function(done) {
-    this.timeout(TIMEOUT * 2);
-    verifyReporting(undefined, function(message) {
-      return message.startsWith('undefined\n');
-    }, TIMEOUT, done);
-  });
+  it('Should correctly publish an error that is undefined',
+     function(this, done) {
+       this.timeout(TIMEOUT * 2);
+       verifyReporting(undefined, message => {
+         return message.startsWith('undefined\n');
+       }, TIMEOUT, done);
+     });
 
-  it('Should correctly publish an error that is null', function(done) {
+  it('Should correctly publish an error that is null', function(this, done) {
     this.timeout(TIMEOUT * 2);
-    verifyReporting(null, function(message) {
+    verifyReporting(null, message => {
       return message.startsWith('null\n');
     }, TIMEOUT, done);
   });
 
   it('Should correctly publish an error that is a plain object',
-     function(done) {
+     function(this, done) {
        this.timeout(TIMEOUT * 2);
-       verifyReporting({someKey: 'someValue'}, function(message) {
+       verifyReporting({someKey: 'someValue'}, message => {
          return message.startsWith('[object Object]\n');
        }, TIMEOUT, done);
      });
 
-  it('Should correctly publish an error that is a number', function(done) {
-    this.timeout(TIMEOUT * 2);
-    var num = new Date().getTime();
-    verifyReporting(num, function(message) {
-      return message.startsWith('' + num + '\n');
-    }, TIMEOUT, done);
-  });
+  it('Should correctly publish an error that is a number',
+     function(this, done) {
+       this.timeout(TIMEOUT * 2);
+       const num = new Date().getTime();
+       verifyReporting(num, message => {
+         return message.startsWith('' + num + '\n');
+       }, TIMEOUT, done);
+     });
 
   it('Should correctly publish an error that is of an unknown type',
-     function(done) {
+     function(this, done) {
        this.timeout(TIMEOUT * 2);
-       var bool = true;
-       verifyReporting(bool, function(message) {
+       const bool = true;
+       verifyReporting(bool, message => {
          return message.startsWith('true\n');
        }, TIMEOUT, done);
      });
 
-  it('Should correctly publish errors using an error builder', function(done) {
-    this.timeout(TIMEOUT * 2);
-    var errorId = buildName('with-error-builder');
-    // Use an IIFE with the name `definitionSiteFunction` to use later to ensure
-    // the stack trace of the point where the error message was constructed is
-    // used.
-    // Use an IIFE with the name `expectedTopOfStack` so that the test can
-    // verify that the stack trace used does not contain any frames
-    // specific to the error-reporting library.
-    var errOb = (function definitionSiteFunction() {
-      return (function expectedTopOfStack() {
-        return errors.event().setMessage(errorId);
-      })();
-    })();
-    (function callingSiteFunction() {
-      verifyReporting(errOb, function(message) {
-        // Verify that the stack trace of the constructed error
-        // uses the stack trace at the point where the error was constructed
-        // and not the stack trace at the point where the `report` method
-        // was called.
-        return (
-            message.startsWith(errorId) &&
-            message.indexOf('callingSiteFunction') === -1 &&
-            message.indexOf('definitionSiteFunction') !== -1);
-      }, TIMEOUT, done);
-    })();
-  });
+  it('Should correctly publish errors using an error builder',
+     function(this, done) {
+       this.timeout(TIMEOUT * 2);
+       const errorId = buildName('with-error-builder');
+       // Use an IIFE with the name `definitionSiteFunction` to use later to
+       // ensure the stack trace of the point where the error message was
+       // constructed is used. Use an IIFE with the name `expectedTopOfStack` so
+       // that the test can verify that the stack trace used does not contain
+       // any frames specific to the error-reporting library.
+       const errOb = (function definitionSiteFunction() {
+         return (function expectedTopOfStack() {
+           return errors.event().setMessage(errorId);
+         })();
+       })();
+       (function callingSiteFunction() {
+         verifyReporting(errOb, message => {
+           // Verify that the stack trace of the constructed error
+           // uses the stack trace at the point where the error was constructed
+           // and not the stack trace at the point where the `report` method
+           // was called.
+           return (
+               message.startsWith(errorId) &&
+               message.indexOf('callingSiteFunction') === -1 &&
+               message.indexOf('definitionSiteFunction') !== -1);
+         }, TIMEOUT, done);
+       })();
+     });
 
-  it('Should report unhandledRejections if enabled', function(done) {
+  it('Should report unhandledRejections if enabled', function(this, done) {
     this.timeout(TIMEOUT * 2);
     reinitialize({reportUnhandledRejections: true});
-    var rejectValue = buildName('promise-rejection');
+    const rejectValue = buildName('promise-rejection');
     (function expectedTopOfStack() {
       // An Error is used for the rejection value so that it's stack
       // contains the stack trace at the point the rejection occured and is
@@ -649,28 +666,28 @@ describe('error-reporting', function() {
       // test can verify that the collected stack is correct.
       Promise.reject(new Error(rejectValue));
     })();
-    var rejectText = 'Error: ' + rejectValue;
-    setImmediate(function() {
-      var expected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
+    const rejectText = 'Error: ' + rejectValue;
+    setImmediate(() => {
+      const expected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
           'promise rejection: ' + rejectText +
           '.  This rejection has been reported to the ' +
           'Google Cloud Platform error-reporting console.';
       assert.notStrictEqual(logOutput.indexOf(expected), -1);
-      verifyServerResponse(function(message) {
+      verifyServerResponse(message => {
         return message.startsWith(rejectText);
       }, TIMEOUT, done);
     });
   });
 
-  it('Should not report unhandledRejections if disabled', function(done) {
+  it('Should not report unhandledRejections if disabled', function(this, done) {
     this.timeout(TIMEOUT * 2);
     reinitialize({reportUnhandledRejections: false});
-    var rejectValue = buildName('promise-rejection');
+    const rejectValue = buildName('promise-rejection');
     (function expectedTopOfStack() {
       Promise.reject(rejectValue);
     })();
-    setImmediate(function() {
-      var notExpected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
+    setImmediate(() => {
+      const notExpected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
           'promise rejection: ' + rejectValue +
           '.  This rejection has been reported to the error-reporting console.';
       assert.strictEqual(logOutput.indexOf(notExpected), -1);
@@ -679,11 +696,11 @@ describe('error-reporting', function() {
       // buildName() creates a string unique enough to single out only the
       // above rejection.) and verify that there are no such groups reported.
       verifyAllGroups(
-          function(message) {
+          message => {
             return message.startsWith(rejectValue);
           },
           TIMEOUT,
-          function(matchedErrors) {
+          matchedErrors => {
             assert.strictEqual(matchedErrors.length, 0);
             done();
           });

@@ -13,58 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// jscs:disable requireEarlyReturn
 
-'use strict';
-
-var WARNING_HEADER = '\n!! -WARNING-';
-var EXCLAMATION_LN = '\n!!';
-var has = require('lodash.has');
-var express = require('express');
-var app = express();
-var errorHandler = require('../../src/index.js')({
+const WARNING_HEADER = '\n!! -WARNING-';
+const EXCLAMATION_LN = '\n!!';
+import has from 'lodash.has';
+import express from 'express';
+const app = express();
+const errorHandler = require('../../src/index.js')({
   onUncaughtException: 'report',
   key: process.env.STUBBED_API_KEY,
   projectId: process.env.STUBBED_PROJECT_NUM,
 });
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 
 // eslint-disable-next-line no-console
-var log = console.log;
+const log = console.log;
 
 app.use(bodyParser.json());
 
-app.post('/testErrorHandling', function(req, res, next) {
+app.post('/testErrorHandling', (req, res, next) => {
   if (has(req.body, 'test') && req.body.test !== true) {
-    return next(new Error('Error on Express Regular Error POST Route'));
+    return next!(new Error('Error on Express Regular Error POST Route'));
   } else {
     res.send('Success');
     res.end();
   }
 });
 
-app.get('/customError', function(req, res, next) {
-  errorHandler.report('Error on Express Custom Error GET Route', function(err) {
-    if (err) {
-      log(WARNING_HEADER);
-      log('Error in sending custom get error to api');
-      log(err);
-      log(EXCLAMATION_LN);
-    } else {
-      log(EXCLAMATION_LN);
-      log('Successfully sent custom get error to api');
-      log(EXCLAMATION_LN);
-    }
-  });
+app.get('/customError', (req, res, next) => {
+  errorHandler.report(
+      'Error on Express Custom Error GET Route', (err: Error|null) => {
+        if (err) {
+          log(WARNING_HEADER);
+          log('Error in sending custom get error to api');
+          log(err);
+          log(EXCLAMATION_LN);
+        } else {
+          log(EXCLAMATION_LN);
+          log('Successfully sent custom get error to api');
+          log(EXCLAMATION_LN);
+        }
+      });
 
   res.send('Success');
   res.end();
 
-  next();
+  next!();
 });
 
-app.get('/getError', function(req, res, next) {
-  return next(new Error('Error on Express Regular Error GET Route'));
+app.get('/getError', (req, res, next) => {
+  return next!(new Error('Error on Express Regular Error GET Route'));
 });
 
 app.use(errorHandler.express);
@@ -78,7 +76,7 @@ function reportManualError() {
   log('Reporting a manual error..');
   errorHandler.report(
       new Error('This is a manually reported error'), null, null,
-      function(err) {
+      (err: Error|null) => {
         if (err) {
           log(WARNING_HEADER);
           log('Got an error in sending error information to the API');
@@ -96,7 +94,7 @@ function reportManualError() {
       });
 }
 log('reporting a manual error first');
-errorHandler.report(new Error('This is a test'), err => {
+errorHandler.report(new Error('This is a test'), (err: Error|null) => {
   log('reported first manual error');
   if (err) {
     log('Error was unable to be reported', err);
@@ -105,7 +103,7 @@ errorHandler.report(new Error('This is a test'), err => {
   }
 });
 
-app.listen(3000, function() {
+app.listen(3000, () => {
   log('Scaffold Server has been started on port 3000');
   reportManualError();
 });

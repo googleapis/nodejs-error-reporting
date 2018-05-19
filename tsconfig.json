@@ -3,20 +3,16 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
-    "declaration": false,
-    "allowJs": true
+    "target": "es5"
   },
   "include": [
     "src/*.ts",
     "src/**/*.ts",
-    "src/*.js",
-    "src/**/*.js",
     "test/*.ts",
     "test/**/*.ts",
-    "test/*.js",
-    "test/**/*.js",
-    "system-test/*.js",
-    "system-test/**/*.js"
+    "system-test/*.ts",
+    "system-test/**/*.ts",
+    "utils/*.ts"
   ],
   "exclude": [
     "node_modules"

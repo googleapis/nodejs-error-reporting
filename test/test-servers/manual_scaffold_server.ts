@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-'use strict';
-
-var Configuration = require('../../src/configuration.js').Configuration;
-
-var FakeConfiguration = function(config) {
-  return Configuration.call(this, config, {warn: function() {}});
-};
-
-FakeConfiguration.prototype = Object.create(Configuration.prototype);
-
-module.exports = FakeConfiguration;
+import {ErrorReporting} from '../../src/index';
+const errors = new ErrorReporting();
+(errors.report as Function)('Sample test string', (err: Error|null) => {
+  // eslint-disable-next-line no-console
+  console.log(
+      'Callback from report:\n', '\tError: ', err, '\n', '\tResponse Body:');
+});

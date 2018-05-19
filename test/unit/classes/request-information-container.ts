@@ -14,81 +14,78 @@
  * limitations under the License.
  */
 
-'use strict';
+import assert from 'assert';
+import {RequestInformationContainer} from '../../../src/classes/request-information-container';
+import {Fuzzer} from '../../../utils/fuzzer';
 
-var assert = require('assert');
-var RequestInformationContainer =
-    require('../../../src/classes/request-information-container.js');
-var Fuzzer = require('../../../utils/fuzzer.js');
-
-describe('RequestInformationContainer', function() {
-  var f = new Fuzzer();
-  var cbFn, ric;
-  beforeEach(function() {
-    ric = new RequestInformationContainer.RequestInformationContainer();
+describe('RequestInformationContainer', () => {
+  const f = new Fuzzer();
+  let cbFn, ric: RequestInformationContainer;
+  beforeEach(() => {
+    ric = new RequestInformationContainer();
   });
-  describe('Fuzzing against RequestInformationContainer', function() {
-    it('Should return the property as an empty string', function() {
-      cbFn = function() {
+  describe('Fuzzing against RequestInformationContainer', () => {
+    it('Should return the property as an empty string', () => {
+      cbFn = () => {
         assert.deepEqual(ric.url, '');
       };
       f.fuzzFunctionForTypes(ric.setUrl, ['string'], cbFn, ric);
     });
-    it('Should return the method property as an empty string', function() {
-      cbFn = function() {
+    it('Should return the method property as an empty string', () => {
+      cbFn = () => {
         assert.deepEqual(ric.method, '');
       };
       f.fuzzFunctionForTypes(ric.setMethod, ['string'], cbFn, ric);
     });
-    it('Should return the referrer property as an empty string', function() {
-      cbFn = function() {
+    it('Should return the referrer property as an empty string', () => {
+      cbFn = () => {
         assert.deepEqual(ric.referrer, '');
       };
       f.fuzzFunctionForTypes(ric.setReferrer, ['string'], cbFn, ric);
     });
-    it('Should return the userAgent property as an empty string', function() {
-      cbFn = function() {
+    it('Should return the userAgent property as an empty string', () => {
+      cbFn = () => {
         assert.deepEqual(ric.userAgent, '');
       };
       f.fuzzFunctionForTypes(ric.setUserAgent, ['string'], cbFn, ric);
     });
-    it('Should return the property as an empty string', function() {
-      cbFn = function() {
+    it('Should return the property as an empty string', () => {
+      cbFn = () => {
         assert.deepEqual(ric.remoteAddress, '');
       };
       f.fuzzFunctionForTypes(ric.setRemoteAddress, ['string'], cbFn, ric);
     });
-    it('Should return the default value for statusCode', function() {
-      cbFn = function() {
+    it('Should return the default value for statusCode', () => {
+      cbFn = () => {
         assert.strictEqual(ric.statusCode, 0);
       };
       f.fuzzFunctionForTypes(ric.setStatusCode, ['number'], cbFn, ric);
     });
   });
-  describe('Fuzzing against for positive cases', function() {
-    var VALID_STRING_INPUT = 'valid';
-    var VALID_NUMBER_INPUT = 500;
-    it('Should assign the value to the url property', function() {
+  describe('Fuzzing against for positive cases', () => {
+    const VALID_STRING_INPUT = 'valid';
+    const VALID_NUMBER_INPUT = 500;
+    it('Should assign the value to the url property', () => {
       ric.setUrl(VALID_STRING_INPUT);
       assert.deepEqual(ric.url, VALID_STRING_INPUT);
     });
-    it('Should assign the value to the method property', function() {
+    it('Should assign the value to the method property', () => {
       ric.setMethod(VALID_STRING_INPUT);
       assert.deepEqual(ric.method, VALID_STRING_INPUT);
     });
-    it('Should assign the value to the referrer property', function() {
+    it('Should assign the value to the referrer property', () => {
       ric.setReferrer(VALID_STRING_INPUT);
       assert.deepEqual(ric.referrer, VALID_STRING_INPUT);
     });
-    it('Should assign the value to the userAgent property', function() {
+    it('Should assign the value to the userAgent property', () => {
       ric.setUserAgent(VALID_STRING_INPUT);
       assert.deepEqual(ric.userAgent, VALID_STRING_INPUT);
     });
-    it('Should assign the value to remoteAddress property', function() {
+    it('Should assign the value to remoteAddress property', () => {
       ric.setRemoteAddress(VALID_STRING_INPUT);
       assert.deepEqual(ric.remoteAddress, VALID_STRING_INPUT);
     });
-    it('Should assign the value to statusCode property', function() {
+    it('Should assign the value to statusCode property', () => {
       ric.setStatusCode(VALID_NUMBER_INPUT);
       assert.deepEqual(ric.statusCode, VALID_NUMBER_INPUT);
     });

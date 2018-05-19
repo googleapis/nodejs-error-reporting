@@ -18,26 +18,25 @@
  * @module error-reporting
  */
 
-import {Logger} from '@google-cloud/common';
-import * as e from 'express';
-import * as h from 'hapi';
-import {ServerResponse} from 'http';
-import * as r from 'restify';
+import * as types from './types';
+const Logger: types.Logger = require('@google-cloud/common').Logger;
 
 import {ErrorMessage} from './classes/error-message';
 import {Configuration, ConfigurationOptions} from './configuration';
 import {RequestHandler as AuthClient} from './google-apis/auth-client';
-import {makeExpressHandler as express} from './interfaces/express';
-import {makeHapiPlugin as hapi} from './interfaces/hapi';
-// Begin error reporting interfaces
-
-import {koaErrorHandler as koa} from './interfaces/koa';
-import * as manual from './interfaces/manual';
-import {Callback} from './interfaces/manual';
-import * as messageBuilder from './interfaces/message-builder';
-import {handlerSetup as restify} from './interfaces/restify';
 import {createLogger} from './logger';
-import {Request} from './request-extractors/manual';
+
+// Begin error reporting interfaces
+import * as expressInterface from './interfaces/express';
+import * as hapiInterface from './interfaces/hapi';
+import * as koaInterface from './interfaces/koa';
+import * as manualInterface from './interfaces/manual';
+import * as messageBuilderInterface from './interfaces/message-builder';
+import * as restifyInterface from './interfaces/restify';
+
+import * as manualRequestExtractor from './request-extractors/manual';
+
+export type RestifyRequestHandler = (req: {}, res: {}, next: {}) => {};
 
 /**
  * @typedef ConfigurationOptions
@@ -97,20 +96,25 @@ import {Request} from './request-extractors/manual';
  *     reporting configuration.
  */
 export class ErrorReporting {
-  private _logger: Logger;
+  private _logger: types.Logger;
   private _config: Configuration;
   private _client: AuthClient;
+  // the `err` argument can be anything, including `null` and `undefined`
   report:
-      (err: {}, request?: Request, additionalMessage?: string|{},
-       callback?: Callback|{}|string) => ErrorMessage;
+      (err: any,  // tslint:disable-line:no-any
+       request?: manualRequestExtractor.Request, additionalMessage?: string|{},
+       callback?: manualInterface.Callback|{}|string) => ErrorMessage;
   event: () => ErrorMessage;
-  hapi: {register: (server: h.Server, options: {}, next: Function) => void};
-  express: (err: {}, req: e.Request, res: e.Response, next: Function) => void;
-  restify:
-      (client: AuthClient, config: Configuration, server: r.Server) => void;
-  koa: (next: Function) => Iterable<Function>;
+  hapi: {
+    register: (server: {}, options: {}, next?: Function) => void; name: string;
+    version?: string;
+  };
+  express: (err: {}, req: {}, res: {}, next: Function) => void;
+  restify: (server: {}) => RestifyRequestHandler | RestifyRequestHandler[];
+  // tslint:disable-next-line:no-any
+  koa: (context: any, next: {}) => IterableIterator<{}>;
 
-  constructor(initConfiguration: ConfigurationOptions) {
+  constructor(initConfiguration?: ConfigurationOptions) {
     if (!(this instanceof ErrorReporting)) {
       return new ErrorReporting(initConfiguration);
     }
@@ -139,7 +143,8 @@ export class ErrorReporting {
      *  console.log('done!');
      * });
      */
-    this.report = manual.handlerSetup(this._client, this._config, this._logger);
+    this.report =
+        manualInterface.handlerSetup(this._client, this._config, this._logger);
 
     /**
      * @example
@@ -152,7 +157,7 @@ export class ErrorReporting {
      *  console.log('done!');
      * });
      */
-    this.event = messageBuilder.handlerSetup(this._config);
+    this.event = messageBuilderInterface.handlerSetup(this._config);
 
     /**
      * @example
@@ -163,7 +168,7 @@ export class ErrorReporting {
      * // AFTER ALL OTHER ROUTE HANDLERS
      * server.register({register: errors.hapi});
      */
-    this.hapi = hapi(this._client, this._config);
+    this.hapi = hapiInterface.makeHapiPlugin(this._client, this._config);
 
     /**
      * @example
@@ -173,7 +178,8 @@ export class ErrorReporting {
      * app.use(errors.express);
      * app.listen(3000);
      */
-    this.express = express(this._client, this._config);
+    this.express =
+        expressInterface.makeExpressHandler(this._client, this._config);
 
     /**
      * @example
@@ -182,7 +188,7 @@ export class ErrorReporting {
      * // BEFORE ALL OTHER ROUTE HANDLERS
      * server.use(errors.restify(server));
      */
-    this.restify = restify(this._client, this._config);
+    this.restify = restifyInterface.handlerSetup(this._client, this._config);
 
     /**
      * @example
@@ -191,6 +197,6 @@ export class ErrorReporting {
      * // BEFORE ALL OTHER ROUTE HANDLERS HANDLERS
      * app.use(errors.koa);
      */
-    this.koa = koa(this._client, this._config);
+    this.koa = koaInterface.koaErrorHandler(this._client, this._config);
   }
 }
