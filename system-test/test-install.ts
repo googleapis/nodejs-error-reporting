@@ -22,14 +22,14 @@ const TS_CODE_ARRAY: check.CodeSample[] = [
 new errorReporting.ErrorReporting();`,
     description: 'imports the module using * syntax',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
 new ErrorReporting();`,
     description: 'imports the module with {} syntax',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -39,9 +39,9 @@ new ErrorReporting({
   }
 });`,
     description:
-        'imports the module and starts with a partial `serviceContext`',
+      'imports the module and starts with a partial `serviceContext`',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -53,9 +53,9 @@ new ErrorReporting({
   }
 });`,
     description:
-        'imports the module and starts with a complete `serviceContext`',
+      'imports the module and starts with a complete `serviceContext`',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
   },
   {
     code: `import * as express from 'express';
@@ -78,7 +78,7 @@ app.use(errors.express);
 `,
     description: 'uses express',
     dependencies: ['express'],
-    devDependencies: ['@types/express']
+    devDependencies: ['@types/express'],
   },
   {
     code: `import * as hapi from 'hapi';
@@ -102,7 +102,7 @@ server.register(errors.hapi);
 `,
     description: 'uses hapi16',
     dependencies: ['hapi@16.x.x'],
-    devDependencies: ['@types/hapi@16.x.x']
+    devDependencies: ['@types/hapi@16.x.x'],
   },
   {
     code: `import * as hapi from 'hapi';
@@ -131,7 +131,7 @@ start().catch(console.error);
 `,
     description: 'uses hapi17',
     dependencies: ['hapi@17.x.x'],
-    devDependencies: ['@types/hapi@17.x.x']
+    devDependencies: ['@types/hapi@17.x.x'],
   },
   {
     code: `import * as Koa from 'koa';
@@ -153,9 +153,33 @@ app.use(function *(this: any): IterableIterator<any> {
   this.body = 'Hello World';
 });
 `,
-    description: 'uses koa',
+    description: 'uses koa1',
     dependencies: ['koa@1.x.x'],
-    devDependencies: ['@types/koa']
+    devDependencies: ['@types/koa'],
+  },
+  {
+    code: `import * as Koa from 'koa';
+
+import {ErrorReporting} from '@google-cloud/error-reporting';
+const errors = new ErrorReporting();
+
+const app = new Koa();
+
+app.use(errors.koa);
+
+app.use(async (this: any): Promise<void> => {
+  //This will set status and message
+  this.throw('Error Message', 500);
+});
+
+// response
+app.use(async (this: any): Promise<void> => {
+  this.body = 'Hello World';
+});
+`,
+    description: 'uses koa2',
+    dependencies: ['koa@2.x.x'],
+    devDependencies: ['@types/koa@2.x.x'],
   },
   {
     code: `import * as restify from 'restify';
@@ -175,35 +199,32 @@ server.head('/hello/:name', respond);
 `,
     description: 'uses restify',
     dependencies: ['restify'],
-    devDependencies: ['@types/restify']
-  }
+    devDependencies: ['@types/restify'],
+  },
 ];
 
 const JS_CODE_ARRAY: check.CodeSample[] = [
   {
-    code:
-        `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+    code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting();`,
     description: 'requires the module using Node 4+ syntax',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
   },
   {
-    code:
-        `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+    code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting({
   serviceContext: {
     service: 'some service'
   }
 });`,
     description:
-        'requires the module and starts with a partial `serviceContext`',
+      'requires the module and starts with a partial `serviceContext`',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
   },
   {
-    code:
-        `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+    code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting({
   projectId: 'some-project',
   serviceContext: {
@@ -212,9 +233,9 @@ new ErrorReporting({
   }
 });`,
     description:
-        'requires the module and starts with a complete `serviceContext`',
+      'requires the module and starts with a complete `serviceContext`',
     dependencies: [],
-    devDependencies: []
+    devDependencies: [],
   },
   {
     code: `const express = require('express');
@@ -239,7 +260,7 @@ app.use(errors.express);
 `,
     description: 'uses express',
     dependencies: ['express'],
-    devDependencies: []
+    devDependencies: [],
   },
   {
     code: `const hapi = require('hapi');
@@ -263,7 +284,7 @@ server.register(errors.hapi);
 `,
     description: 'uses hapi16',
     dependencies: ['hapi@16.x.x'],
-    devDependencies: []
+    devDependencies: [],
   },
   {
     code: `const hapi = require('hapi');
@@ -292,7 +313,7 @@ start().catch(console.error);
 `,
     description: 'uses hapi17',
     dependencies: ['hapi@17.x.x'],
-    devDependencies: []
+    devDependencies: [],
   },
   {
     code: `const Koa = require('koa');
@@ -314,9 +335,33 @@ app.use(function *(){
   this.body = 'Hello World';
 });
 `,
-    description: 'uses koa',
+    description: 'uses koa1',
     dependencies: ['koa@1.x.x'],
-    devDependencies: []
+    devDependencies: [],
+  },
+  {
+    code: `const Koa = require('koa');
+
+const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+const errors = new ErrorReporting();
+
+const app = new Koa();
+
+app.use(errors.koa);
+
+app.use(async (next) => {
+  //This will set status and message
+  this.throw('Error Message', 500);
+});
+
+// response
+app.use(async () => {
+  this.body = 'Hello World';
+});
+`,
+    description: 'uses koa2',
+    dependencies: ['koa@2.x.x'],
+    devDependencies: [],
   },
   {
     code: `const restify = require('restify');
@@ -336,8 +381,9 @@ server.head('/hello/:name', respond);
 `,
     description: 'uses restify',
     dependencies: ['restify'],
-    devDependencies: []
-  }
+    devDependencies: [],
+  },
 ];
 
 check.testInstallation(TS_CODE_ARRAY, JS_CODE_ARRAY, {timeout: 2 * 60 * 1000});
+
