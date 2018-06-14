@@ -19,7 +19,7 @@ import is from 'is';
 import {Configuration} from '../configuration';
 import {ErrorMessage} from '../classes/error-message';
 import * as http from 'http';
-import {Service, Logger, ServiceOptions} from '@google-cloud/common';
+import {Service, CustomLevelsLogger, ServiceOptions} from '@google-cloud/common';
 
 /* @const {Array<String>} list of scopes needed to work with the errors api. */
 const SCOPES = ['https://www.googleapis.com/auth/cloud-platform'];
@@ -54,7 +54,7 @@ const API = 'https://clouderrorreporting.googleapis.com/v1beta1';
  */
 export class RequestHandler extends Service {
   private _config: Configuration;
-  private _logger: Logger;
+  private _logger: CustomLevelsLogger;
   // TODO: Make this more precise
 
   /**
@@ -89,7 +89,7 @@ export class RequestHandler extends Service {
    * @param {Configuration} config - an instance of the Configuration class
    * @param {Logger} logger - an instance of logger
    */
-  constructor(config: Configuration, logger: Logger) {
+  constructor(config: Configuration, logger: CustomLevelsLogger) {
     const pid = config.getProjectId();
     // If an API key is provided, do not try to authenticate.
     const tryAuthenticate = !config.getKey();

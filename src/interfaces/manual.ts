@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Logger} from '@google-cloud/common';
+import {CustomLevelsLogger} from '@google-cloud/common';
 import * as http from 'http';
 import is from 'is';
 
@@ -43,7 +43,7 @@ export type Callback =
  *  function
  */
 export function handlerSetup(
-    client: RequestHandler, config: Configuration, logger: Logger) {
+    client: RequestHandler, config: Configuration, logger: CustomLevelsLogger) {
   /**
    * The interface for manually reporting errors to the Google Error API in
    * application code.

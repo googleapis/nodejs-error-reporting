@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {Logger} from '@google-cloud/common';
+import {CustomLevelsLogger} from '@google-cloud/common';
 
 import {Configuration, ConfigurationOptions} from '../../src/configuration';
 
 export class FakeConfiguration extends Configuration {
-  constructor(config: ConfigurationOptions|undefined, logger?: Logger) {
-    super(config, logger || {warn() {}} as {} as Logger);
+  constructor(config: ConfigurationOptions|undefined, logger?: CustomLevelsLogger) {
+    super(config, logger || {warn() {}} as {} as CustomLevelsLogger);
   }
 }

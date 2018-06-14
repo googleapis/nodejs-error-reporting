@@ -15,7 +15,7 @@
  */
 
 
-import {Logger} from '@google-cloud/common';
+import {CustomLevelsLogger} from '@google-cloud/common';
 import is from 'is';
 import has from 'lodash.has';
 
@@ -63,7 +63,7 @@ export interface ServiceContext {
  *  been initialized.
  */
 export class Configuration {
-  _logger: Logger;
+  _logger: CustomLevelsLogger;
   _shouldReportErrorsToAPI: boolean;
   _projectId: string|null;
   _key: string|null;
@@ -73,7 +73,7 @@ export class Configuration {
   _reportUnhandledRejections: boolean;
   _givenConfiguration: ConfigurationOptions;
 
-  constructor(givenConfig: ConfigurationOptions|undefined, logger: Logger) {
+  constructor(givenConfig: ConfigurationOptions|undefined, logger: CustomLevelsLogger) {
     /**
      * The _logger property caches the logger instance created at the top-level
      * for configuration logging purposes.

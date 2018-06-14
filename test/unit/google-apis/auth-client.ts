@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Logger} from '@google-cloud/common';
+import {CustomLevelsLogger} from '@google-cloud/common';
 import assert from 'assert';
 import proxyquire from 'proxyquire';
 
@@ -56,7 +56,7 @@ function verifyReportedMessage(
       }
       logs.info += text;
     },
-  } as {} as Logger;
+  } as {} as CustomLevelsLogger;
   const config2 = new Configuration(config1, logger);
   // tslint:disable-next-line:no-unused-expression
   new RequestHandler(config2, logger);

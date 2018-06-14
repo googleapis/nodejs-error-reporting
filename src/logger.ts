@@ -20,7 +20,7 @@ import has from 'lodash.has';
 const packageJson = require('../../package.json');
 
 import {ConfigurationOptions} from './configuration';
-import {logger, Logger} from '@google-cloud/common';
+import {logger, CustomLevelsLogger} from '@google-cloud/common';
 
 /**
  * Creates an instance of the Google Cloud Diagnostics logger class. This
@@ -39,7 +39,7 @@ import {logger, Logger} from '@google-cloud/common';
  * @returns {Object} - returns an instance of the logger created with the given/
  *  default options
  */
-export function createLogger(initConfiguration?: ConfigurationOptions) {
+export function createLogger(initConfiguration?: ConfigurationOptions): CustomLevelsLogger {
   // Default to log level: warn (2)
   const DEFAULT_LEVEL = logger.LEVELS[2];
   let level = DEFAULT_LEVEL;
