@@ -19,7 +19,8 @@ import {CustomLevelsLogger} from '@google-cloud/common';
 import {Configuration, ConfigurationOptions} from '../../src/configuration';
 
 export class FakeConfiguration extends Configuration {
-  constructor(config: ConfigurationOptions|undefined, logger?: CustomLevelsLogger) {
+  constructor(
+      config: ConfigurationOptions|undefined, logger?: CustomLevelsLogger) {
     super(config, logger || {warn() {}} as {} as CustomLevelsLogger);
   }
 }

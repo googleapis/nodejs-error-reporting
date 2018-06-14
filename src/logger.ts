@@ -39,7 +39,8 @@ import {logger, CustomLevelsLogger} from '@google-cloud/common';
  * @returns {Object} - returns an instance of the logger created with the given/
  *  default options
  */
-export function createLogger(initConfiguration?: ConfigurationOptions): CustomLevelsLogger {
+export function createLogger(initConfiguration?: ConfigurationOptions):
+    CustomLevelsLogger {
   // Default to log level: warn (2)
   const DEFAULT_LEVEL = logger.LEVELS[2];
   let level = DEFAULT_LEVEL;
