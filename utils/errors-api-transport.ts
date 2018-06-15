@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CustomLevelsLogger} from '@google-cloud/common';
+import {Logger} from '@google-cloud/common';
 
 import {Configuration} from '../src/configuration';
 import {RequestHandler as AuthClient} from '../src/google-apis/auth-client';
@@ -50,7 +50,7 @@ const API = 'https://clouderrorreporting.googleapis.com/v1beta1/projects';
 const ONE_HOUR_API = 'timeRange.period=PERIOD_1_HOUR';
 
 export class ErrorsApiTransport extends AuthClient {
-  constructor(config: Configuration, logger: CustomLevelsLogger) {
+  constructor(config: Configuration, logger: Logger) {
     super(config, logger);
   }
 

@@ -23,7 +23,7 @@ const config = new Configuration({});
 };
 import {ErrorMessage} from '../../../src/classes/error-message';
 import {RequestHandler} from '../../../src/google-apis/auth-client';
-import {CustomLevelsLogger} from '@google-cloud/common';
+import {Logger} from '@google-cloud/common';
 import {RequestInformationContainer} from '../../../src/classes/request-information-container';
 
 describe('Manual handler', () => {
@@ -53,7 +53,7 @@ describe('Manual handler', () => {
               'trace.  This error might not be visible in the error reporting ' +
               'console.');
     },
-  } as {} as CustomLevelsLogger);
+  } as {} as Logger);
   describe('Report invocation behaviour', () => {
     it('Should allow argument-less invocation', () => {
       const r = report(null!);

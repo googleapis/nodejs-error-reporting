@@ -18,7 +18,7 @@
  * @module error-reporting
  */
 
-import {CustomLevelsLogger} from '@google-cloud/common';
+import {Logger} from '@google-cloud/common';
 
 import {ErrorMessage} from './classes/error-message';
 import {Configuration, ConfigurationOptions} from './configuration';
@@ -93,7 +93,7 @@ export type RestifyRequestHandler = (req: {}, res: {}, next: {}) => {};
  *     reporting configuration.
  */
 export class ErrorReporting {
-  private _logger: CustomLevelsLogger;
+  private _logger: Logger;
   private _config: Configuration;
   private _client: AuthClient;
   // the `err` argument can be anything, including `null` and `undefined`
