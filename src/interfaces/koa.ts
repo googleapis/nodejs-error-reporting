@@ -65,11 +65,11 @@ export function koaErrorHandler(client: RequestHandler, config: Configuration) {
     }
   };
 
-  return function(this: any, arg1: any, arg2: any) {
+  return function(this: KoaContext, arg1: KoaContext|KoaNext, arg2?: KoaNext) {
     const next = arg2 ? arg2 : arg1;
-    const ctx = arg2 ? arg1 : this;
+    const ctx = arg2 ? arg1 as KoaContext : this;
 
-    const result = middleware(ctx, next) as any;
+    const result = middleware(ctx, next) as {} as {next: KoaNext};
 
     // Make our result look like a generator for Koa1
     let done = false;
