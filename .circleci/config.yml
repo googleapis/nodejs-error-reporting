@@ -86,7 +86,9 @@ jobs:
             fi
       - run: &npm_install_and_link
           name: Install and link the module.
-          command: npm install
+          command: |
+            npm install
+            npm link
           environment:
             NPM_CONFIG_PREFIX: /home/node/.npm-global
       - run:
