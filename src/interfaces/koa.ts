@@ -22,7 +22,9 @@ import {RequestHandler} from '../google-apis/auth-client';
 import {populateErrorMessage} from '../populate-error-message';
 import {koaRequestInformationExtractor} from '../request-extractors/koa';
 
-type KoaContext = {request: Request; response: Response};
+type KoaContext = {
+  request: Request; response: Response
+};
 type KoaNext = {};
 
 /**
@@ -54,10 +56,9 @@ export function koaErrorHandler(client: RequestHandler, config: Configuration) {
       await next;
     } catch (err) {
       const em = new ErrorMessage()
-        .consumeRequestInformation(
-          koaRequestInformationExtractor(ctx.request, ctx.response)
-        )
-        .setServiceContext(svc.service, svc.version);
+                     .consumeRequestInformation(koaRequestInformationExtractor(
+                         ctx.request, ctx.response))
+                     .setServiceContext(svc.service, svc.version);
 
       populateErrorMessage(err, em);
 

@@ -39,7 +39,7 @@ new ErrorReporting({
   }
 });`,
     description:
-      'imports the module and starts with a partial `serviceContext`',
+        'imports the module and starts with a partial `serviceContext`',
     dependencies: [],
     devDependencies: [],
   },
@@ -53,7 +53,7 @@ new ErrorReporting({
   }
 });`,
     description:
-      'imports the module and starts with a complete `serviceContext`',
+        'imports the module and starts with a complete `serviceContext`',
     dependencies: [],
     devDependencies: [],
   },
@@ -205,26 +205,29 @@ server.head('/hello/:name', respond);
 
 const JS_CODE_ARRAY: check.CodeSample[] = [
   {
-    code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+    code:
+        `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting();`,
     description: 'requires the module using Node 4+ syntax',
     dependencies: [],
     devDependencies: [],
   },
   {
-    code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+    code:
+        `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting({
   serviceContext: {
     service: 'some service'
   }
 });`,
     description:
-      'requires the module and starts with a partial `serviceContext`',
+        'requires the module and starts with a partial `serviceContext`',
     dependencies: [],
     devDependencies: [],
   },
   {
-    code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+    code:
+        `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting({
   projectId: 'some-project',
   serviceContext: {
@@ -233,7 +236,7 @@ new ErrorReporting({
   }
 });`,
     description:
-      'requires the module and starts with a complete `serviceContext`',
+        'requires the module and starts with a complete `serviceContext`',
     dependencies: [],
     devDependencies: [],
   },
@@ -386,4 +389,3 @@ server.head('/hello/:name', respond);
 ];
 
 check.testInstallation(TS_CODE_ARRAY, JS_CODE_ARRAY, {timeout: 2 * 60 * 1000});
-
