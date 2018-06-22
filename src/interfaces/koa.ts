@@ -70,7 +70,7 @@ export function koaErrorHandler(client: RequestHandler, config: Configuration) {
     const next = arg2 ? arg2 : arg1;
     const ctx = arg2 ? arg1 as KoaContext : this;
 
-    const result = middleware(ctx, next) as {} as {next: KoaNext};
+    const result = middleware(ctx, next) as {} as {next: Function};
 
     // Make our result look like a generator for Koa1
     let done = false;
@@ -86,6 +86,6 @@ export function koaErrorHandler(client: RequestHandler, config: Configuration) {
       };
     };
 
-    return result;
+    return result as IterableIterator<{}>;
   };
 }
