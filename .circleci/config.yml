@@ -113,16 +113,17 @@ jobs:
       - image: 'node:10'
         user: node
     steps: *unit_tests_steps
-#  lint:
-#    docker:
-#      - image: 'node:8'
-#        user: node
-#    steps:
-#      - checkout
-#      - run: *remove_package_lock
-#      - run: *npm_install_and_link
-#      - run: &samples_npm_install_and_link
-#          name: Link the module being tested to the samples.
+  lint:
+    docker:
+      - image: 'node:8'
+        user: node
+    steps:
+      - checkout
+      - run: *remove_package_lock
+      - run: *npm_install_and_link
+      - run: &samples_npm_install_and_link
+          name: Link the module being tested to the samples.
+          command: echo 'Disabled'
 #          command: |
 #            cd samples/
 #            npm link ../
