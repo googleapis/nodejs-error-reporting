@@ -11,10 +11,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - node9:
-          filters:
-            tags:
-              only: /.*/
       - node10:
           filters:
             tags:
@@ -23,7 +19,6 @@ workflows:
           requires:
             - node6
             - node8
-            - node9
             - node10
           filters:
             tags:
@@ -32,7 +27,6 @@ workflows:
           requires:
             - node6
             - node8
-            - node9
             - node10
           filters:
             tags:
