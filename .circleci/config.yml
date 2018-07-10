@@ -103,11 +103,6 @@ jobs:
       - image: 'node:8'
         user: node
     steps: *unit_tests_steps
-  node9:
-    docker:
-      - image: 'node:9'
-        user: node
-    steps: *unit_tests_steps
   node10:
     docker:
       - image: 'node:10'
@@ -205,10 +200,6 @@ jobs:
         user: node
     steps:
       - checkout
-      - run:
-          name: Set NPM authentication.
-          command: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+      - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
       - run: *npm_install_and_link
-      - run:
-          name: Publish the module to npm.
-          command: npm publish
+      - run: npm publish
