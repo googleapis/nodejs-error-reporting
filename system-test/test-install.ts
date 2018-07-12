@@ -58,7 +58,7 @@ new ErrorReporting({
     devDependencies: []
   },
   {
-    code: `import express from 'express';
+    code: `import * as express from 'express';
 
 import {ErrorReporting} from '@google-cloud/error-reporting';
 const errors = new ErrorReporting();
@@ -105,7 +105,7 @@ server.register(errors.hapi);
     devDependencies: ['@types/hapi@16.x.x']
   },
   {
-    code: `import hapi from 'hapi';
+    code: `import * as hapi from 'hapi';
 
 import {ErrorReporting} from '@google-cloud/error-reporting';
 const errors = new ErrorReporting();
@@ -134,7 +134,7 @@ start().catch(console.error);
     devDependencies: ['@types/hapi@17.x.x']
   },
   {
-    code: `import Koa from 'koa';
+    code: `import * as Koa from 'koa';
 
 import {ErrorReporting} from '@google-cloud/error-reporting';
 const errors = new ErrorReporting();
@@ -158,7 +158,7 @@ app.use(function *(this: any): IterableIterator<any> {
     devDependencies: ['@types/koa']
   },
   {
-    code: `import restify from 'restify';
+    code: `import * as restify from 'restify';
 
 import {ErrorReporting} from '@google-cloud/error-reporting';
 const errors = new ErrorReporting();
