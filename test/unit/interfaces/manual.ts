@@ -16,6 +16,7 @@
 
 import * as assert from 'assert';
 import * as manual from '../../../src/interfaces/manual';
+import {Logger} from '../../../src/configuration';
 import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
 const config = new Configuration({});
 (config as {} as {lacksCredentials: Function}).lacksCredentials = () => {
@@ -23,7 +24,6 @@ const config = new Configuration({});
 };
 import {ErrorMessage} from '../../../src/classes/error-message';
 import {RequestHandler} from '../../../src/google-apis/auth-client';
-import {Logger} from '@google-cloud/common';
 import {RequestInformationContainer} from '../../../src/classes/request-information-container';
 
 describe('Manual handler', () => {
