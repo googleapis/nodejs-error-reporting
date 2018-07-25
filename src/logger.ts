@@ -23,9 +23,8 @@ const packageJson = require('../../package.json');
 import {ConfigurationOptions, Logger} from './configuration';
 
 
-const LEVELNAMES: consoleLogLevel.LogLevelNames[] = [
-  'fatal', 'error', 'warn', 'info', 'debug', 'trace'
-];
+const LEVELNAMES: consoleLogLevel.LogLevelNames[] =
+    ['fatal', 'error', 'warn', 'info', 'debug', 'trace'];
 const DEFAULT_LEVEL = 2;  // warn.
 
 function logLevelToName(level: number): consoleLogLevel.LogLevelNames {
@@ -63,8 +62,7 @@ export function createLogger(config?: ConfigurationOptions): Logger {
   if (has(process.env, 'GCLOUD_ERRORS_LOGLEVEL')) {
     // Cast env string as integer
     level = ~~process.env.GCLOUD_ERRORS_LOGLEVEL! || DEFAULT_LEVEL;
-  } else if (
-      is.object(config) && has(config, 'logLevel')) {
+  } else if (is.object(config) && has(config, 'logLevel')) {
     if (is.string(config!.logLevel)) {
       // Cast string as integer
       level = ~~config!.logLevel! || DEFAULT_LEVEL;

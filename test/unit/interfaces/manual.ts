@@ -15,9 +15,11 @@
  */
 
 import * as assert from 'assert';
-import * as manual from '../../../src/interfaces/manual';
+
 import {Logger} from '../../../src/configuration';
+import * as manual from '../../../src/interfaces/manual';
 import {FakeConfiguration as Configuration} from '../../fixtures/configuration';
+
 const config = new Configuration({});
 (config as {} as {lacksCredentials: Function}).lacksCredentials = () => {
   return false;
