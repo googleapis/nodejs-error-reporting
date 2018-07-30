@@ -551,7 +551,7 @@ describe('error-reporting', () => {
       errors.report(errOb, undefined, undefined, (err, response, body) => {
         assert.ifError(err);
         assert(is.object(response));
-        assert.deepEqual(body, {});
+        assert.deepStrictEqual(body, {});
         verifyServerResponse(messageTest, timeout, cb);
       });
     })();
