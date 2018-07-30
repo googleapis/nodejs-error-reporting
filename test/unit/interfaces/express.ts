@@ -59,7 +59,7 @@ describe('expressInterface', () => {
         expressInterface(client as {} as RequestHandler, stubbedConfig);
     it('Should return the error message', () => {
       const res = validBoundHandler(testError, null!, null!, null!);
-      assert.deepEqual(
+      assert.deepStrictEqual(
           res,
           merge(
               new ErrorMessage()
