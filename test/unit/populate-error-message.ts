@@ -95,7 +95,7 @@ describe('populate-error-message', () => {
      () => {
        const err = new Error(TEST_MESSAGE);
        populateErrorMessage(err, em);
-       assert.deepEqual(
+       assert.deepStrictEqual(
            em.message, err.stack,
            'Given a valid message the ' +
                'error message should absorb the error stack as the message');
@@ -159,7 +159,7 @@ describe('populate-error-message', () => {
        const TEST_SERVICE_VALID = {service: 'test', version: 'test'};
        err.serviceContext = TEST_SERVICE_VALID;
        populateErrorMessage(err, em);
-       assert.deepEqual(err.serviceContext, TEST_SERVICE_VALID);
+       assert.deepStrictEqual(err.serviceContext, TEST_SERVICE_VALID);
      });
 
   it('ServiceContext Field: Should default the field given invalid input ' +
@@ -169,7 +169,7 @@ describe('populate-error-message', () => {
        const TEST_SERVICE_INVALID = 12;
        err.serviceContext = TEST_SERVICE_INVALID;
        populateErrorMessage(err, em);
-       assert.deepEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
+       assert.deepStrictEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
      });
 
   it('ServiceContext Field: Should default the field if not given input ' +
@@ -177,7 +177,7 @@ describe('populate-error-message', () => {
      () => {
        const err = new Error();
        populateErrorMessage(err, em);
-       assert.deepEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
+       assert.deepStrictEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
      });
 
   it('ServiceContext Field: Should set the field given valid input given an ' +
@@ -187,7 +187,7 @@ describe('populate-error-message', () => {
        const TEST_SERVICE_VALID = {service: 'test', version: 'test'};
        err.serviceContext = TEST_SERVICE_VALID;
        populateErrorMessage(err, em);
-       assert.deepEqual(em.serviceContext, TEST_SERVICE_VALID);
+       assert.deepStrictEqual(em.serviceContext, TEST_SERVICE_VALID);
      });
 
   it('ServiceContext Field: Should default the field given invalid input ' +
@@ -197,7 +197,7 @@ describe('populate-error-message', () => {
        const TEST_SERVICE_INVALID = 12;
        err.serviceContext = TEST_SERVICE_INVALID;
        populateErrorMessage(err, em);
-       assert.deepEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
+       assert.deepStrictEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
      });
 
   it('ServiceContext Field: Should default the field given lack-of input ' +
@@ -205,7 +205,7 @@ describe('populate-error-message', () => {
      () => {
        const err = {};
        populateErrorMessage(err, em);
-       assert.deepEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
+       assert.deepStrictEqual(em.serviceContext, TEST_SERVICE_DEFAULT);
      });
 
   it('Report location Field: Should default the field if given invalid input ' +
@@ -219,7 +219,7 @@ describe('populate-error-message', () => {
        const err: AnnotatedError = new Error();
        err.stack = TEST_STACK_INVALID_CONTENTS;
        populateErrorMessage(err, em);
-       assert.deepEqual(em.context.reportLocation, TEST_STACK_DEFAULT);
+       assert.deepStrictEqual(em.context.reportLocation, TEST_STACK_DEFAULT);
      });
 
   it('Report location Field: Should default field if not given a valid type ' +
@@ -229,7 +229,7 @@ describe('populate-error-message', () => {
        const TEST_STACK_INVALID_TYPE = [] as {};
        err.stack = TEST_STACK_INVALID_TYPE;
        populateErrorMessage(err, em);
-       assert.deepEqual(em.context.reportLocation, TEST_STACK_DEFAULT);
+       assert.deepStrictEqual(em.context.reportLocation, TEST_STACK_DEFAULT);
      });
 
   it('FilePath Field: Should set the field given valid input given an object',
