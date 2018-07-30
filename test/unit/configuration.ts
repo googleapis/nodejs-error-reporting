@@ -67,7 +67,7 @@ describe('Configuration class', () => {
         let c;
         f.fuzzFunctionForTypes((givenConfigFuzz: ConfigurationOptions) => {
           c = new Configuration(givenConfigFuzz, logger);
-          assert.deepEqual(c._givenConfiguration, {});
+          assert.deepStrictEqual(c._givenConfiguration, {});
         }, ['object']);
       });
     });
@@ -86,7 +86,7 @@ describe('Configuration class', () => {
         });
       });
       it('Should have a property reflecting the config argument', () => {
-        assert.deepEqual(c._givenConfiguration, validConfig);
+        assert.deepStrictEqual(c._givenConfiguration, validConfig);
       });
       it('Should not have a project id', () => {
         assert.strictEqual(c._projectId, null);
@@ -95,7 +95,7 @@ describe('Configuration class', () => {
         assert.strictEqual(c.getKey(), null);
       });
       it('Should have a default service context', () => {
-        assert.deepEqual(c.getServiceContext(), {
+        assert.deepStrictEqual(c.getServiceContext(), {
           service: 'node',
           version: undefined,
         });
@@ -299,7 +299,7 @@ describe('Configuration class', () => {
           c = new Configuration(undefined, logger);
         });
         it('Should assign', () => {
-          assert.deepEqual(c.getServiceContext(), serviceContext);
+          assert.deepStrictEqual(c.getServiceContext(), serviceContext);
         });
       });
     });
@@ -321,7 +321,7 @@ describe('Configuration class', () => {
           });
         });
         it('Should assign', () => {
-          assert.deepEqual(c.getServiceContext(), serviceContext);
+          assert.deepStrictEqual(c.getServiceContext(), serviceContext);
         });
       });
       describe('api key', () => {
