@@ -73,10 +73,10 @@ describe('Testing service configuration', () => {
            'someModuleName', '1.0', 'InvalidName', 'InvalidVersion',
            'someFunction');
        const c = new Configuration({}, logger);
-       assert.deepEqual(c.getServiceContext().service, 'someFunction');
+       assert.deepStrictEqual(c.getServiceContext().service, 'someFunction');
        // FUNCTION_NAME is set and the user didn't specify a version, and so
        // the version should not be defined
-       assert.deepEqual(c.getServiceContext().version, undefined);
+       assert.deepStrictEqual(c.getServiceContext().version, undefined);
      });
   it('A Configuration uses the function name as the service name on GCF ' +
          'if the service name is not given in the given config ' +
@@ -84,10 +84,10 @@ describe('Testing service configuration', () => {
      () => {
        setEnv(null, '1.0', null, 'InvalidVersion', 'someFunction');
        const c = new Configuration({}, logger);
-       assert.deepEqual(c.getServiceContext().service, 'someFunction');
+       assert.deepStrictEqual(c.getServiceContext().service, 'someFunction');
        // The user didn't specify a version and FUNCTION_NAME is defined, and
        // so the version should not be defined
-       assert.deepEqual(c.getServiceContext().version, undefined);
+       assert.deepStrictEqual(c.getServiceContext().version, undefined);
      });
   it('A Configuration uses the GAE_SERVICE env value as the service name ' +
          'if the FUNCTION_NAME env variable is not set and the given config ' +
@@ -95,10 +95,10 @@ describe('Testing service configuration', () => {
      () => {
        setEnv('someModuleName', '1.0', 'InvalidName', 'InvalidVersion', null);
        const c = new Configuration({}, logger);
-       assert.deepEqual(c.getServiceContext().service, 'someModuleName');
+       assert.deepStrictEqual(c.getServiceContext().service, 'someModuleName');
        // The user didn't specify a version, and FUNCTION_NAME is not defined,
        // and so use the GAE_MODULE_VERSION
-       assert.deepEqual(c.getServiceContext().version, '1.0');
+       assert.deepStrictEqual(c.getServiceContext().version, '1.0');
      });
   it('A Configuration uses the service name in the given config if it ' +
          'was specified and both the GAE_SERVICE and FUNCTION_NAME ' +
@@ -114,10 +114,10 @@ describe('Testing service configuration', () => {
              },
            },
            logger);
-       assert.deepEqual(c.getServiceContext().service, 'customService');
+       assert.deepStrictEqual(c.getServiceContext().service, 'customService');
        // The user didn't specify a version, but FUNCTION_NAME is defined, and
        // so the version should not be defined
-       assert.deepEqual(c.getServiceContext().version, undefined);
+       assert.deepStrictEqual(c.getServiceContext().version, undefined);
      });
   it('A Configuration uses the service name and version in the given config' +
          'they were both specified and both the GAE_SERVICE and FUNCTION_NAME ' +
@@ -134,9 +134,9 @@ describe('Testing service configuration', () => {
              },
            },
            logger);
-       assert.deepEqual(c.getServiceContext().service, 'customService');
+       assert.deepStrictEqual(c.getServiceContext().service, 'customService');
        // The user specified version should be used
-       assert.deepEqual(c.getServiceContext().version, '2.0');
+       assert.deepStrictEqual(c.getServiceContext().version, '2.0');
      });
   it('A Configuration uses the service name in the given config if it ' +
          'was specified and only the GAE_SERVICE env const is set',
@@ -149,10 +149,10 @@ describe('Testing service configuration', () => {
              },
            },
            logger);
-       assert.deepEqual(c.getServiceContext().service, 'customService');
+       assert.deepStrictEqual(c.getServiceContext().service, 'customService');
        // The user didn't specify a version and FUNCTION_NAME is not defined
        // and so the GAE_MODULE_VERSION should be used
-       assert.deepEqual(c.getServiceContext().version, '1.0');
+       assert.deepStrictEqual(c.getServiceContext().version, '1.0');
      });
   it('A Configuration uses the service name and version in the given config ' +
          'they were both specified and only the GAE_SERVICE env const is set',
@@ -166,9 +166,9 @@ describe('Testing service configuration', () => {
              },
            },
            logger);
-       assert.deepEqual(c.getServiceContext().service, 'customService');
+       assert.deepStrictEqual(c.getServiceContext().service, 'customService');
        // The user specified version should be used
-       assert.deepEqual(c.getServiceContext().version, '2.0');
+       assert.deepStrictEqual(c.getServiceContext().version, '2.0');
      });
   it('A Configuration uses the service name in the given config if it ' +
          'was specified and only the FUNCTION_NAME env const is set',
@@ -181,10 +181,10 @@ describe('Testing service configuration', () => {
              },
            },
            logger);
-       assert.deepEqual(c.getServiceContext().service, 'customService');
+       assert.deepStrictEqual(c.getServiceContext().service, 'customService');
        // The user didn't specify a version and thus because FUNCTION_NAME is
        // defined the version should not be defined
-       assert.deepEqual(c.getServiceContext().version, undefined);
+       assert.deepStrictEqual(c.getServiceContext().version, undefined);
      });
   it('A Configuration uses the service name and version in the given config ' +
          'if they were both specified and only the FUNCTION_NAME env const is set',
@@ -231,7 +231,7 @@ describe('Testing service configuration', () => {
              },
            },
            logger);
-       assert.deepEqual(c.getServiceContext().service, 'node');
-       assert.deepEqual(c.getServiceContext().version, '2.0');
+       assert.deepStrictEqual(c.getServiceContext().service, 'node');
+       assert.deepStrictEqual(c.getServiceContext().version, '2.0');
      });
 });
