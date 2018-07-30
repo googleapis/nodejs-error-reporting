@@ -33,7 +33,7 @@ describe('koaRequestInformationExtractor', () => {
       };
       const f = new Fuzzer();
       const cbFn = (value: {}) => {
-        assert.deepEqual(value, DEFAULT_RETURN_VALUE);
+        assert.deepStrictEqual(value, DEFAULT_RETURN_VALUE);
       };
       f.fuzzFunctionForTypes(
           koaRequestInformationExtractor, ['object', 'object'], cbFn);
@@ -61,7 +61,7 @@ describe('koaRequestInformationExtractor', () => {
         remoteAddress: '0.0.0.0',
         statusCode: 200,
       };
-      assert.deepEqual(
+      assert.deepStrictEqual(
           koaRequestInformationExtractor(
               FULL_REQ_DERIVATION_VALUE as Request,
               FULL_RES_DERIVATION_VALUE as Response),
