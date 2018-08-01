@@ -29,7 +29,7 @@ const env = process.env;
 // TypeScript users of the error reporting library would
 // need to install @types/console-log-level to compile their
 // code.  As a result, the interface is explicitly specified instead.
-export type LogLevel = "error" | "trace" | "debug" | "info" | "warn" | "fatal" | undefined;
+export type LogLevel = 'error'|'trace'|'debug'|'info'|'warn'|'fatal'|undefined;
 export interface Logger {
   error(...args: Array<{}>): void;
   trace(...args: Array<{}>): void;
