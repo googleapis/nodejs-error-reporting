@@ -22,7 +22,7 @@ const errorHandler = new ErrorReporting({
   //       option is now invalid.
   onUncaughtException: 'report',
 } as {});
-import Koa from 'koa';
+import * as Koa from 'koa';
 const app = new Koa();
 
 app.use(errorHandler.koa);
