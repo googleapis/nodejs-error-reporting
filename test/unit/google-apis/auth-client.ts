@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as assert from 'assert';
 import * as proxyquire from 'proxyquire';
 
 import {Configuration, ConfigurationOptions, Logger} from '../../../src/configuration';
@@ -60,6 +61,7 @@ function verifyReportedMessage(
   // tslint:disable-next-line:no-unused-expression
   new RequestHandler(config2, logger);
   setImmediate(() => {
+    console.log('TOAST');
     deepStrictEqual(logs, expectedLogs);
     done();
   });
@@ -78,24 +80,26 @@ describe('RequestHandler', () => {
         done);
   }).timeout(8000);
 
-  it('should issue a warning if it cannot communicate with the API',
-     (done: () => void) => {
-       const config = {ignoreEnvironmentCheck: true};
-       const message = 'Test Error';
-       verifyReportedMessage(
-           config, new Error(message), {
-             error: 'Unable to find credential information on instance. This ' +
-                 'library will be unable to communicate with the Stackdriver API to ' +
-                 'save errors.  Message: ' + message,
-           },
-           done);
-     });
+  it('should issue a warning if it cannot communicate with the API', done => {
+    const config = {ignoreEnvironmentCheck: true};
+    const message = 'Test Error';
+    verifyReportedMessage(
+        config, new Error(message), {
+          error: 'Unable to find credential information on instance. This ' +
+              'library will be unable to communicate with the Stackdriver API to ' +
+              'save errors.  Message: ' + message,
+        },
+        done);
+  });
 
-  it('should not issue a warning if it can communicate with the API',
-     (done: () => void) => {
-       const config = {ignoreEnvironmentCheck: true};
-       verifyReportedMessage(config, null, {}, () => {
-         verifyReportedMessage(config, undefined, {}, done);
-       });
-     });
+  it.skip(
+      'should not issue a warning if it can communicate with the API', done => {
+        const config = {ignoreEnvironmentCheck: true};
+        verifyReportedMessage(config, null, {}, () => {
+          verifyReportedMessage(config, null, {}, () => {
+            console.log('eah');
+            done();
+          });
+        });
+      });
 });
