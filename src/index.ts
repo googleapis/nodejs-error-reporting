@@ -206,6 +206,6 @@ export class ErrorReporting {
      * // BEFORE ALL OTHER ROUTE HANDLERS HANDLERS
      * app.use(errors.koa2);
      */
-    this.koa2 = koa2Interface.koaErrorHandler(this._client, this._config);
+    this.koa2 = koa2Interface.koa2ErrorHandler(this._client, this._config);
   }
 }
