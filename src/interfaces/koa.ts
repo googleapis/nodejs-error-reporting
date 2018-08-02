@@ -22,17 +22,12 @@ import {RequestHandler} from '../google-apis/auth-client';
 import {populateErrorMessage} from '../populate-error-message';
 import {koaRequestInformationExtractor} from '../request-extractors/koa';
 
-type KoaContext = {
-  request: Request; response: Response
-};
-type KoaNext = {};
-
 /**
  * The koaErrorHandler should be placed at the beginning of the koa middleware
- * stack and should catch the awaited output of the request handling chain. The
- * Koa error handler returns the actual error handler which will be used in the
- * request chain handling and this function corresponds to the format given in:
- * https://github.com/koajs/koa/wiki/Error-Handling.
+ * stack and should catch the yield of the output of the request handling chain.
+ * The Koa error handler returns the actual error handler which will be used in
+ * the request chain handling and this function corresponds to the format given
+ * in: https://github.com/koajs/koa/wiki/Error-Handling.
  * @function koaErrorHandler
  * @param {AuthClient} - The API client instance to report errors to Stackdriver
  * @param {NormalizedConfigurationVariables} - The application configuration
@@ -41,51 +36,26 @@ type KoaNext = {};
  */
 export function koaErrorHandler(client: RequestHandler, config: Configuration) {
   /**
-   * The actual error handler for the Koa plugin attempts to await the results
+   * The actual error handler for the Koa plugin attempts to yield the results
    * of downstream request handlers and will attempt to catch errors emitted by
    * these handlers.
-   * @param {Object} ctx - the result of the request handlers to await
-   * @param {Function} next - the result of the request handlers to await
+   * @param {Function} next - the result of the request handlers to yield
    * @returns {Undefined} does not return anything
    */
-
-  const middleware = async (ctx: KoaContext, next: KoaNext) => {
+  return function*(this: {request: Request; response: Response;}, next: {}) {
     const svc = config.getServiceContext();
 
     try {
-      await next;
+      yield next;
     } catch (err) {
       const em = new ErrorMessage()
                      .consumeRequestInformation(koaRequestInformationExtractor(
-                         ctx.request, ctx.response))
+                         this.request, this.response))
                      .setServiceContext(svc.service, svc.version);
 
       populateErrorMessage(err, em);
 
       client.sendError(em);
     }
-  };
-
-  return function(this: KoaContext, arg1: KoaContext|KoaNext, arg2?: KoaNext) {
-    const next = arg2 ? arg2 : arg1;
-    const ctx = arg2 ? arg1 as KoaContext : this;
-
-    const result = middleware(ctx, next) as {} as {next: Function};
-
-    // Make our result look like a generator for Koa1
-    let done = false;
-    result.next = () => {
-      if (done) {
-        return {done};
-      }
-
-      done = true;
-      return {
-        done,
-        value: middleware(this, arg1),
-      };
-    };
-
-    return result as IterableIterator<{}>;
   };
 }
