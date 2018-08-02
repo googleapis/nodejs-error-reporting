@@ -16,6 +16,22 @@
 
 import * as check from 'post-install-check';
 
+// Used to easily debug specific tests if necessary.
+// Otherwise, no tests should be skipped.
+const SKIP = {
+  base: false,
+  express: false,
+  hapi: {
+    sixteen: false,
+    seventeen: false
+  },
+  koa: {
+    one: false,
+    two: false
+  },
+  restify: false
+};
+
 const TS_CODE_ARRAY: check.CodeSample[] = [
   {
     code: `import * as errorReporting from '@google-cloud/error-reporting';
@@ -23,6 +39,7 @@ new errorReporting.ErrorReporting();`,
     description: 'imports the module using * syntax',
     dependencies: [],
     devDependencies: [],
+    skip: SKIP.base
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -30,6 +47,7 @@ new ErrorReporting();`,
     description: 'imports the module with {} syntax',
     dependencies: [],
     devDependencies: [],
+    skip: SKIP.base
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -42,6 +60,7 @@ new ErrorReporting({
         'imports the module and starts with a partial `serviceContext`',
     dependencies: [],
     devDependencies: [],
+    skip: SKIP.base
   },
   {
     code: `import {ErrorReporting} from '@google-cloud/error-reporting';
@@ -56,6 +75,7 @@ new ErrorReporting({
         'imports the module and starts with a complete `serviceContext`',
     dependencies: [],
     devDependencies: [],
+    skip: SKIP.base
   },
   {
     code: `import * as express from 'express';
@@ -79,6 +99,7 @@ app.use(errors.express);
     description: 'uses express',
     dependencies: ['express'],
     devDependencies: ['@types/express'],
+    skip: SKIP.express
   },
   {
     code: `import * as hapi from 'hapi';
@@ -103,6 +124,7 @@ server.register(errors.hapi);
     description: 'uses hapi16',
     dependencies: ['hapi@16.x.x'],
     devDependencies: ['@types/hapi@16.x.x'],
+    skip: SKIP.hapi.sixteen
   },
   {
     code: `import * as hapi from 'hapi';
@@ -132,6 +154,7 @@ start().catch(console.error);
     description: 'uses hapi17',
     dependencies: ['hapi@17.x.x'],
     devDependencies: ['@types/hapi@17.x.x'],
+    skip: SKIP.hapi.seventeen
   },
   {
     code: `import * as Koa from 'koa';
@@ -156,6 +179,7 @@ app.use(function *(this: any): IterableIterator<any> {
     description: 'uses koa1',
     dependencies: ['koa@1.x.x'],
     devDependencies: ['@types/koa'],
+    skip: SKIP.koa.one
   },
   {
     code: `import * as Koa from 'koa';
@@ -165,21 +189,22 @@ const errors = new ErrorReporting();
 
 const app = new Koa();
 
-app.use(errors.koa);
+app.use(errors.koa2);
 
-app.use(async (this: any): Promise<void> => {
+app.use(async (ctx: Koa.Context, next: {}) => {
   //This will set status and message
-  this.throw('Error Message', 500);
+  ctx.throw('Error Message', 500);
 });
 
 // response
-app.use(async (this: any): Promise<void> => {
-  this.body = 'Hello World';
+app.use(async (ctx: Koa.Context, next: {}): Promise<void> => {
+  ctx.body = 'Hello World';
 });
 `,
     description: 'uses koa2',
     dependencies: ['koa@2.x.x'],
     devDependencies: ['@types/koa@2.x.x'],
+    skip: SKIP.koa.two
   },
   {
     code: `import * as restify from 'restify';
@@ -200,6 +225,7 @@ server.head('/hello/:name', respond);
     description: 'uses restify',
     dependencies: ['restify'],
     devDependencies: ['@types/restify'],
+    skip: SKIP.restify
   },
 ];
 
@@ -211,6 +237,7 @@ new ErrorReporting();`,
     description: 'requires the module using Node 4+ syntax',
     dependencies: [],
     devDependencies: [],
+    skip: SKIP.base
   },
   {
     code:
@@ -224,6 +251,7 @@ new ErrorReporting({
         'requires the module and starts with a partial `serviceContext`',
     dependencies: [],
     devDependencies: [],
+    skip: SKIP.base
   },
   {
     code:
@@ -239,6 +267,7 @@ new ErrorReporting({
         'requires the module and starts with a complete `serviceContext`',
     dependencies: [],
     devDependencies: [],
+    skip: SKIP.base
   },
   {
     code: `const express = require('express');
@@ -264,6 +293,7 @@ app.use(errors.express);
     description: 'uses express',
     dependencies: ['express'],
     devDependencies: [],
+    skip: SKIP.express
   },
   {
     code: `const hapi = require('hapi');
@@ -288,6 +318,7 @@ server.register(errors.hapi);
     description: 'uses hapi16',
     dependencies: ['hapi@16.x.x'],
     devDependencies: [],
+    skip: SKIP.hapi.sixteen
   },
   {
     code: `const hapi = require('hapi');
@@ -317,6 +348,7 @@ start().catch(console.error);
     description: 'uses hapi17',
     dependencies: ['hapi@17.x.x'],
     devDependencies: [],
+    skip: SKIP.hapi.seventeen
   },
   {
     code: `const Koa = require('koa');
@@ -341,6 +373,7 @@ app.use(function *(){
     description: 'uses koa1',
     dependencies: ['koa@1.x.x'],
     devDependencies: [],
+    skip: SKIP.koa.one
   },
   {
     code: `const Koa = require('koa');
@@ -350,21 +383,22 @@ const errors = new ErrorReporting();
 
 const app = new Koa();
 
-app.use(errors.koa);
+app.use(errors.koa2);
 
-app.use(async (next) => {
+app.use(async (ctx, next) => {
   //This will set status and message
-  this.throw('Error Message', 500);
+  ctx.throw('Error Message', 500);
 });
 
 // response
-app.use(async () => {
-  this.body = 'Hello World';
+app.use(async (ctx, next) => {
+  ctx.body = 'Hello World';
 });
 `,
     description: 'uses koa2',
     dependencies: ['koa@2.x.x'],
     devDependencies: [],
+    skip: SKIP.koa.two
   },
   {
     code: `const restify = require('restify');
@@ -385,6 +419,7 @@ server.head('/hello/:name', respond);
     description: 'uses restify',
     dependencies: ['restify'],
     devDependencies: [],
+    skip: SKIP.restify
   },
 ];
 
