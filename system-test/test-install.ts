@@ -21,14 +21,8 @@ import * as check from 'post-install-check';
 const SKIP = {
   base: false,
   express: false,
-  hapi: {
-    sixteen: false,
-    seventeen: false
-  },
-  koa: {
-    one: false,
-    two: false
-  },
+  hapi: {sixteen: false, seventeen: false},
+  koa: {one: false, two: false},
   restify: false
 };
 
