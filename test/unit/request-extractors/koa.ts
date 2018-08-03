@@ -15,8 +15,8 @@
  */
 
 import * as assert from 'assert';
-import {Request, Response} from 'koa';
 import * as stringify from 'json-stable-stringify';
+import {Request, Response} from 'koa';
 
 import {koaRequestInformationExtractor} from '../../../src/request-extractors/koa';
 import {Fuzzer} from '../../../utils/fuzzer';

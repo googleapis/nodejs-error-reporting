@@ -25,7 +25,8 @@ describe('Instantiating a new ErrorMessage', () => {
   });
 
   it('Should have a default service context', () => {
-    assert.deepStrictEqual(em.serviceContext, {service: 'node', version: undefined});
+    assert.deepStrictEqual(
+        em.serviceContext, {service: 'node', version: undefined});
   });
   it('Should have a default message', () => {
     assert.strictEqual(em.message, '');
