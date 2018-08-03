@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-import * as assert from 'assert';
 import {Response} from 'express-serve-static-core';
 import * as extend from 'extend';
-import * as stringify from 'json-stable-stringify';
 
 import {expressRequestInformationExtractor} from '../../../src/request-extractors/express';
 import {Fuzzer} from '../../../utils/fuzzer';
-
-function deepStrictEqual(actual: {}, expected: {}, message?: string) {
-  assert.deepStrictEqual(stringify(actual), stringify(expected), message);
-}
+import {deepStrictEqual} from '../../util';
 
 describe('Behaviour under varying input', () => {
   let f: Fuzzer;

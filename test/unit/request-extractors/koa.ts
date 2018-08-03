@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-import * as assert from 'assert';
-import * as stringify from 'json-stable-stringify';
 import {Request, Response} from 'koa';
 
 import {koaRequestInformationExtractor} from '../../../src/request-extractors/koa';
 import {Fuzzer} from '../../../utils/fuzzer';
-
-function deepStrictEqual(actual: {}, expected: {}, message?: string) {
-  assert.deepStrictEqual(stringify(actual), stringify(expected), message);
-}
+import {deepStrictEqual} from '../../util';
 
 describe('koaRequestInformationExtractor', () => {
   describe('Behaviour under invalid input', () => {

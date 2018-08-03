@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-import * as assert from 'assert';
 import * as hapi from 'hapi';
-import * as stringify from 'json-stable-stringify';
 
 import {hapiRequestInformationExtractor} from '../../../src/request-extractors/hapi';
 import {Fuzzer} from '../../../utils/fuzzer';
-
-function deepStrictEqual(actual: {}, expected: {}, message?: string) {
-  assert.deepStrictEqual(stringify(actual), stringify(expected), message);
-}
+import {deepStrictEqual} from '../../util';
 
 describe('hapiRequestInformationExtractor behaviour', () => {
   describe('behaviour given invalid input', () => {

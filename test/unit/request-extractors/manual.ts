@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-import * as assert from 'assert';
 import * as extend from 'extend';
 import omit = require('lodash.omit');
-import * as stringify from 'json-stable-stringify';
 
 import {manualRequestInformationExtractor} from '../../../src/request-extractors/manual';
 import {Fuzzer} from '../../../utils/fuzzer';
-
-function deepStrictEqual(actual: {}, expected: {}, message?: string) {
-  assert.deepStrictEqual(stringify(actual), stringify(expected), message);
-}
+import {deepStrictEqual} from '../../util';
 
 describe('manualRequestInformationExtractor', () => {
   describe('Behaviour given invalid input', () => {
