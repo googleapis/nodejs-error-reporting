@@ -16,9 +16,14 @@
 
 import * as assert from 'assert';
 import {Request, Response} from 'koa';
+import * as stringify from 'json-stable-stringify';
 
 import {koaRequestInformationExtractor} from '../../../src/request-extractors/koa';
 import {Fuzzer} from '../../../utils/fuzzer';
+
+function deepStrictEqual(actual: {}, expected: {}, message?: string) {
+  assert.deepStrictEqual(stringify(actual), stringify(expected), message);
+}
 
 describe('koaRequestInformationExtractor', () => {
   describe('Behaviour under invalid input', () => {
@@ -33,7 +38,7 @@ describe('koaRequestInformationExtractor', () => {
       };
       const f = new Fuzzer();
       const cbFn = (value: {}) => {
-        assert.deepStrictEqual(value, DEFAULT_RETURN_VALUE);
+        deepStrictEqual(value, DEFAULT_RETURN_VALUE);
       };
       f.fuzzFunctionForTypes(
           koaRequestInformationExtractor, ['object', 'object'], cbFn);
@@ -61,7 +66,7 @@ describe('koaRequestInformationExtractor', () => {
         remoteAddress: '0.0.0.0',
         statusCode: 200,
       };
-      assert.deepStrictEqual(
+      deepStrictEqual(
           koaRequestInformationExtractor(
               FULL_REQ_DERIVATION_VALUE as Request,
               FULL_RES_DERIVATION_VALUE as Response),

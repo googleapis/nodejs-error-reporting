@@ -17,9 +17,14 @@
 import * as assert from 'assert';
 import {Response} from 'express-serve-static-core';
 import * as extend from 'extend';
+import * as stringify from 'json-stable-stringify';
 
 import {expressRequestInformationExtractor} from '../../../src/request-extractors/express';
 import {Fuzzer} from '../../../utils/fuzzer';
+
+function deepStrictEqual(actual: {}, expected: {}, message?: string) {
+  assert.deepStrictEqual(stringify(actual), stringify(expected), message);
+}
 
 describe('Behaviour under varying input', () => {
   let f: Fuzzer;
@@ -36,7 +41,7 @@ describe('Behaviour under varying input', () => {
   });
   it('Should return a default value given invalid input', () => {
     const cbFn = (value: {}) => {
-      assert.deepStrictEqual(value, DEFAULT_RETURN_VALUE);
+      deepStrictEqual(value, DEFAULT_RETURN_VALUE);
     };
     f.fuzzFunctionForTypes(
         expressRequestInformationExtractor, ['object', 'object'], cbFn);
@@ -116,7 +121,7 @@ describe('Behaviour under varying input', () => {
     let tmpOutput = expressRequestInformationExtractor(
         headerFactory(FULL_REQ_DERIVATION_VALUE),
         FULL_RES_DERIVATION_VALUE as Response);
-    assert.deepStrictEqual(tmpOutput, FULL_REQ_EXPECTED_VALUE, [
+    deepStrictEqual(tmpOutput, FULL_REQ_EXPECTED_VALUE, [
       'Given a valid object input for the request parameter and an',
       '\'x-forwarded-for\' parameter the request extractor should return',
       'the expected full req output and the \'x-forwarded-for\' value',
@@ -125,7 +130,7 @@ describe('Behaviour under varying input', () => {
     tmpOutput = expressRequestInformationExtractor(
         headerFactory(PARTIAL_REQ_DERIVATION_VALUE),
         PARTIAL_RES_DERIVATION_VALUE as Response);
-    assert.deepStrictEqual(tmpOutput, PARTIAL_REQ_EXPECTED_VALUE, [
+    deepStrictEqual(tmpOutput, PARTIAL_REQ_EXPECTED_VALUE, [
       'Given a valid object input for the request parameter but sans an',
       '\'x-forwarded-for\' parameter the request extractor should return',
       'the expected parital req output and the remoteAddress value',
@@ -134,7 +139,7 @@ describe('Behaviour under varying input', () => {
     tmpOutput = expressRequestInformationExtractor(
         headerFactory(ANOTHER_PARTIAL_REQ_DERIVATION_VALUE),
         ANOTHER_PARTIAL_RES_DERIVATION_VALUE as Response);
-    assert.deepStrictEqual(tmpOutput, ANOTHER_PARTIAL_REQ_EXPECTED_VALUE, [
+    deepStrictEqual(tmpOutput, ANOTHER_PARTIAL_REQ_EXPECTED_VALUE, [
       'Given a valid object input for the request parameter but sans an',
       '\'x-forwarded-for\' parameter or a remoteAddress parameter',
       'the request extractor should return an empty string',
