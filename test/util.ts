@@ -17,6 +17,8 @@
 import * as assert from 'assert';
 import * as stringify from 'json-stable-stringify';
 
-export function deepStrictEqual(actual: {}, expected: {}, message?: string) {
+export type Anything = {}|undefined|null;
+
+export function deepStrictEqual(actual: Anything, expected: Anything, message?: string) {
   assert.deepStrictEqual(stringify(actual), stringify(expected), message);
 }
