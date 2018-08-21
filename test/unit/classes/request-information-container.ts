@@ -68,27 +68,27 @@ describe('RequestInformationContainer', () => {
     const VALID_NUMBER_INPUT = 500;
     it('Should assign the value to the url property', () => {
       ric.setUrl(VALID_STRING_INPUT);
-      deepStrictEqual(ric.url, VALID_STRING_INPUT);
+      assert.strictEqual(ric.url, VALID_STRING_INPUT);
     });
     it('Should assign the value to the method property', () => {
       ric.setMethod(VALID_STRING_INPUT);
-      deepStrictEqual(ric.method, VALID_STRING_INPUT);
+      assert.strictEqual(ric.method, VALID_STRING_INPUT);
     });
     it('Should assign the value to the referrer property', () => {
       ric.setReferrer(VALID_STRING_INPUT);
-      deepStrictEqual(ric.referrer, VALID_STRING_INPUT);
+      assert.strictEqual(ric.referrer, VALID_STRING_INPUT);
     });
     it('Should assign the value to the userAgent property', () => {
       ric.setUserAgent(VALID_STRING_INPUT);
-      deepStrictEqual(ric.userAgent, VALID_STRING_INPUT);
+      assert.strictEqual(ric.userAgent, VALID_STRING_INPUT);
     });
     it('Should assign the value to remoteAddress property', () => {
       ric.setRemoteAddress(VALID_STRING_INPUT);
-      deepStrictEqual(ric.remoteAddress, VALID_STRING_INPUT);
+      assert.strictEqual(ric.remoteAddress, VALID_STRING_INPUT);
     });
     it('Should assign the value to statusCode property', () => {
       ric.setStatusCode(VALID_NUMBER_INPUT);
-      deepStrictEqual(ric.statusCode, VALID_NUMBER_INPUT);
+      assert.strictEqual(ric.statusCode, VALID_NUMBER_INPUT);
     });
   });
 });
