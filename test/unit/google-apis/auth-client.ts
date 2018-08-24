@@ -28,7 +28,7 @@ function verifyReportedMessage(
     constructor() {
       this.authClient = {
         async getAccessToken() {
-          return Promise.reject(errToReturn);
+          throw errToReturn;
         },
       };
       this.request = () => {};
@@ -76,7 +76,7 @@ describe('RequestHandler', () => {
           info: 'API key provided; skipping OAuth2 token request.',
         },
         done);
-  }).timeout(4000);
+  }).timeout(8000);
 
   it('should issue a warning if it cannot communicate with the API',
      (done: () => void) => {
