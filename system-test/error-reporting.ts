@@ -44,9 +44,9 @@ const envKeys = [
 
 // block all attempts to chat with the metadata server (kokoro runs on GCE)
 nock('http://metadata.google.internal')
-  .get(() => true)
-  .replyWithError({code: 'ENOTFOUND'})
-  .persist();
+    .get(() => true)
+    .replyWithError({code: 'ENOTFOUND'})
+    .persist();
 
 class InstancedEnv {
   injectedEnv: {[key: string]: string|undefined};
