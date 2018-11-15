@@ -15,20 +15,20 @@
 
 'use strict';
 
-const path = require(`path`);
-const assert = require(`assert`);
-const tools = require(`@google-cloud/nodejs-repo-tools`);
+const path = require('path');
+const assert = require('assert');
+const tools = require('@google-cloud/nodejs-repo-tools');
 
-const cwd = path.join(__dirname, `..`);
-const cmd = `node snippets.js`;
+const cwd = path.join(__dirname, '..');
+const cmd = 'node snippets.js';
 
 before(tools.checkCredentials);
 
-it(`should setup using implicit credentials`, async () =>
+it('should setup using implicit credentials', async () =>
   // There's no output, the command should just succeed
   await tools.runAsync(`${cmd} setup-implicit`, cwd));
 
-it(`should report errors manually`, async () => {
+it('should report errors manually', async () => {
   const output = await tools.runAsync(`${cmd} manual`, cwd);
   assert.strictEqual(output.includes('Done reporting error event!'), true);
   assert.strictEqual(output.includes('Done reporting Error object!'), true);
