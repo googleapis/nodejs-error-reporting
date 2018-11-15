@@ -24,7 +24,7 @@ import {RequestHandler} from '../src/google-apis/auth-client';
 import {createLogger} from '../src/logger';
 import {FakeConfiguration as Configuration} from '../test/fixtures/configuration';
 import {deepStrictEqual} from '../test/util';
-import {ErrorGroupStats, ErrorsApiTransport} from '../utils/errors-api-transport';
+import {ErrorsApiTransport} from '../utils/errors-api-transport';
 
 import pick = require('lodash.pick');
 import omitBy = require('lodash.omitby');
@@ -33,7 +33,7 @@ import * as util from 'util';
 import * as path from 'path';
 
 const ERR_TOKEN = '_@google_STACKDRIVER_INTEGRATION_TEST_ERROR__';
-const TIMEOUT = 60000;
+const TIMEOUT = 120000;
 
 const envKeys = [
   'GOOGLE_APPLICATION_CREDENTIALS',
@@ -137,6 +137,12 @@ if (!shouldRun()) {
   console.log('Skipping error-reporting system tests');
   // eslint-disable-next-line no-process-exit
   process.exit(1);
+}
+
+function sleep(timeout: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, timeout);
+  });
 }
 
 describe('Request/Response lifecycle mocking', () => {
@@ -443,7 +449,7 @@ describe('error-reporting', () => {
   let transport: ErrorsApiTransport;
   let oldLogger: (text: string) => void;
   let logOutput = '';
-  before(() => {
+  before(async () => {
     // This test assumes that only the error-reporting library will be
     // adding listeners to the 'unhandledRejection' event.  Thus we need to
     // make sure that no listeners for that event exist.  If this check
@@ -458,6 +464,7 @@ describe('error-reporting', () => {
       logOutput += text;
     };
     reinitialize();
+    await transport.deleteAllEvents();
   });
 
   function reinitialize(extraConfig?: {}) {
@@ -470,7 +477,7 @@ describe('error-reporting', () => {
             version: VERSION,
           },
           projectId: env.projectId,
-          keyFilename: process.env.GCLOUD_TESTS_KEY,
+          keyFilename: process.env.GCLOUD_TESTS_KEY
         },
         extraConfig || {});
     errors = new ErrorReporting(initConfiguration);
@@ -479,13 +486,9 @@ describe('error-reporting', () => {
     transport = new ErrorsApiTransport(configuration, logger);
   }
 
-  after(done => {
-    console.error = oldLogger;
+  after(async () => {
     if (transport) {
-      transport.deleteAllEvents(err => {
-        assert.ifError(err);
-        done();
-      });
+      await transport.deleteAllEvents();
     }
   });
 
@@ -493,27 +496,18 @@ describe('error-reporting', () => {
     logOutput = '';
   });
 
-  function verifyAllGroups(messageTest: (message: string) => void, timeout: number) {
-    return new Promise<ErrorGroupStats[]>((resolve, reject) => {
-      setTimeout(() => {
-        transport.getAllGroups((err, groups) => {
-          if (err) {
-            return reject(err);
-          }
-          assert.ok(groups);
+  async function verifyAllGroups(messageTest: (message: string) => void, timeout: number) {
+    await sleep(timeout);
+    const groups = await transport.getAllGroups();
+    assert.ok(groups);
 
-          const matchedErrors = groups!.filter(errItem => {
-            return (
-                errItem && errItem.representative &&
-                errItem.representative.serviceContext &&
-                errItem.representative.serviceContext.service === SERVICE &&
-                errItem.representative.serviceContext.version === VERSION &&
-                messageTest(errItem.representative.message));
-          });
-
-          resolve(matchedErrors);
-        });
-      }, timeout);
+    return groups!.filter(errItem => {
+      return (
+          errItem && errItem.representative &&
+          errItem.representative.serviceContext &&
+          errItem.representative.serviceContext.service === SERVICE &&
+          errItem.representative.serviceContext.version === VERSION &&
+          messageTest(errItem.representative.message));
     });
   }
 
@@ -547,14 +541,22 @@ describe('error-reporting', () => {
       errOb: any,  // tslint:disable-line:no-any
       messageTest: (message: string) => void, timeout: number) {
     function expectedTopOfStack() {
-      errors.report(errOb, undefined, undefined, async (err, response, body) => {
-        assert.ifError(err);
-        assert(is.object(response));
-        deepStrictEqual(body, {});
-        await verifyServerResponse(messageTest, timeout);
+      return new Promise((resolve, reject) => {
+        errors.report(errOb, undefined, undefined, async (err, response, body) => {
+          try {
+            assert.ifError(err);
+            assert(is.object(response));
+            deepStrictEqual(body, {});
+            await verifyServerResponse(messageTest, timeout);
+            resolve();
+          }
+          catch (e) {
+            reject(e);
+          }
+        });
       });
     };
-    expectedTopOfStack();
+    await expectedTopOfStack();
   }
 
   // For each test below, after an error is reported, the test waits
