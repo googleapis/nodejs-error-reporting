@@ -29,6 +29,7 @@ import {ErrorGroupStats, ErrorsApiTransport} from '../utils/errors-api-transport
 import pick = require('lodash.pick');
 import omitBy = require('lodash.omitby');
 import * as request from 'request';
+import * as uuid from 'uuid';
 import * as util from 'util';
 import * as path from 'path';
 
@@ -434,12 +435,12 @@ describe('Error Reporting API', () => {
   });
 });
 
-describe.only('error-reporting', () => {
+describe('error-reporting', () => {
   const SRC_ROOT = path.join(__dirname, '..', 'src');
-  const TIMESTAMP = Date.now();
+  const UUID = uuid.v4();
   const BASE_NAME = 'error-reporting-system-test';
   function buildName(suffix: string) {
-    return [TIMESTAMP, BASE_NAME, suffix].join('_');
+    return [UUID, BASE_NAME, suffix].join('_');
   }
 
   const SERVICE = buildName('service-name');
@@ -532,11 +533,6 @@ describe.only('error-reporting', () => {
     assert.ok(
         errItem,
         'Retrieved an error item from the Error Reporting API but it is falsy.');
-    assert.strictEqual(
-        errItem.count, '1',
-        `Expected the error item to only have a count of 1 but found ${
-            errItem.count} for error item: ${
-            JSON.stringify(errItem, null, 2)}`);
     const rep = errItem.representative;
     assert.ok(rep, 'Expected the error item to have representative');
     // Ensure the stack trace in the message does not contain any frames
