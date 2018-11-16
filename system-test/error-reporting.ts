@@ -24,7 +24,7 @@ import {RequestHandler} from '../src/google-apis/auth-client';
 import {createLogger} from '../src/logger';
 import {FakeConfiguration as Configuration} from '../test/fixtures/configuration';
 import {deepStrictEqual} from '../test/util';
-import {ErrorsApiTransport} from '../utils/errors-api-transport';
+import {ErrorGroupStats, ErrorsApiTransport} from '../utils/errors-api-transport';
 
 import pick = require('lodash.pick');
 import omitBy = require('lodash.omitby');
@@ -434,7 +434,7 @@ describe('Error Reporting API', () => {
   });
 });
 
-describe('error-reporting', () => {
+describe.only('error-reporting', () => {
   const SRC_ROOT = path.join(__dirname, '..', 'src');
   const TIMESTAMP = Date.now();
   const BASE_NAME = 'error-reporting-system-test';
@@ -496,42 +496,49 @@ describe('error-reporting', () => {
     logOutput = '';
   });
 
-  async function verifyAllGroups(messageTest: (message: string) => void, timeout: number) {
-    await sleep(timeout);
-    const groups = await transport.getAllGroups();
-    assert.ok(groups);
+  async function verifyAllGroups(messageTest: (message: string) => void, maxCount: number, timeout: number) {
+    const start = Date.now();
+    let groups: ErrorGroupStats[] = [];
+    while (groups.length < maxCount && (Date.now() - start) <= timeout) {
+      const allGroups = await transport.getAllGroups();
+      assert.ok(allGroups, 'Failed to get groups from the Error Reporting API');
 
-    return groups!.filter(errItem => {
-      return (
-          errItem && errItem.representative &&
-          errItem.representative.serviceContext &&
-          errItem.representative.serviceContext.service === SERVICE &&
-          errItem.representative.serviceContext.version === VERSION &&
-          messageTest(errItem.representative.message));
-    });
+      const filteredGroups = allGroups!.filter(errItem => {
+        return (
+            errItem && errItem.representative &&
+            errItem.representative.serviceContext &&
+            errItem.representative.serviceContext.service === SERVICE &&
+            errItem.representative.serviceContext.version === VERSION &&
+            messageTest(errItem.representative.message));
+      });
+      groups = groups.concat(filteredGroups);
+      await sleep(1000);
+    }
+
+    return groups;
   }
 
-  async function verifyServerResponse(messageTest: (message: string) => void, timeout: number) {
-    const matchedErrors = await verifyAllGroups(messageTest, timeout);
-    // The error should have been reported exactly once
-    assert.strictEqual(matchedErrors.length, 1);
+  async function verifyServerResponse(messageTest: (message: string) => void, maxCount: number, timeout: number) {
+    const matchedErrors = await verifyAllGroups(messageTest, maxCount, timeout);
+    assert.strictEqual(matchedErrors.length, maxCount, `Expected to find ${maxCount} error items but found ${matchedErrors.length}: ${JSON.stringify(matchedErrors, null, 2)}`);
     const errItem = matchedErrors[0];
-    assert.ok(errItem);
-    assert.strictEqual(errItem.count, '1');
+    assert.ok(errItem, 'Retrieved an error item from the Error Reporting API but it is falsy.');
+    assert.strictEqual(errItem.count, '1', `Expected the error item to only have a count of 1 but found ${errItem.count} for error item: ${JSON.stringify(errItem, null, 2)}`);
     const rep = errItem.representative;
-    assert.ok(rep);
+    assert.ok(rep, 'Expected the error item to have representative');
     // Ensure the stack trace in the message does not contain any frames
     // specific to the error-reporting library.
-    assert.strictEqual(rep.message.indexOf(SRC_ROOT), -1);
+    assert.strictEqual(rep.message.indexOf(SRC_ROOT), -1, `Expected the error item's representative's message to start with ${SRC_ROOT} but found '${rep.message}'`);
     // Ensure the stack trace in the mssage contains the frame corresponding
     // to the 'expectedTopOfStack' function because that is the name of
     // function used in this file that is the topmost function in the call
     // stack that is not internal to the error-reporting library.
     // This ensures that only the frames specific to the
     // error-reporting library are removed from the stack trace.
-    assert.notStrictEqual(rep.message.indexOf('expectedTopOfStack'), -1);
+    const expectedTopOfStack = 'expectedTopOfStack';
+    assert.notStrictEqual(rep.message.indexOf(expectedTopOfStack), -1, `Expected the error item's representative's message to not contain ${expectedTopOfStack} but found '${rep.message}'`);
     const context = rep.serviceContext;
-    assert.ok(context);
+    assert.ok(context, `Expected the error item's representative to have a context`);
     assert.strictEqual(context.service, SERVICE);
     assert.strictEqual(context.version, VERSION);
   }
@@ -539,7 +546,7 @@ describe('error-reporting', () => {
   // the `errOb` argument can be anything, including `null` and `undefined`
   async function verifyReporting(
       errOb: any,  // tslint:disable-line:no-any
-      messageTest: (message: string) => void, timeout: number) {
+      messageTest: (message: string) => void, maxCount: number, timeout: number) {
     function expectedTopOfStack() {
       return new Promise((resolve, reject) => {
         errors.report(errOb, undefined, undefined, async (err, response, body) => {
@@ -547,7 +554,7 @@ describe('error-reporting', () => {
             assert.ifError(err);
             assert(is.object(response));
             deepStrictEqual(body, {});
-            await verifyServerResponse(messageTest, timeout);
+            await verifyServerResponse(messageTest, maxCount, timeout);
             resolve();
           }
           catch (e) {
@@ -575,7 +582,7 @@ describe('error-reporting', () => {
        const errOb = expectedTopOfStack();
        await verifyReporting(errOb, message => {
          return message.startsWith('Error: ' + errorId + '\n');
-       }, TIMEOUT);
+       }, 1, TIMEOUT);
      });
 
   it('Should correctly publish an error that is a string',
@@ -584,7 +591,7 @@ describe('error-reporting', () => {
        const errorId = buildName('with-string');
        await verifyReporting(errorId, message => {
          return message.startsWith(errorId + '\n');
-       }, TIMEOUT);
+       }, 1, TIMEOUT);
      });
 
   it('Should correctly publish an error that is undefined',
@@ -592,14 +599,14 @@ describe('error-reporting', () => {
        this.timeout(TIMEOUT * 2);
        await verifyReporting(undefined, message => {
          return message.startsWith('undefined\n');
-       }, TIMEOUT);
+       }, 1, TIMEOUT);
      });
 
   it('Should correctly publish an error that is null', async function(this) {
     this.timeout(TIMEOUT * 2);
     await verifyReporting(null, message => {
       return message.startsWith('null\n');
-    }, TIMEOUT);
+    }, 1, TIMEOUT);
   });
 
   it('Should correctly publish an error that is a plain object',
@@ -607,7 +614,7 @@ describe('error-reporting', () => {
        this.timeout(TIMEOUT * 2);
        await verifyReporting({someKey: 'someValue'}, message => {
          return message.startsWith('[object Object]\n');
-       }, TIMEOUT);
+       }, 1, TIMEOUT);
      });
 
   it('Should correctly publish an error that is a number',
@@ -616,7 +623,7 @@ describe('error-reporting', () => {
        const num = new Date().getTime();
        await verifyReporting(num, message => {
          return message.startsWith('' + num + '\n');
-       }, TIMEOUT);
+       }, 1, TIMEOUT);
      });
 
   it('Should correctly publish an error that is of an unknown type',
@@ -625,7 +632,7 @@ describe('error-reporting', () => {
        const bool = true;
        await verifyReporting(bool, message => {
          return message.startsWith('true\n');
-       }, TIMEOUT);
+       }, 1, TIMEOUT);
      });
 
   it('Should correctly publish errors using an error builder',
@@ -654,13 +661,13 @@ describe('error-reporting', () => {
                message.startsWith(errorId) &&
                message.indexOf('callingSiteFunction') === -1 &&
                message.indexOf('definitionSiteFunction') !== -1);
-         }, TIMEOUT);
+         }, 1, TIMEOUT);
        }
        await callingSiteFunction();
      });
 
   it('Should report unhandledRejections if enabled', async function(this) {
-    this.timeout(TIMEOUT * 2);
+    this.timeout(TIMEOUT * 4);
     reinitialize({reportUnhandledRejections: true});
     const rejectValue = buildName('promise-rejection');
     function expectedTopOfStack() {
@@ -674,15 +681,20 @@ describe('error-reporting', () => {
     const rejectText = 'Error: ' + rejectValue;
     await new Promise((resolve, reject) => {
       setImmediate(async () => {
-        const expected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
-            'promise rejection: ' + rejectText +
-            '.  This rejection has been reported to the ' +
-            'Google Cloud Platform error-reporting console.';
-        assert.notStrictEqual(logOutput.indexOf(expected), -1);
-        await verifyServerResponse(message => {
-          return message.startsWith(rejectText);
-        }, TIMEOUT);
-        resolve();
+        try {
+          const expected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
+              'promise rejection: ' + rejectText +
+              '.  This rejection has been reported to the ' +
+              'Google Cloud Platform error-reporting console.';
+          assert.notStrictEqual(logOutput.indexOf(expected), -1);
+          await verifyServerResponse(message => {
+            return message.startsWith(rejectText);
+          }, 1, TIMEOUT);
+          resolve();
+        }
+        catch (err) {
+          reject(err);
+        }
       });
     });
   });
@@ -697,21 +709,25 @@ describe('error-reporting', () => {
     expectedTopOfStack();
     await new Promise((resolve, reject) => {
       setImmediate(async () => {
-        const notExpected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
-            'promise rejection: ' + rejectValue +
-            '.  This rejection has been reported to the error-reporting console.';
-        assert.strictEqual(logOutput.indexOf(notExpected), -1);
-        // Get all groups that that start with the rejection value and hence all
-        // of the groups corresponding to the above rejection (Since the
-        // buildName() creates a string unique enough to single out only the
-        // above rejection.) and verify that there are no such groups reported.
-        const matchedErrors = await verifyAllGroups(
-            message => {
-              return message.startsWith(rejectValue);
-            },
-            TIMEOUT);
-        assert.strictEqual(matchedErrors.length, 0);
-        resolve();
+        try {
+          const notExpected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
+              'promise rejection: ' + rejectValue +
+              '.  This rejection has been reported to the error-reporting console.';
+          assert.strictEqual(logOutput.indexOf(notExpected), -1);
+          // Get all groups that that start with the rejection value and hence all
+          // of the groups corresponding to the above rejection (Since the
+          // buildName() creates a string unique enough to single out only the
+          // above rejection.) and verify that there are no such groups reported.
+          const matchedErrors = await verifyAllGroups(
+              message => {
+                return message.startsWith(rejectValue);
+              }, 1, TIMEOUT);
+          assert.strictEqual(matchedErrors.length, 0);
+          resolve();
+        }
+        catch (err) {
+          reject(err);
+        }
       });
     });
   });
