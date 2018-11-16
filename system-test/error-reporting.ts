@@ -496,7 +496,9 @@ describe.only('error-reporting', () => {
     logOutput = '';
   });
 
-  async function verifyAllGroups(messageTest: (message: string) => void, maxCount: number, timeout: number) {
+  async function verifyAllGroups(
+      messageTest: (message: string) => void, maxCount: number,
+      timeout: number) {
     const start = Date.now();
     let groups: ErrorGroupStats[] = [];
     while (groups.length < maxCount && (Date.now() - start) <= timeout) {
@@ -518,17 +520,31 @@ describe.only('error-reporting', () => {
     return groups;
   }
 
-  async function verifyServerResponse(messageTest: (message: string) => void, maxCount: number, timeout: number) {
+  async function verifyServerResponse(
+      messageTest: (message: string) => void, maxCount: number,
+      timeout: number) {
     const matchedErrors = await verifyAllGroups(messageTest, maxCount, timeout);
-    assert.strictEqual(matchedErrors.length, maxCount, `Expected to find ${maxCount} error items but found ${matchedErrors.length}: ${JSON.stringify(matchedErrors, null, 2)}`);
+    assert.strictEqual(
+        matchedErrors.length, maxCount,
+        `Expected to find ${maxCount} error items but found ${
+            matchedErrors.length}: ${JSON.stringify(matchedErrors, null, 2)}`);
     const errItem = matchedErrors[0];
-    assert.ok(errItem, 'Retrieved an error item from the Error Reporting API but it is falsy.');
-    assert.strictEqual(errItem.count, '1', `Expected the error item to only have a count of 1 but found ${errItem.count} for error item: ${JSON.stringify(errItem, null, 2)}`);
+    assert.ok(
+        errItem,
+        'Retrieved an error item from the Error Reporting API but it is falsy.');
+    assert.strictEqual(
+        errItem.count, '1',
+        `Expected the error item to only have a count of 1 but found ${
+            errItem.count} for error item: ${
+            JSON.stringify(errItem, null, 2)}`);
     const rep = errItem.representative;
     assert.ok(rep, 'Expected the error item to have representative');
     // Ensure the stack trace in the message does not contain any frames
     // specific to the error-reporting library.
-    assert.strictEqual(rep.message.indexOf(SRC_ROOT), -1, `Expected the error item's representative's message to start with ${SRC_ROOT} but found '${rep.message}'`);
+    assert.strictEqual(
+        rep.message.indexOf(SRC_ROOT), -1,
+        `Expected the error item's representative's message to start with ${
+            SRC_ROOT} but found '${rep.message}'`);
     // Ensure the stack trace in the mssage contains the frame corresponding
     // to the 'expectedTopOfStack' function because that is the name of
     // function used in this file that is the topmost function in the call
@@ -536,9 +552,13 @@ describe.only('error-reporting', () => {
     // This ensures that only the frames specific to the
     // error-reporting library are removed from the stack trace.
     const expectedTopOfStack = 'expectedTopOfStack';
-    assert.notStrictEqual(rep.message.indexOf(expectedTopOfStack), -1, `Expected the error item's representative's message to not contain ${expectedTopOfStack} but found '${rep.message}'`);
+    assert.notStrictEqual(
+        rep.message.indexOf(expectedTopOfStack), -1,
+        `Expected the error item's representative's message to not contain ${
+            expectedTopOfStack} but found '${rep.message}'`);
     const context = rep.serviceContext;
-    assert.ok(context, `Expected the error item's representative to have a context`);
+    assert.ok(
+        context, `Expected the error item's representative to have a context`);
     assert.strictEqual(context.service, SERVICE);
     assert.strictEqual(context.version, VERSION);
   }
@@ -546,23 +566,24 @@ describe.only('error-reporting', () => {
   // the `errOb` argument can be anything, including `null` and `undefined`
   async function verifyReporting(
       errOb: any,  // tslint:disable-line:no-any
-      messageTest: (message: string) => void, maxCount: number, timeout: number) {
+      messageTest: (message: string) => void, maxCount: number,
+      timeout: number) {
     function expectedTopOfStack() {
       return new Promise((resolve, reject) => {
-        errors.report(errOb, undefined, undefined, async (err, response, body) => {
-          try {
-            assert.ifError(err);
-            assert(is.object(response));
-            deepStrictEqual(body, {});
-            await verifyServerResponse(messageTest, maxCount, timeout);
-            resolve();
-          }
-          catch (e) {
-            reject(e);
-          }
-        });
+        errors.report(
+            errOb, undefined, undefined, async (err, response, body) => {
+              try {
+                assert.ifError(err);
+                assert(is.object(response));
+                deepStrictEqual(body, {});
+                await verifyServerResponse(messageTest, maxCount, timeout);
+                resolve();
+              } catch (e) {
+                reject(e);
+              }
+            });
       });
-    };
+    }
     await expectedTopOfStack();
   }
 
@@ -691,8 +712,7 @@ describe.only('error-reporting', () => {
             return message.startsWith(rejectText);
           }, 1, TIMEOUT);
           resolve();
-        }
-        catch (err) {
+        } catch (err) {
           reject(err);
         }
       });
@@ -714,18 +734,17 @@ describe.only('error-reporting', () => {
               'promise rejection: ' + rejectValue +
               '.  This rejection has been reported to the error-reporting console.';
           assert.strictEqual(logOutput.indexOf(notExpected), -1);
-          // Get all groups that that start with the rejection value and hence all
-          // of the groups corresponding to the above rejection (Since the
+          // Get all groups that that start with the rejection value and hence
+          // all of the groups corresponding to the above rejection (Since the
           // buildName() creates a string unique enough to single out only the
-          // above rejection.) and verify that there are no such groups reported.
-          const matchedErrors = await verifyAllGroups(
-              message => {
-                return message.startsWith(rejectValue);
-              }, 1, TIMEOUT);
+          // above rejection.) and verify that there are no such groups
+          // reported.
+          const matchedErrors = await verifyAllGroups(message => {
+            return message.startsWith(rejectValue);
+          }, 1, TIMEOUT);
           assert.strictEqual(matchedErrors.length, 0);
           resolve();
-        }
-        catch (err) {
+        } catch (err) {
           reject(err);
         }
       });
