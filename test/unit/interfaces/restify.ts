@@ -72,7 +72,8 @@ describe('restifyInterface', () => {
       });
       it('Should not throw while handling the req/res objects', () => {
         assert.doesNotThrow(() => {
-          requestHandlerInstance(req as restify.Request, res as restify.Response, noOp);
+          requestHandlerInstance(
+              req as restify.Request, res as restify.Response, noOp);
         });
       });
       it('Should have 1 listener', () => {
@@ -117,7 +118,8 @@ describe('restifyInterface', () => {
       });
       it('Should not throw on instantiation', () => {
         assert.doesNotThrow(() => {
-          requestHandlerInstance(req as restify.Request, res as restify.Response, noOp);
+          requestHandlerInstance(
+              req as restify.Request, res as restify.Response, noOp);
         });
       });
       it('Should have 1 listener on the finish event', () => {
