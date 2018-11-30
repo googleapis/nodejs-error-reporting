@@ -32,7 +32,8 @@ import * as restifyInterface from './interfaces/restify';
 import {createLogger} from './logger';
 import * as manualRequestExtractor from './request-extractors/manual';
 
-export type RestifyRequestHandler = (req: {}, res: {}, next: {}) => {};
+// tslint:disable-next-line:no-any
+export type RestifyRequestHandler = (req: any, res: any, next: Function) => any;
 
 /**
  * @typedef ConfigurationOptions
@@ -107,7 +108,7 @@ export class ErrorReporting {
   };
   express!: (err: {}, req: {}, res: {}, next: Function) => void;
   // tslint:disable-next-line:no-any
-  restify!: (server: any) => any;
+  restify!: (server: any) => RestifyRequestHandler | RestifyRequestHandler[];
   // tslint:disable-next-line:no-any
   koa!: (context: any, next: {}) => IterableIterator<{}>;
   // tslint:disable-next-line:no-any
