@@ -34,7 +34,7 @@ import * as util from 'util';
 import * as path from 'path';
 
 const ERR_TOKEN = '_@google_STACKDRIVER_INTEGRATION_TEST_ERROR__';
-const TIMEOUT = 120000;
+const TIMEOUT = 10 * 60 * 1000;
 
 const envKeys = [
   'GOOGLE_APPLICATION_CREDENTIALS',
