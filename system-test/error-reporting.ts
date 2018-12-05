@@ -721,10 +721,12 @@ describe('error-reporting', () => {
     this.timeout(TIMEOUT * 2);
     reinitialize({reportUnhandledRejections: false});
     const rejectValue = buildName('promise-rejection');
+    const canaryValue = buildName('canary-value');
     function expectedTopOfStack() {
       Promise.reject(rejectValue);
     }
     expectedTopOfStack();
+    errors.report(new Error(canaryValue));
     await new Promise((resolve, reject) => {
       setImmediate(async () => {
         try {
@@ -736,11 +738,21 @@ describe('error-reporting', () => {
           // all of the groups corresponding to the above rejection (Since the
           // buildName() creates a string unique enough to single out only the
           // above rejection.) and verify that there are no such groups
-          // reported.
+          // reported.  This is done by looking for the canary value.  If the
+          // canary value is found, but the rejection value has not, then the
+          // rejection was not reported to the API.
+          const rejectPrefix = `Error: ${rejectValue}`;
+          const canaryPrefix = `Error: ${canaryValue}`;
           const matchedErrors = await verifyAllGroups(message => {
-            return message.startsWith(rejectValue);
+            return message.startsWith(rejectPrefix) ||
+                message.startsWith(canaryPrefix);
           }, 1, TIMEOUT);
-          assert.strictEqual(matchedErrors.length, 0);
+          assert.strictEqual(matchedErrors.length, 1);
+          const message = matchedErrors[0].representative.message;
+          assert(
+              message.startsWith(canaryPrefix),
+              `Expected the error message to start with ${
+                  canaryPrefix} but found ${message}`);
           resolve();
         } catch (err) {
           reject(err);
