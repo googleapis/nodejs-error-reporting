@@ -688,7 +688,7 @@ describe('error-reporting', () => {
   it('Should report unhandledRejections if enabled', async function(this) {
     this.timeout(TIMEOUT * 4);
     reinitialize({reportUnhandledRejections: true});
-    const rejectValue = buildName('promise-rejection');
+    const rejectValue = buildName('report-promise-rejection');
     function expectedTopOfStack() {
       // An Error is used for the rejection value so that it's stack
       // contains the stack trace at the point the rejection occured and is
@@ -720,7 +720,7 @@ describe('error-reporting', () => {
   it('Should not report unhandledRejections if disabled', async function(this) {
     this.timeout(TIMEOUT * 2);
     reinitialize({reportUnhandledRejections: false});
-    const rejectValue = buildName('promise-rejection');
+    const rejectValue = buildName('do-not-report-promise-rejection');
     const canaryValue = buildName('canary-value');
     function expectedTopOfStack() {
       Promise.reject(rejectValue);
