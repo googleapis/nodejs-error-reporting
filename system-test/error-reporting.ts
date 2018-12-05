@@ -445,6 +445,7 @@ describe('error-reporting', () => {
 
   const SERVICE = buildName('service-name');
   const VERSION = buildName('service-version');
+  const PAGE_SIZE = 100;
 
   let errors: ErrorReporting;
   let transport: ErrorsApiTransport;
@@ -503,7 +504,8 @@ describe('error-reporting', () => {
     const start = Date.now();
     let groups: ErrorGroupStats[] = [];
     while (groups.length < maxCount && (Date.now() - start) <= timeout) {
-      const allGroups = await transport.getAllGroups();
+      const allGroups =
+          await transport.getAllGroups(SERVICE, VERSION, PAGE_SIZE);
       assert.ok(allGroups, 'Failed to get groups from the Error Reporting API');
 
       const filteredGroups = allGroups!.filter(errItem => {
