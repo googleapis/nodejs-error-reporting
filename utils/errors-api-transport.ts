@@ -52,12 +52,6 @@ export class ErrorsApiTransport extends AuthClient {
     super(config, logger);
   }
 
-  async deleteAllEvents() {
-    const id = await this.getProjectId();
-    const options = {uri: [API, id, 'events'].join('/'), method: 'DELETE'};
-    return this.request_(options);
-  }
-
   async getAllGroups(service: string, version: string, pageSize: number):
       Promise<ErrorGroupStats[]> {
     const id = await this.getProjectId();

@@ -461,7 +461,6 @@ describe('error-reporting', () => {
       logOutput += text;
     };
     reinitialize();
-    await transport.deleteAllEvents();
   });
 
   function reinitialize(extraConfig?: {}) {
@@ -482,12 +481,6 @@ describe('error-reporting', () => {
     const configuration = new Configuration(initConfiguration, logger);
     transport = new ErrorsApiTransport(configuration, logger);
   }
-
-  after(async () => {
-    if (transport) {
-      await transport.deleteAllEvents();
-    }
-  });
 
   afterEach(() => {
     logOutput = '';
