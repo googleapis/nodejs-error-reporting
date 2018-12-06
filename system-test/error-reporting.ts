@@ -674,7 +674,7 @@ describe('error-reporting', () => {
      });
 
   it('Should report unhandledRejections if enabled', async function(this) {
-    this.timeout(TIMEOUT * 4);
+    this.timeout(TIMEOUT * 5);
     reinitialize({reportUnhandledRejections: true});
     const rejectValue = buildName('report-promise-rejection');
     function expectedTopOfStack() {
