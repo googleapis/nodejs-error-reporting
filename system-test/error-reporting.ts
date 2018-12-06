@@ -15,6 +15,7 @@
  */
 
 import * as assert from 'assert';
+import delay from 'delay';
 import * as is from 'is';
 import * as nock from 'nock';
 
@@ -138,12 +139,6 @@ if (!shouldRun()) {
   console.log('Skipping error-reporting system tests');
   // eslint-disable-next-line no-process-exit
   process.exit(1);
-}
-
-function sleep(timeout: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, timeout);
-  });
 }
 
 describe('Request/Response lifecycle mocking', () => {
@@ -517,7 +512,7 @@ describe('error-reporting', () => {
             messageTest(errItem.representative.message));
       });
       groups = groups.concat(filteredGroups);
-      await sleep(1000);
+      await delay(5000);
     }
 
     return groups;
