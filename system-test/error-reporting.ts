@@ -505,6 +505,8 @@ describe('error-reporting', () => {
           await transport.getAllGroups(SERVICE, VERSION, PAGE_SIZE);
       assert.ok(allGroups, 'Failed to get groups from the Error Reporting API');
 
+      console.log(`At ${new Date()}: All groups: ${JSON.stringify(allGroups, null, 2)}`);
+
       const filteredGroups = allGroups!.filter(errItem => {
         return (
             errItem && errItem.representative &&
