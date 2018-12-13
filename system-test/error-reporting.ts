@@ -440,7 +440,7 @@ describe('error-reporting', () => {
 
   const SERVICE = buildName('service-name');
   const VERSION = buildName('service-version');
-  const PAGE_SIZE = 100;
+  const PAGE_SIZE = 1000;
 
   let errors: ErrorReporting;
   let transport: ErrorsApiTransport;
@@ -581,7 +581,7 @@ describe('error-reporting', () => {
 
   it('Should correctly publish an error that is an Error object',
      async function verifyErrors() {
-       this.timeout(TIMEOUT * 2);
+       this.timeout(TIMEOUT);
        const errorId = buildName('with-error-constructor');
        function expectedTopOfStack() {
          return new Error(errorId);
@@ -594,7 +594,7 @@ describe('error-reporting', () => {
 
   it('Should correctly publish an error that is a string',
      async function(this) {
-       this.timeout(TIMEOUT * 2);
+       this.timeout(TIMEOUT);
        const errorId = buildName('with-string');
        await verifyReporting(errorId, message => {
          return message.startsWith(errorId + '\n');
@@ -603,14 +603,14 @@ describe('error-reporting', () => {
 
   it('Should correctly publish an error that is undefined',
      async function(this) {
-       this.timeout(TIMEOUT * 2);
+       this.timeout(TIMEOUT);
        await verifyReporting(undefined, message => {
          return message.startsWith('undefined\n');
        }, 1, TIMEOUT);
      });
 
   it('Should correctly publish an error that is null', async function(this) {
-    this.timeout(TIMEOUT * 2);
+    this.timeout(TIMEOUT);
     await verifyReporting(null, message => {
       return message.startsWith('null\n');
     }, 1, TIMEOUT);
@@ -618,7 +618,7 @@ describe('error-reporting', () => {
 
   it('Should correctly publish an error that is a plain object',
      async function(this) {
-       this.timeout(TIMEOUT * 2);
+       this.timeout(TIMEOUT);
        await verifyReporting({someKey: 'someValue'}, message => {
          return message.startsWith('[object Object]\n');
        }, 1, TIMEOUT);
@@ -626,7 +626,7 @@ describe('error-reporting', () => {
 
   it('Should correctly publish an error that is a number',
      async function(this) {
-       this.timeout(TIMEOUT * 2);
+       this.timeout(TIMEOUT);
        const num = new Date().getTime();
        await verifyReporting(num, message => {
          return message.startsWith('' + num + '\n');
@@ -635,7 +635,7 @@ describe('error-reporting', () => {
 
   it('Should correctly publish an error that is of an unknown type',
      async function(this) {
-       this.timeout(TIMEOUT * 2);
+       this.timeout(TIMEOUT);
        const bool = true;
        await verifyReporting(bool, message => {
          return message.startsWith('true\n');
@@ -644,7 +644,7 @@ describe('error-reporting', () => {
 
   it('Should correctly publish errors using an error builder',
      async function(this) {
-       this.timeout(TIMEOUT * 2);
+       this.timeout(TIMEOUT);
        const errorId = buildName('with-error-builder');
        // Use an IIFE with the name `definitionSiteFunction` to use later to
        // ensure the stack trace of the point where the error message was
@@ -674,7 +674,7 @@ describe('error-reporting', () => {
      });
 
   it('Should report unhandledRejections if enabled', async function(this) {
-    this.timeout(TIMEOUT * 5);
+    this.timeout(TIMEOUT);
     reinitialize({reportUnhandledRejections: true});
     const rejectValue = buildName('report-promise-rejection');
     function expectedTopOfStack() {
@@ -706,7 +706,7 @@ describe('error-reporting', () => {
   });
 
   it('Should not report unhandledRejections if disabled', async function(this) {
-    this.timeout(TIMEOUT * 2);
+    this.timeout(TIMEOUT);
     reinitialize({reportUnhandledRejections: false});
     const rejectValue = buildName('do-not-report-promise-rejection');
     const canaryValue = buildName('canary-value');
