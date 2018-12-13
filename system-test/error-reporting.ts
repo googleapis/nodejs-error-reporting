@@ -496,7 +496,8 @@ describe('error-reporting', () => {
           await transport.getAllGroups(SERVICE, VERSION, PAGE_SIZE);
       assert.ok(allGroups, 'Failed to get groups from the Error Reporting API');
 
-      console.log(JSON.stringify(allGroups.map(group => group.representative.message.split('\n')[0])));
+      console.log(JSON.stringify(
+          allGroups.map(group => group.representative.message.split('\n')[0])));
 
       const filteredGroups = allGroups!.filter(errItem => {
         return (
