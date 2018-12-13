@@ -488,9 +488,9 @@ describe('error-reporting', () => {
     start = Date.now();
   });
 
-  afterEach(function() {
+  afterEach(() => {
     const end = Date.now();
-    console.log(`Completed test ${count++} in ${(end - start)/1000} seconds`);
+    console.log(`Completed test ${count++} in ${(end - start) / 1000} seconds`);
 
     logOutput = '';
   });
