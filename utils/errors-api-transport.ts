@@ -60,7 +60,7 @@ export class ErrorsApiTransport extends AuthClient {
         API, id,
         'groupStats?' + ONE_HOUR_API +
             `&serviceFilter.service=${service}&serviceFilter.version=${
-                version}&pageSize=${pageSize}`
+                version}&pageSize=${pageSize}&order=CREATED_DESC`
       ].join('/'),
       method: 'GET'
     };
