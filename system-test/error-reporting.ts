@@ -482,7 +482,16 @@ describe('error-reporting', () => {
     transport = new ErrorsApiTransport(configuration, logger);
   }
 
-  afterEach(() => {
+  let start: number;
+  let count = 1;
+  beforeEach(() => {
+    start = Date.now();
+  });
+
+  afterEach(function() {
+    const end = Date.now();
+    console.log(`Completed test ${count++} in ${(end - start)/1000} seconds`);
+
     logOutput = '';
   });
 
