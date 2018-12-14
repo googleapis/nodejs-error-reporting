@@ -65,12 +65,12 @@ export class ErrorsApiTransport extends AuthClient {
       method: 'GET'
     };
     return new Promise((resolve, reject) => {
-      this.request(options, (err, res, body) => {
+      this.request(options, (err, res) => {
         if (err) {
           reject(err);
           return;
         }
-        resolve(res);
+        resolve(res.body!.errorGroupStats || []);
       });
     });
   }
