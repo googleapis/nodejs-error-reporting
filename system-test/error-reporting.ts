@@ -35,7 +35,7 @@ import * as util from 'util';
 import * as path from 'path';
 
 const ERR_TOKEN = '_@google_STACKDRIVER_INTEGRATION_TEST_ERROR__';
-const TIMEOUT = 10 * 60 * 1000;
+const TIMEOUT = 20 * 60 * 1000;
 
 const envKeys = [
   'GOOGLE_APPLICATION_CREDENTIALS',
@@ -491,24 +491,29 @@ describe('error-reporting', () => {
       timeout: number) {
     const start = Date.now();
     let groups: ErrorGroupStats[] = [];
-    while (groups.length < maxCount && (Date.now() - start) <= timeout) {
-      const allGroups =
-          await transport.getAllGroups(SERVICE, VERSION, PAGE_SIZE);
-      assert.ok(allGroups, 'Failed to get groups from the Error Reporting API');
+    const shouldContinue = () => groups.length < maxCount && (Date.now() - start) <= timeout;
+    while (shouldContinue()) {
+      let prevPageToken: string|undefined;
+      let allGroups: ErrorGroupStats[]|undefined;
+      let page = 1;
+      while (shouldContinue() && (!allGroups || allGroups.length > 0)) {
+        const response =
+          await transport.getAllGroups(SERVICE, VERSION, PAGE_SIZE, prevPageToken);
+        prevPageToken = response.nextPageToken;
+        allGroups = response.errorGroupStats || [];
+        assert.ok(allGroups, 'Failed to get groups from the Error Reporting API');
 
-      console.log(JSON.stringify(
-          allGroups.map(group => group.representative.message.split('\n')[0])));
-
-      const filteredGroups = allGroups!.filter(errItem => {
-        return (
-            errItem && errItem.representative &&
-            errItem.representative.serviceContext &&
-            errItem.representative.serviceContext.service === SERVICE &&
-            errItem.representative.serviceContext.version === VERSION &&
-            messageTest(errItem.representative.message));
-      });
-      groups = groups.concat(filteredGroups);
-      await delay(5000);
+        const filteredGroups = allGroups!.filter(errItem => {
+          return (
+              errItem && errItem.representative &&
+              errItem.representative.serviceContext &&
+              errItem.representative.serviceContext.service === SERVICE &&
+              errItem.representative.serviceContext.version === VERSION &&
+              messageTest(errItem.representative.message));
+        });
+        groups = groups.concat(filteredGroups);
+        await delay(5000);
+      }
     }
 
     return groups;
