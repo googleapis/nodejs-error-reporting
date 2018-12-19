@@ -52,8 +52,9 @@ export class ErrorsApiTransport extends AuthClient {
     super(config, logger);
   }
 
-  async getAllGroups(service: string, version: string, pageSize: number, pageToken?: string):
-      Promise<GroupStatesResponse> {
+  async getAllGroups(
+      service: string, version: string, pageSize: number,
+      pageToken?: string): Promise<GroupStatesResponse> {
     const id = await this.getProjectId();
     const options = {
       uri: [
@@ -61,7 +62,7 @@ export class ErrorsApiTransport extends AuthClient {
         'groupStats?' + ONE_HOUR_API +
             `&serviceFilter.service=${service}&serviceFilter.version=${
                 version}&pageSize=${pageSize}&order=LAST_SEEN_DESC` +
-                  (pageToken ? `&pageToken=${pageToken}` : '')
+            (pageToken ? `&pageToken=${pageToken}` : '')
       ].join('/'),
       method: 'GET'
     };

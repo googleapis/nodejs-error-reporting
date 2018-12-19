@@ -491,17 +491,19 @@ describe('error-reporting', () => {
       timeout: number) {
     const start = Date.now();
     let groups: ErrorGroupStats[] = [];
-    const shouldContinue = () => groups.length < maxCount && (Date.now() - start) <= timeout;
+    const shouldContinue = () =>
+        groups.length < maxCount && (Date.now() - start) <= timeout;
     while (shouldContinue()) {
       let prevPageToken: string|undefined;
       let allGroups: ErrorGroupStats[]|undefined;
-      let page = 1;
+      const page = 1;
       while (shouldContinue() && (!allGroups || allGroups.length > 0)) {
-        const response =
-          await transport.getAllGroups(SERVICE, VERSION, PAGE_SIZE, prevPageToken);
+        const response = await transport.getAllGroups(
+            SERVICE, VERSION, PAGE_SIZE, prevPageToken);
         prevPageToken = response.nextPageToken;
         allGroups = response.errorGroupStats || [];
-        assert.ok(allGroups, 'Failed to get groups from the Error Reporting API');
+        assert.ok(
+            allGroups, 'Failed to get groups from the Error Reporting API');
 
         const filteredGroups = allGroups!.filter(errItem => {
           return (
