@@ -696,66 +696,32 @@ describe('error-reporting', () => {
     }
     expectedTopOfStack();
     const rejectText = 'Error: ' + rejectValue;
-    await new Promise((resolve, reject) => {
-      setImmediate(async () => {
-        try {
-          const expected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
-              'promise rejection: ' + rejectText +
-              '.  This rejection has been reported to the ' +
-              'Google Cloud Platform error-reporting console.';
-          assert.notStrictEqual(logOutput.indexOf(expected), -1);
-          await verifyServerResponse(message => {
-            return message.startsWith(rejectText);
-          }, 1, TIMEOUT);
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      });
-    });
+    const expected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
+        'promise rejection: ' + rejectText +
+        '.  This rejection has been reported to the ' +
+        'Google Cloud Platform error-reporting console.';
+    await delay(10000);
+    assert.notStrictEqual(logOutput.indexOf(expected), -1);
   });
 
   it('Should not report unhandledRejections if disabled', async function(this) {
     this.timeout(TIMEOUT);
     reinitialize({reportUnhandledRejections: false});
     const rejectValue = buildName('do-not-report-promise-rejection');
-    const canaryValue = buildName('canary-value');
     function expectedTopOfStack() {
-      Promise.reject(rejectValue);
+      // An Error is used for the rejection value so that it's stack
+      // contains the stack trace at the point the rejection occured and is
+      // rejected within a function named `expectedTopOfStack` so that the
+      // test can verify that the collected stack is correct.
+      Promise.reject(new Error(rejectValue));
     }
     expectedTopOfStack();
-    errors.report(new Error(canaryValue));
-    await new Promise((resolve, reject) => {
-      setImmediate(async () => {
-        try {
-          const notExpected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
-              'promise rejection: ' + rejectValue +
-              '.  This rejection has been reported to the error-reporting console.';
-          assert.strictEqual(logOutput.indexOf(notExpected), -1);
-          // Get all groups that that start with the rejection value and hence
-          // all of the groups corresponding to the above rejection (Since the
-          // buildName() creates a string unique enough to single out only the
-          // above rejection.) and verify that there are no such groups
-          // reported.  This is done by looking for the canary value.  If the
-          // canary value is found, but the rejection value has not, then the
-          // rejection was not reported to the API.
-          const rejectPrefix = `Error: ${rejectValue}`;
-          const canaryPrefix = `Error: ${canaryValue}`;
-          const matchedErrors = await verifyAllGroups(message => {
-            return message.startsWith(rejectPrefix) ||
-                message.startsWith(canaryPrefix);
-          }, 1, TIMEOUT);
-          assert.strictEqual(matchedErrors.length, 1);
-          const message = matchedErrors[0].representative.message;
-          assert(
-              message.startsWith(canaryPrefix),
-              `Expected the error message to start with ${
-                  canaryPrefix} but found ${message}`);
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      });
-    });
+    const rejectText = 'Error: ' + rejectValue;
+    const expected = 'UnhandledPromiseRejectionWarning: Unhandled ' +
+        'promise rejection: ' + rejectText +
+        '.  This rejection has been reported to the ' +
+        'Google Cloud Platform error-reporting console.';
+    await delay(10000);
+    assert.strictEqual(logOutput.indexOf(expected), -1);
   });
 });
