@@ -73,7 +73,7 @@ describe('Configuration class', () => {
     });
     describe('valid config and default values', () => {
       let c: Configuration;
-      const validConfig = {ignoreEnvironmentCheck: true};
+      const validConfig = {reportMode: 'always'} as {reportMode: 'always'};
       before(() => {
         process.env.NODE_ENV = 'development';
       });
@@ -104,86 +104,126 @@ describe('Configuration class', () => {
         assert.strictEqual(c.getReportUnhandledRejections(), false);
       });
     });
-    describe('with ignoreEnvironmentCheck', () => {
-      const conf =
-          merge({}, {projectId: 'some-id'}, {ignoreEnvironmentCheck: true});
-      const c = new Configuration(conf, logger);
-      it('Should reportErrorsToAPI', () => {
-        assert.strictEqual(c.getShouldReportErrorsToAPI(), true);
+    describe('reportMode', () => {
+      let nodeEnv: string|undefined;
+      beforeEach(() => {
+        nodeEnv = process.env.NODE_ENV;
       });
+
+      afterEach(() => {
+        if (nodeEnv === undefined) {
+          delete process.env.NODE_ENV;
+        } else {
+          process.env.NODE_ENV = nodeEnv;
+        }
+      });
+
+      it('Should be set to "production" by default', () => {
+        const conf = new Configuration({}, logger);
+        assert.strictEqual(conf._reportMode, 'production');
+      });
+
+      it('Should state reporting is enabled with mode "production"', () => {
+        const conf = new Configuration({reportMode: 'production'}, logger);
+        assert.strictEqual(conf.isReportingEnabled(), true);
+      });
+
+      it('Should state reporting is enabled with mode "always"', () => {
+        const conf = new Configuration({reportMode: 'always'}, logger);
+        assert.strictEqual(conf.isReportingEnabled(), true);
+      });
+
+      it('Should state reporting is not enabled with mode "never"', () => {
+        const conf = new Configuration({reportMode: 'never'}, logger);
+        assert.strictEqual(conf.isReportingEnabled(), false);
+      });
+
+      it('Should state reporting can proceed with mode "production" and env "production"',
+         () => {
+           process.env.NODE_ENV = 'production';
+           const conf = new Configuration({reportMode: 'production'}, logger);
+           assert.strictEqual(conf.getCanReportErrorsToAPI(), true);
+         });
+
+      it('Should state reporting cannot proceed with mode "production" and env not "production"',
+         () => {
+           process.env.NODE_ENV = 'dev';
+           const conf = new Configuration({reportMode: 'production'}, logger);
+           assert.strictEqual(conf.getCanReportErrorsToAPI(), false);
+         });
+
+      it('Should state reporting can proceed with mode "always" and env "production"',
+         () => {
+           process.env.NODE_ENV = 'production';
+           const conf = new Configuration({reportMode: 'always'}, logger);
+           assert.strictEqual(conf.getCanReportErrorsToAPI(), true);
+         });
+
+      it('Should state reporting can proceed with mode "always" and env not "production"',
+         () => {
+           process.env.NODE_ENV = 'dev';
+           const conf = new Configuration({reportMode: 'always'}, logger);
+           assert.strictEqual(conf.getCanReportErrorsToAPI(), true);
+         });
+
+      it('Should state reporting cannot proceed with mode "never" and env "production"',
+         () => {
+           process.env.NODE_ENV = 'production';
+           const conf = new Configuration({reportMode: 'never'}, logger);
+           assert.strictEqual(conf.getCanReportErrorsToAPI(), false);
+         });
+
+      it('Should state reporting cannot proceed with mode "never" and env not "production"',
+         () => {
+           process.env.NODE_ENV = 'dev';
+           const conf = new Configuration({reportMode: 'never'}, logger);
+           assert.strictEqual(conf.getCanReportErrorsToAPI(), false);
+         });
     });
-    describe('without ignoreEnvironmentCheck', () => {
-      describe('report behaviour with production env', () => {
-        let c: Configuration;
-        before(() => {
-          sterilizeConfigEnv();
-          process.env.NODE_ENV = 'production';
-          c = new Configuration(undefined, logger);
-        });
-        after(() => {
-          sterilizeConfigEnv();
-        });
-        it('Should reportErrorsToAPI', () => {
-          assert.strictEqual(c.getShouldReportErrorsToAPI(), true);
+    describe('exception behaviour', () => {
+      it('Should throw if invalid type for key', () => {
+        assert.throws(() => {
+          // we are intentionally providing an invalid configuration
+          // thus an explicit cast is needed
+          // tslint:disable-next-line:no-unused-expression
+          new Configuration({key: null} as {} as ConfigurationOptions, logger);
         });
       });
-      describe('exception behaviour', () => {
-        it('Should throw if invalid type for key', () => {
-          assert.throws(() => {
-            // we are intentionally providing an invalid configuration
-            // thus an explicit cast is needed
-            // tslint:disable-next-line:no-unused-expression
-            new Configuration(
-                {key: null} as {} as ConfigurationOptions, logger);
-          });
+      it('Should throw if invalid for serviceContext.service', () => {
+        assert.throws(() => {
+          // we are intentionally providing an invalid configuration
+          // thus an explicit cast is needed
+          // tslint:disable-next-line:no-unused-expression
+          new Configuration(
+              {serviceContext: {service: false}} as {} as ConfigurationOptions,
+              logger);
         });
-        it('Should throw if invalid for ignoreEnvironmentCheck', () => {
-          assert.throws(() => {
-            // we are intentionally providing an invalid configuration
-            // thus an explicit cast is needed
-            // tslint:disable-next-line:no-unused-expression
-            new Configuration(
-                {ignoreEnvironmentCheck: null} as {} as ConfigurationOptions,
-                logger);
-          });
+      });
+      it('Should throw if invalid for serviceContext.version', () => {
+        assert.throws(() => {
+          // we are intentionally providing an invalid configuration
+          // thus an explicit cast is needed
+          // tslint:disable-next-line:no-unused-expression
+          new Configuration(
+              {serviceContext: {version: true}} as {} as ConfigurationOptions,
+              logger);
         });
-        it('Should throw if invalid for serviceContext.service', () => {
-          assert.throws(() => {
-            // we are intentionally providing an invalid configuration
-            // thus an explicit cast is needed
-            // tslint:disable-next-line:no-unused-expression
-            new Configuration(
-                {serviceContext: {service: false}} as {} as
-                    ConfigurationOptions,
-                logger);
-          });
+      });
+      it('Should throw if invalid for reportUnhandledRejections', () => {
+        assert.throws(() => {
+          // we are intentionally providing an invalid configuration
+          // thus an explicit cast is needed
+          // tslint:disable-next-line:no-unused-expression
+          new Configuration(
+              {reportUnhandledRejections: 'INVALID'} as {} as
+                  ConfigurationOptions,
+              logger);
         });
-        it('Should throw if invalid for serviceContext.version', () => {
-          assert.throws(() => {
-            // we are intentionally providing an invalid configuration
-            // thus an explicit cast is needed
-            // tslint:disable-next-line:no-unused-expression
-            new Configuration(
-                {serviceContext: {version: true}} as {} as ConfigurationOptions,
-                logger);
-          });
-        });
-        it('Should throw if invalid for reportUnhandledRejections', () => {
-          assert.throws(() => {
-            // we are intentionally providing an invalid configuration
-            // thus an explicit cast is needed
-            // tslint:disable-next-line:no-unused-expression
-            new Configuration(
-                {reportUnhandledRejections: 'INVALID'} as {} as
-                    ConfigurationOptions,
-                logger);
-          });
-        });
-        it('Should not throw given an empty object for serviceContext', () => {
-          assert.doesNotThrow(() => {
-            // tslint:disable-next-line:no-unused-expression
-            new Configuration({serviceContext: {}}, logger);
-          });
+      });
+      it('Should not throw given an empty object for serviceContext', () => {
+        assert.doesNotThrow(() => {
+          // tslint:disable-next-line:no-unused-expression
+          new Configuration({serviceContext: {}}, logger);
         });
       });
     });

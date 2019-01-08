@@ -35,13 +35,15 @@ export interface Logger {
   fatal(...args: Array<{}>): void;
 }
 
+export type ReportMode = 'production'|'always'|'never';
+
 export interface ConfigurationOptions {
   projectId?: string;
   keyFilename?: string;
   logLevel?: string|number;
   key?: string;
   serviceContext?: {service?: string; version?: string;};
-  ignoreEnvironmentCheck?: boolean;
+  reportMode?: ReportMode;
   credentials?: {};
   reportUnhandledRejections?: boolean;
 }
@@ -74,7 +76,7 @@ export interface ServiceContext {
  */
 export class Configuration {
   _logger: Logger;
-  _shouldReportErrorsToAPI: boolean;
+  _reportMode: ReportMode;
   _projectId: string|null;
   _key: string|null;
   keyFilename: string|null;
@@ -89,23 +91,7 @@ export class Configuration {
      * for configuration logging purposes.
      */
     this._logger = logger;
-    /**
-     * The _shouldReportErrorsToAPI property is meant to denote whether or not
-     * the Stackdriver error reporting library will actually try to report
-     * Errors to the Stackdriver Error API. The value of this property is
-     * derived from the `NODE_ENV` environmental variable or the value of
-     * ignoreEnvironmentChec property if present in the runtime configuration.
-     * If either the `NODE_ENV` variable is set to 'production' or the
-     * ignoreEnvironmentCheck propery on the runtime configuration is set to
-     * true then the error reporting library attempt to send errors to the Error
-     * API. Otherwise the value will remain false and errors will not be
-     * reported to the API.
-     * @memberof Configuration
-     * @private
-     * @type {Boolean}
-     * @defaultvalue false
-     */
-    this._shouldReportErrorsToAPI = false;
+    this._reportMode = 'production';
     /**
      * The _projectId property is meant to contain the string project id that
      * the hosting application is running under. The project id is a unique
@@ -273,21 +259,16 @@ export class Configuration {
    * @returns {Undefined} - does not return anything
    */
   _gatherLocalConfiguration() {
-    if (this._givenConfiguration.ignoreEnvironmentCheck === true) {
-      this._shouldReportErrorsToAPI = true;
-    } else if (
-        has(this._givenConfiguration, 'ignoreEnvironmentCheck') &&
-        !is.boolean(this._givenConfiguration.ignoreEnvironmentCheck)) {
-      throw new Error('config.ignoreEnvironmentCheck must be a boolean');
-    } else {
-      this._shouldReportErrorsToAPI = env.NODE_ENV === 'production';
+    if (this._givenConfiguration.reportMode) {
+      this._reportMode =
+          this._givenConfiguration.reportMode.toLowerCase() as ReportMode;
     }
-    if (!this._shouldReportErrorsToAPI) {
+    if (this.isReportingEnabled() && !this.getCanReportErrorsToAPI()) {
       this._logger.warn([
-        'Stackdriver error reporting client has not been configured to send',
-        'errors, please check the NODE_ENV environment variable and make sure it',
-        'is set to "production" or the ignoreEnvironmentCheck property is set to',
-        'true in the runtime configuration object',
+        'The stackdriver error reporting client is configured to report errors',
+        'if and only if the NODE_ENV environment variable is set to "production".',
+        'Errors will not be reported.  To have errors always reported, regardless of the',
+        'value of NODE_ENV, set the reportMode configuration option to "always".'
       ].join(' '));
     }
     if (is.string(this._givenConfiguration.key)) {
@@ -355,8 +336,13 @@ export class Configuration {
    * @function getShouldReportErrorsToAPI
    * @returns {Boolean} - returns the _shouldReportErrorsToAPI property
    */
-  getShouldReportErrorsToAPI() {
-    return this._shouldReportErrorsToAPI;
+  getCanReportErrorsToAPI() {
+    return this._reportMode === 'always' ||
+        (this._reportMode === 'production' &&
+         (process.env.NODE_ENV || '').toLowerCase() === 'production');
+  }
+  isReportingEnabled() {
+    return this._reportMode !== 'never';
   }
   /**
    * Returns the _projectId property on the instance.

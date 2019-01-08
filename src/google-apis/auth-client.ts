@@ -159,8 +159,12 @@ export class RequestHandler extends Service {
       userCb?:
           (err: Error|null, response: http.ServerResponse|null,
            body: {}) => void) {
-    const cb: Function = (is.function(userCb) ? userCb : RequestHandler.noOp)!;
-      if (this._config.getShouldReportErrorsToAPI()) {
+      const cb: Function = (is.function(userCb) ? userCb : RequestHandler.noOp)!;
+      if (!this._config.isReportingEnabled()) {
+        cb(null, null, {});
+        return;
+      }
+      if (this._config.getCanReportErrorsToAPI()) {
         this.request(
             {
               uri: 'events:report',
@@ -181,14 +185,14 @@ export class RequestHandler extends Service {
             });
       } else {
         cb(new Error([
-             'Stackdriver error reporting client has not been configured to send',
-             'errors, please check the NODE_ENV environment variable and make sure',
-             'it is set to "production" or set the ignoreEnvironmentCheck property',
-             'to true in the runtime configuration object',
+             'The stackdriver error reporting client is configured to report errors',
+             'if and only if the NODE_ENV environment variable is set to "production".',
+             'Errors will not be reported.  To have errors always reported, regardless of the',
+             'value of NODE_ENV, set the reportMode configuration option to "always".'
            ].join(' ')),
            null, null);
       }
-  }
+    }
   }
 
   /**
