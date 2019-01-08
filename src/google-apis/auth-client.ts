@@ -164,7 +164,7 @@ export class RequestHandler extends Service {
         cb(null, null, {});
         return;
       }
-      if (this._config.getCanReportErrorsToAPI()) {
+      if (this._config.getShouldReportErrorsToAPI()) {
         this.request(
             {
               uri: 'events:report',

@@ -263,7 +263,7 @@ export class Configuration {
       this._reportMode =
           this._givenConfiguration.reportMode.toLowerCase() as ReportMode;
     }
-    if (this.isReportingEnabled() && !this.getCanReportErrorsToAPI()) {
+    if (this.isReportingEnabled() && !this.getShouldReportErrorsToAPI()) {
       this._logger.warn([
         'The stackdriver error reporting client is configured to report errors',
         'if and only if the NODE_ENV environment variable is set to "production".',
@@ -330,13 +330,16 @@ export class Configuration {
     return this._projectId;
   }
   /**
-   * Returns the _shouldReportErrorsToAPI property on the instance.
+   * Returns whether this configuration specifies that errors should be
+   * reported to the error reporting API.  That is, "reportMode" is
+   * either set to "always" or it is set to "production" and the value
+   * of the NODE_ENV environment variable is "production".
    * @memberof Configuration
    * @public
    * @function getShouldReportErrorsToAPI
-   * @returns {Boolean} - returns the _shouldReportErrorsToAPI property
+   * @returns {Boolean} - whether errors should be reported to the API
    */
-  getCanReportErrorsToAPI() {
+  getShouldReportErrorsToAPI() {
     return this._reportMode === 'always' ||
         (this._reportMode === 'production' &&
          (process.env.NODE_ENV || '').toLowerCase() === 'production');

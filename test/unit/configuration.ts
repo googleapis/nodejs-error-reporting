@@ -138,46 +138,46 @@ describe('Configuration class', () => {
         assert.strictEqual(conf.isReportingEnabled(), false);
       });
 
-      it('Should state reporting can proceed with mode "production" and env "production"',
+      it('Should state reporting should proceed with mode "production" and env "production"',
          () => {
            process.env.NODE_ENV = 'production';
            const conf = new Configuration({reportMode: 'production'}, logger);
-           assert.strictEqual(conf.getCanReportErrorsToAPI(), true);
+           assert.strictEqual(conf.getShouldReportErrorsToAPI(), true);
          });
 
-      it('Should state reporting cannot proceed with mode "production" and env not "production"',
+      it('Should state reporting should not proceed with mode "production" and env not "production"',
          () => {
            process.env.NODE_ENV = 'dev';
            const conf = new Configuration({reportMode: 'production'}, logger);
-           assert.strictEqual(conf.getCanReportErrorsToAPI(), false);
+           assert.strictEqual(conf.getShouldReportErrorsToAPI(), false);
          });
 
-      it('Should state reporting can proceed with mode "always" and env "production"',
+      it('Should state reporting should proceed with mode "always" and env "production"',
          () => {
            process.env.NODE_ENV = 'production';
            const conf = new Configuration({reportMode: 'always'}, logger);
-           assert.strictEqual(conf.getCanReportErrorsToAPI(), true);
+           assert.strictEqual(conf.getShouldReportErrorsToAPI(), true);
          });
 
-      it('Should state reporting can proceed with mode "always" and env not "production"',
+      it('Should state reporting should proceed with mode "always" and env not "production"',
          () => {
            process.env.NODE_ENV = 'dev';
            const conf = new Configuration({reportMode: 'always'}, logger);
-           assert.strictEqual(conf.getCanReportErrorsToAPI(), true);
+           assert.strictEqual(conf.getShouldReportErrorsToAPI(), true);
          });
 
-      it('Should state reporting cannot proceed with mode "never" and env "production"',
+      it('Should state reporting should not proceed with mode "never" and env "production"',
          () => {
            process.env.NODE_ENV = 'production';
            const conf = new Configuration({reportMode: 'never'}, logger);
-           assert.strictEqual(conf.getCanReportErrorsToAPI(), false);
+           assert.strictEqual(conf.getShouldReportErrorsToAPI(), false);
          });
 
-      it('Should state reporting cannot proceed with mode "never" and env not "production"',
+      it('Should state reporting should not proceed with mode "never" and env not "production"',
          () => {
            process.env.NODE_ENV = 'dev';
            const conf = new Configuration({reportMode: 'never'}, logger);
-           assert.strictEqual(conf.getCanReportErrorsToAPI(), false);
+           assert.strictEqual(conf.getShouldReportErrorsToAPI(), false);
          });
     });
     describe('exception behaviour', () => {
