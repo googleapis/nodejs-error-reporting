@@ -335,10 +335,7 @@ describe('Expected Behavior', () => {
      done => {
        env.sterilizeProcess().setKeyFilename().setProjectId();
        process.env.NODE_ENV = 'null';
-       const logger = createLogger({
-         logLevel: 5,
-         reportMode: 'production'
-        });
+       const logger = createLogger({logLevel: 5, reportMode: 'production'});
        const client =
            new RequestHandler(new Configuration(undefined, logger), logger);
        client.sendError({} as ErrorMessage, (err, response) => {
