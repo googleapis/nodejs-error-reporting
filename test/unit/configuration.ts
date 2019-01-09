@@ -118,6 +118,27 @@ describe('Configuration class', () => {
         }
       });
 
+      it('Should set "reportMode" to "always" if "ignoreEnvironmentCheck" is true',
+         () => {
+           const conf =
+               new Configuration({ignoreEnvironmentCheck: true}, logger);
+           assert.strictEqual(conf._reportMode, 'always');
+         });
+
+      it('Should set "reportMode" to "production" if "ignoreEnvironmentCheck" is false',
+         () => {
+           const conf =
+               new Configuration({ignoreEnvironmentCheck: false}, logger);
+           assert.strictEqual(conf._reportMode, 'production');
+         });
+
+      it('Should prefer "reportMode" config if "ignoreEnvironmentCheck" is also set',
+         () => {
+           const conf = new Configuration(
+               {ignoreEnvironmentCheck: true, reportMode: 'never'}, logger);
+           assert.strictEqual(conf._reportMode, 'never');
+         });
+
       it('Should be set to "production" by default', () => {
         const conf = new Configuration({}, logger);
         assert.strictEqual(conf._reportMode, 'production');
@@ -180,6 +201,30 @@ describe('Configuration class', () => {
            assert.strictEqual(conf.getShouldReportErrorsToAPI(), false);
          });
     });
+    describe('with ignoreEnvironmentCheck', () => {
+      const conf =
+          merge({}, {projectId: 'some-id'}, {ignoreEnvironmentCheck: true});
+      const c = new Configuration(conf, logger);
+      it('Should reportErrorsToAPI', () => {
+        assert.strictEqual(c.getShouldReportErrorsToAPI(), true);
+      });
+    });
+    describe('without ignoreEnvironmentCheck', () => {
+      describe('report behaviour with production env', () => {
+        let c: Configuration;
+        before(() => {
+          sterilizeConfigEnv();
+          process.env.NODE_ENV = 'production';
+          c = new Configuration(undefined, logger);
+        });
+        after(() => {
+          sterilizeConfigEnv();
+        });
+        it('Should reportErrorsToAPI', () => {
+          assert.strictEqual(c.getShouldReportErrorsToAPI(), true);
+        });
+      });
+    });
     describe('exception behaviour', () => {
       it('Should throw if invalid type for key', () => {
         assert.throws(() => {
@@ -187,6 +232,16 @@ describe('Configuration class', () => {
           // thus an explicit cast is needed
           // tslint:disable-next-line:no-unused-expression
           new Configuration({key: null} as {} as ConfigurationOptions, logger);
+        });
+      });
+      it('Should throw if invalid for ignoreEnvironmentCheck', () => {
+        assert.throws(() => {
+          // we are intentionally providing an invalid configuration
+          // thus an explicit cast is needed
+          // tslint:disable-next-line:no-unused-expression
+          new Configuration(
+              {ignoreEnvironmentCheck: null} as {} as ConfigurationOptions,
+              logger);
         });
       });
       it('Should throw if invalid for serviceContext.service', () => {
@@ -227,170 +282,171 @@ describe('Configuration class', () => {
         });
       });
     });
-  });
-  describe('Configuration resource aquisition', () => {
-    before(() => {
-      sterilizeConfigEnv();
-    });
-    describe('project id from configuration instance', () => {
-      const pi = 'test';
-      let c: Configuration;
-      before(() => {
-        c = new Configuration({projectId: pi}, logger);
-      });
-      after(() => {
-        nock.cleanAll();
-      });
-      it('Should return the project id', () => {
-        assert.strictEqual(c.getProjectId(), pi);
-      });
-    });
-    describe('project number from configuration instance', () => {
-      const pn = 1234;
-      let c: Configuration;
-      before(() => {
-        sterilizeConfigEnv();
-        c = new Configuration(
-            {projectId: pn} as {} as ConfigurationOptions, logger);
-      });
-      after(() => {
-        nock.cleanAll();
-        sterilizeConfigEnv();
-      });
-      it('Should return the project number', () => {
-        assert.strictEqual(c.getProjectId(), pn.toString());
-      });
-    });
-  });
-  describe('Exception behaviour', () => {
-    describe('While lacking a project id', () => {
-      let c: Configuration;
-      before(() => {
-        sterilizeConfigEnv();
-        createDeadMetadataService();
-        c = new Configuration(undefined, logger);
-      });
-      after(() => {
-        nock.cleanAll();
-        sterilizeConfigEnv();
-      });
-      it('Should return null', () => {
-        assert.strictEqual(c.getProjectId(), null);
-      });
-    });
-    describe('Invalid type for projectId in runtime config', () => {
-      let c: Configuration;
-      before(() => {
-        sterilizeConfigEnv();
-        createDeadMetadataService();
-        // we are intentionally providing an invalid configuration
-        // thus an explicit cast is needed
-        c = new Configuration(
-            {projectId: null} as {} as ConfigurationOptions, logger);
-      });
-      after(() => {
-        nock.cleanAll();
-        sterilizeConfigEnv();
-      });
-      it('Should return null', () => {
-        assert.strictEqual(c.getProjectId(), null);
-      });
-    });
-  });
-  describe('Resource aquisition', () => {
-    after(() => {
-      /*
-       * !! IMPORTANT !!
-       * THE restoreConfigEnv FUNCTION SHOULD BE CALLED LAST AS THIS TEST FILE
-       * EXITS AND SHOULD THEREFORE BE THE LAST THING TO EXECUTE FROM THIS FILE.
-       * !! IMPORTANT !!
-       */
-      restoreConfigEnv();
-    });
-    describe('via env', () => {
+    describe('Configuration resource aquisition', () => {
       before(() => {
         sterilizeConfigEnv();
       });
-      afterEach(() => {
-        sterilizeConfigEnv();
-      });
-      describe('no longer tests env itself', () => {
+      describe('project id from configuration instance', () => {
+        const pi = 'test';
         let c: Configuration;
-        const projectId = 'test-xyz';
         before(() => {
-          process.env.GCLOUD_PROJECT = projectId;
+          c = new Configuration({projectId: pi}, logger);
+        });
+        after(() => {
+          nock.cleanAll();
+        });
+        it('Should return the project id', () => {
+          assert.strictEqual(c.getProjectId(), pi);
+        });
+      });
+      describe('project number from configuration instance', () => {
+        const pn = 1234;
+        let c: Configuration;
+        before(() => {
+          sterilizeConfigEnv();
+          c = new Configuration(
+              {projectId: pn} as {} as ConfigurationOptions, logger);
+        });
+        after(() => {
+          nock.cleanAll();
+          sterilizeConfigEnv();
+        });
+        it('Should return the project number', () => {
+          assert.strictEqual(c.getProjectId(), pn.toString());
+        });
+      });
+    });
+    describe('Exception behaviour', () => {
+      describe('While lacking a project id', () => {
+        let c: Configuration;
+        before(() => {
+          sterilizeConfigEnv();
+          createDeadMetadataService();
           c = new Configuration(undefined, logger);
         });
-        it('Should assign', () => {
+        after(() => {
+          nock.cleanAll();
+          sterilizeConfigEnv();
+        });
+        it('Should return null', () => {
           assert.strictEqual(c.getProjectId(), null);
         });
       });
-      describe('serviceContext', () => {
+      describe('Invalid type for projectId in runtime config', () => {
         let c: Configuration;
-        const projectId = 'test-abc';
-        const serviceContext = {
-          service: 'test',
-          version: '1.x',
-        };
         before(() => {
-          process.env.GCLOUD_PROJECT = projectId;
-          process.env.GAE_MODULE_NAME = serviceContext.service;
-          process.env.GAE_MODULE_VERSION = serviceContext.version;
-          c = new Configuration(undefined, logger);
+          sterilizeConfigEnv();
+          createDeadMetadataService();
+          // we are intentionally providing an invalid configuration
+          // thus an explicit cast is needed
+          c = new Configuration(
+              {projectId: null} as {} as ConfigurationOptions, logger);
         });
-        it('Should assign', () => {
-          deepStrictEqual(c.getServiceContext(), serviceContext);
+        after(() => {
+          nock.cleanAll();
+          sterilizeConfigEnv();
+        });
+        it('Should return null', () => {
+          assert.strictEqual(c.getProjectId(), null);
         });
       });
     });
-    describe('via runtime configuration', () => {
-      before(() => {
-        sterilizeConfigEnv();
+    describe('Resource aquisition', () => {
+      after(() => {
+        /*
+         * !! IMPORTANT !!
+         * THE restoreConfigEnv FUNCTION SHOULD BE CALLED LAST AS THIS TEST FILE
+         * EXITS AND SHOULD THEREFORE BE THE LAST THING TO EXECUTE FROM THIS
+         * FILE.
+         * !! IMPORTANT !!
+         */
+        restoreConfigEnv();
       });
-      describe('serviceContext', () => {
-        let c: Configuration;
-        const projectId = 'xyz123';
-        const serviceContext = {
-          service: 'evaluation',
-          version: '2.x',
-        };
+      describe('via env', () => {
         before(() => {
-          c = new Configuration({
-            projectId,
-            serviceContext,
+          sterilizeConfigEnv();
+        });
+        afterEach(() => {
+          sterilizeConfigEnv();
+        });
+        describe('no longer tests env itself', () => {
+          let c: Configuration;
+          const projectId = 'test-xyz';
+          before(() => {
+            process.env.GCLOUD_PROJECT = projectId;
+            c = new Configuration(undefined, logger);
+          });
+          it('Should assign', () => {
+            assert.strictEqual(c.getProjectId(), null);
           });
         });
-        it('Should assign', () => {
-          deepStrictEqual(c.getServiceContext(), serviceContext);
-        });
-      });
-      describe('api key', () => {
-        let c: Configuration;
-        const projectId = '987abc';
-        const key = '1337-api-key';
-        before(() => {
-          c = new Configuration(
-              {
-                key,
-                projectId,
-              },
-              logger);
-        });
-        it('Should assign', () => {
-          assert.strictEqual(c.getKey(), key);
-        });
-      });
-      describe('reportUnhandledRejections', () => {
-        let c: Configuration;
-        const reportRejections = false;
-        before(() => {
-          c = new Configuration({
-            reportUnhandledRejections: reportRejections,
+        describe('serviceContext', () => {
+          let c: Configuration;
+          const projectId = 'test-abc';
+          const serviceContext = {
+            service: 'test',
+            version: '1.x',
+          };
+          before(() => {
+            process.env.GCLOUD_PROJECT = projectId;
+            process.env.GAE_MODULE_NAME = serviceContext.service;
+            process.env.GAE_MODULE_VERSION = serviceContext.version;
+            c = new Configuration(undefined, logger);
+          });
+          it('Should assign', () => {
+            deepStrictEqual(c.getServiceContext(), serviceContext);
           });
         });
-        it('Should assign', () => {
-          assert.strictEqual(
-              c.getReportUnhandledRejections(), reportRejections);
+      });
+      describe('via runtime configuration', () => {
+        before(() => {
+          sterilizeConfigEnv();
+        });
+        describe('serviceContext', () => {
+          let c: Configuration;
+          const projectId = 'xyz123';
+          const serviceContext = {
+            service: 'evaluation',
+            version: '2.x',
+          };
+          before(() => {
+            c = new Configuration({
+              projectId,
+              serviceContext,
+            });
+          });
+          it('Should assign', () => {
+            deepStrictEqual(c.getServiceContext(), serviceContext);
+          });
+        });
+        describe('api key', () => {
+          let c: Configuration;
+          const projectId = '987abc';
+          const key = '1337-api-key';
+          before(() => {
+            c = new Configuration(
+                {
+                  key,
+                  projectId,
+                },
+                logger);
+          });
+          it('Should assign', () => {
+            assert.strictEqual(c.getKey(), key);
+          });
+        });
+        describe('reportUnhandledRejections', () => {
+          let c: Configuration;
+          const reportRejections = false;
+          before(() => {
+            c = new Configuration({
+              reportUnhandledRejections: reportRejections,
+            });
+          });
+          it('Should assign', () => {
+            assert.strictEqual(
+                c.getReportUnhandledRejections(), reportRejections);
+          });
         });
       });
     });

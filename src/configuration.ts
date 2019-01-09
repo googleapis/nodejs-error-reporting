@@ -43,6 +43,7 @@ export interface ConfigurationOptions {
   logLevel?: string|number;
   key?: string;
   serviceContext?: {service?: string; version?: string;};
+  ignoreEnvironmentCheck?: boolean;
   reportMode?: ReportMode;
   credentials?: {};
   reportUnhandledRejections?: boolean;
@@ -245,6 +246,20 @@ export class Configuration {
       }
     }
   }
+  _determineReportMode() {
+    if (this._givenConfiguration.reportMode) {
+      this._reportMode =
+          this._givenConfiguration.reportMode.toLowerCase() as ReportMode;
+    }
+    if (this.isReportingEnabled() && !this.getShouldReportErrorsToAPI()) {
+      this._logger.warn([
+        'The stackdriver error reporting client is configured to report errors',
+        'if and only if the NODE_ENV environment variable is set to "production".',
+        'Errors will not be reported.  To have errors always reported, regardless of the',
+        'value of NODE_ENV, set the reportMode configuration option to "always".'
+      ].join(' '));
+    }
+  }
   /**
    * The _gatherLocalConfiguration function is responsible for determining
    * directly determing whether the properties `reportUncaughtExceptions` and
@@ -259,18 +274,40 @@ export class Configuration {
    * @returns {Undefined} - does not return anything
    */
   _gatherLocalConfiguration() {
-    if (this._givenConfiguration.reportMode) {
-      this._reportMode =
-          this._givenConfiguration.reportMode.toLowerCase() as ReportMode;
-    }
-    if (this.isReportingEnabled() && !this.getShouldReportErrorsToAPI()) {
+    const hasEnvCheck = has(this._givenConfiguration, 'ignoreEnvironmentCheck');
+    const hasReportMode = has(this._givenConfiguration, 'reportMode');
+    if (hasEnvCheck && hasReportMode) {
       this._logger.warn([
-        'The stackdriver error reporting client is configured to report errors',
-        'if and only if the NODE_ENV environment variable is set to "production".',
-        'Errors will not be reported.  To have errors always reported, regardless of the',
-        'value of NODE_ENV, set the reportMode configuration option to "always".'
+        'Both the "ignoreEnvironmentCheck" and "reportMode" configuration options',
+        'have been specified.  The "reportMode" option will take precedence.'
       ].join(' '));
+      this._determineReportMode();
+    } else if (hasEnvCheck) {
+      if (this._givenConfiguration.ignoreEnvironmentCheck === true) {
+        this._reportMode = 'always';
+      } else if (
+          has(this._givenConfiguration, 'ignoreEnvironmentCheck') &&
+          !is.boolean(this._givenConfiguration.ignoreEnvironmentCheck)) {
+        throw new Error('config.ignoreEnvironmentCheck must be a boolean');
+      } else {
+        this._reportMode = 'production';
+      }
+      if (this.isReportingEnabled() && !this.getShouldReportErrorsToAPI()) {
+        this._logger.warn([
+          'Stackdriver error reporting client has not been configured to send',
+          'errors, please check the NODE_ENV environment variable and make sure it',
+          'is set to "production" or the ignoreEnvironmentCheck property is set to',
+          'true in the runtime configuration object',
+          'The stackdriver error reporting client is configured to report errors',
+          'if and only if the NODE_ENV environment variable is set to "production".',
+          'Errors will not be reported.  To have errors always reported, regardless of the',
+          'value of NODE_ENV, set the reportMode configuration option to "always".'
+        ].join(' '));
+      }
+    } else if (hasReportMode) {
+      this._determineReportMode();
     }
+
     if (is.string(this._givenConfiguration.key)) {
       this._key = this._givenConfiguration.key!;
     } else if (has(this._givenConfiguration, 'key')) {
