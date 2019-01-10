@@ -157,6 +157,9 @@ describe('RequestHandler', () => {
              error: 'Unable to find credential information on instance. This ' +
                  'library will be unable to communicate with the Stackdriver API to ' +
                  'save errors.  Message: ' + message,
+             warn:
+                 'The "ignoreEnvironmentCheck" config option is deprecated.  ' +
+                 'Use the "reportMode" config option instead.'
            },
            done);
      });
@@ -164,8 +167,11 @@ describe('RequestHandler', () => {
   it('should not issue a warning if it can communicate with the API',
      (done: () => void) => {
        const config = {ignoreEnvironmentCheck: true};
-       verifyReportedMessage(config, null, {}, () => {
-         verifyReportedMessage(config, undefined, {}, done);
+       const warn =
+           'The "ignoreEnvironmentCheck" config option is deprecated.  ' +
+           'Use the "reportMode" config option instead.';
+       verifyReportedMessage(config, null, {warn}, () => {
+         verifyReportedMessage(config, undefined, {warn}, done);
        });
      });
 });

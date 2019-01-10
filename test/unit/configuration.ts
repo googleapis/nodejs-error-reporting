@@ -18,7 +18,7 @@ import * as assert from 'assert';
 import * as is from 'is';
 import merge = require('lodash.merge');
 import {FakeConfiguration as Configuration} from '../fixtures/configuration';
-import {ConfigurationOptions} from '../../src/configuration';
+import {ConfigurationOptions, Logger} from '../../src/configuration';
 import {Fuzzer} from '../../utils/fuzzer';
 import {deepStrictEqual} from '../util';
 const level = process.env.GCLOUD_ERRORS_LOGLEVEL;
@@ -117,6 +117,41 @@ describe('Configuration class', () => {
           process.env.NODE_ENV = nodeEnv;
         }
       });
+
+      it('Should print a deprecation warning if "ignoreEvnironmentCheck" is used',
+         () => {
+           let warnText = '';
+           const logger = {
+             warn: (text) => {
+               warnText += text + '\n';
+             }
+           } as Logger;
+           // tslint:disable-next-line:no-unused-expression
+           new Configuration({ignoreEnvironmentCheck: true}, logger);
+           assert.strictEqual(
+               warnText,
+               'The "ignoreEnvironmentCheck" config option is deprecated.  ' +
+                   'Use the "reportMode" config option instead.\n');
+         });
+
+      it('Should print a warning if both "ignoreEnvironmentCheck" and "reportMode" are specified',
+         () => {
+           let warnText = '';
+           const logger = {
+             warn: (text) => {
+               warnText += text + '\n';
+             }
+           } as Logger;
+           // tslint:disable-next-line:no-unused-expression
+           new Configuration(
+               {ignoreEnvironmentCheck: true, reportMode: 'never'}, logger);
+           assert.strictEqual(
+               warnText,
+               'The "ignoreEnvironmentCheck" config option is deprecated.  ' +
+                   'Use the "reportMode" config option instead.\nBoth the "ignoreEnvironmentCheck" ' +
+                   'and "reportMode" configuration options have been specified.  The "reportMode" ' +
+                   'option will take precedence.\n');
+         });
 
       it('Should set "reportMode" to "always" if "ignoreEnvironmentCheck" is true',
          () => {

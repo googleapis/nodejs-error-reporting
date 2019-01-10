@@ -276,6 +276,11 @@ export class Configuration {
   _gatherLocalConfiguration() {
     const hasEnvCheck = has(this._givenConfiguration, 'ignoreEnvironmentCheck');
     const hasReportMode = has(this._givenConfiguration, 'reportMode');
+    if (hasEnvCheck) {
+      this._logger.warn(
+          'The "ignoreEnvironmentCheck" config option is deprecated.  ' +
+          'Use the "reportMode" config option instead.');
+    }
     if (hasEnvCheck && hasReportMode) {
       this._logger.warn([
         'Both the "ignoreEnvironmentCheck" and "reportMode" configuration options',
