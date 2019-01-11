@@ -251,14 +251,6 @@ export class Configuration {
       this._reportMode =
           this._givenConfiguration.reportMode.toLowerCase() as ReportMode;
     }
-    if (this.isReportingEnabled() && !this.getShouldReportErrorsToAPI()) {
-      this._logger.warn([
-        'The stackdriver error reporting client is configured to report errors',
-        'if and only if the NODE_ENV environment variable is set to "production".',
-        'Errors will not be reported.  To have errors always reported, regardless of the',
-        'value of NODE_ENV, set the reportMode configuration option to "always".'
-      ].join(' '));
-    }
   }
   /**
    * The _gatherLocalConfiguration function is responsible for determining
@@ -274,6 +266,20 @@ export class Configuration {
    * @returns {Undefined} - does not return anything
    */
   _gatherLocalConfiguration() {
+    let isReportModeValid = true;
+    if (has(this._givenConfiguration, 'reportMode')) {
+      const reportMode = this._givenConfiguration.reportMode;
+      isReportModeValid = is.string(reportMode) &&
+          (reportMode === 'production' || reportMode === 'always' ||
+           reportMode === 'never');
+    }
+
+    if (!isReportModeValid) {
+      throw new Error(
+          'config.reportMode must a string that is one ' +
+          'of "production", "always", or "never".');
+    }
+
     const hasEnvCheck = has(this._givenConfiguration, 'ignoreEnvironmentCheck');
     const hasReportMode = has(this._givenConfiguration, 'reportMode');
     if (hasEnvCheck) {
@@ -297,20 +303,17 @@ export class Configuration {
       } else {
         this._reportMode = 'production';
       }
-      if (this.isReportingEnabled() && !this.getShouldReportErrorsToAPI()) {
-        this._logger.warn([
-          'Stackdriver error reporting client has not been configured to send',
-          'errors, please check the NODE_ENV environment variable and make sure it',
-          'is set to "production" or the ignoreEnvironmentCheck property is set to',
-          'true in the runtime configuration object',
-          'The stackdriver error reporting client is configured to report errors',
-          'if and only if the NODE_ENV environment variable is set to "production".',
-          'Errors will not be reported.  To have errors always reported, regardless of the',
-          'value of NODE_ENV, set the reportMode configuration option to "always".'
-        ].join(' '));
-      }
     } else if (hasReportMode) {
       this._determineReportMode();
+    }
+
+    if (this.isReportingEnabled() && !this.getShouldReportErrorsToAPI()) {
+      this._logger.warn([
+        'The stackdriver error reporting client is configured to report errors',
+        'if and only if the NODE_ENV environment variable is set to "production".',
+        'Errors will not be reported.  To have errors always reported, regardless of the',
+        'value of NODE_ENV, set the reportMode configuration option to "always".'
+      ].join(' '));
     }
 
     if (is.string(this._givenConfiguration.key)) {

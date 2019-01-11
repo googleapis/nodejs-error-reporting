@@ -261,6 +261,21 @@ describe('Configuration class', () => {
       });
     });
     describe('exception behaviour', () => {
+      it('Should throw if invalid type for reportMode', () => {
+        assert.throws(() => {
+          // tslint:disable-next-line:no-unused-expression
+          new Configuration(
+              {reportMode: new Date()} as {} as ConfigurationOptions, logger);
+        });
+      });
+      it('Should throw if invalid value for reportMode', () => {
+        assert.throws(() => {
+          // tslint:disable-next-line:no-unused-expression
+          new Configuration(
+              {reportMode: 'invalid-mode'} as {} as ConfigurationOptions,
+              logger);
+        });
+      });
       it('Should throw if invalid type for key', () => {
         assert.throws(() => {
           // we are intentionally providing an invalid configuration

@@ -114,7 +114,7 @@ describe('RequestHandler', () => {
 
   it('should not issue a warning if disabled and cannot communicate with the API',
      (done) => {
-       process.env.NODE_ENV = 'ev';
+       process.env.NODE_ENV = 'dev';
        verifyReportedMessage(
            {reportMode: 'never'},
            null,  // no access token error
@@ -132,8 +132,29 @@ describe('RequestHandler', () => {
            done);
      });
 
+  it('should not issue a warning with a default config and can communicate with the API',
+     (done) => {
+       process.env.NODE_ENV = 'production';
+       verifyReportedMessage(
+           {},
+           null,  // no access token error
+           {},    // no expected logs
+           done);
+     });
+
+  it('should not issue a warning if it can communicate with the API',
+     (done: () => void) => {
+       const config = {ignoreEnvironmentCheck: true};
+       const warn =
+           'The "ignoreEnvironmentCheck" config option is deprecated.  ' +
+           'Use the "reportMode" config option instead.';
+       verifyReportedMessage(config, null, {warn}, () => {
+         verifyReportedMessage(config, undefined, {warn}, done);
+       });
+     });
+
   it('should issue a warning if enabled and cannot communicate with the API', (done) => {
-    process.env.NODE_ENV = 'ev';
+    process.env.NODE_ENV = 'dev';
     verifyReportedMessage(
         {reportMode: 'production'},
         null,  // no access token error
@@ -147,6 +168,23 @@ describe('RequestHandler', () => {
         },
         done);
   });
+
+  it('should issue a warning with a default config and cannot communicate with the API',
+     (done) => {
+       process.env.NODE_ENV = 'dev';
+       verifyReportedMessage(
+           {},
+           null,  // no access token error
+           {
+             warn:
+                 'The stackdriver error reporting client is configured to report ' +
+                 'errors if and only if the NODE_ENV environment variable is set to ' +
+                 '"production". Errors will not be reported.  To have errors always ' +
+                 'reported, regardless of the value of NODE_ENV, set the reportMode ' +
+                 'configuration option to "always".'
+           },
+           done);
+     });
 
   it('should issue a warning if it cannot communicate with the API',
      (done: () => void) => {
@@ -162,16 +200,5 @@ describe('RequestHandler', () => {
                  'Use the "reportMode" config option instead.'
            },
            done);
-     });
-
-  it('should not issue a warning if it can communicate with the API',
-     (done: () => void) => {
-       const config = {ignoreEnvironmentCheck: true};
-       const warn =
-           'The "ignoreEnvironmentCheck" config option is deprecated.  ' +
-           'Use the "reportMode" config option instead.';
-       verifyReportedMessage(config, null, {warn}, () => {
-         verifyReportedMessage(config, undefined, {warn}, done);
-       });
      });
 });
