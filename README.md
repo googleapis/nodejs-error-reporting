@@ -104,7 +104,7 @@ Contributions welcome! See the [Contributing Guide](https://github.com/googleapi
 
 Apache Version 2.0
 
-See [LICENSE](LICENSE)
+See [LICENSE](https://github.com/googleapis/nodejs-error-reporting/blob/master/LICENSE)
 
 [product-docs]: https://cloud.google.com/error-reporting/docs/
 
