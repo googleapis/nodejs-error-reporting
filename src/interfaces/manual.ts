@@ -16,7 +16,6 @@
 
 import * as http from 'http';
 import * as is from 'is';
-import {any} from 'joi';
 
 import {ErrorMessage} from '../classes/error-message';
 import {Configuration, Logger} from '../configuration';
