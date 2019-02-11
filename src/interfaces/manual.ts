@@ -16,6 +16,7 @@
 
 import * as http from 'http';
 import * as is from 'is';
+import {any} from 'joi';
 
 import {ErrorMessage} from '../classes/error-message';
 import {Configuration, Logger} from '../configuration';
@@ -26,6 +27,9 @@ import {Request} from '../request-extractors/manual';
 
 export type Callback =
     (err: Error|null, response: http.ServerResponse|null, body: {}) => void;
+
+// tslint:disable-next-line:no-any
+type AnyError = any;
 
 /**
  * The handler setup function serves to produce a bound instance of the
@@ -60,11 +64,25 @@ export function handlerSetup(
    * @returns {ErrorMessage} - returns the error message created through with
    * the parameters given.
    */
-  // the `err` argument can be anything, including `null` and `undefined`
+  function reportManualError(err: AnyError): ErrorMessage;
+  function reportManualError(err: AnyError, request: Request): ErrorMessage;
   function reportManualError(
-      err: any,  // tslint:disable-line:no-any
-      request?: Request|Callback|string, additionalMessage?: Callback|string|{},
-      callback?: Callback|{}|string) {
+      err: AnyError, additionalMessage: string): ErrorMessage;
+  function reportManualError(err: AnyError, callback: Callback): ErrorMessage;
+  function reportManualError(
+      err: AnyError, request: Request, callback: Callback): ErrorMessage;
+  function reportManualError(
+      err: AnyError, request: Request, additionalMessage: string): ErrorMessage;
+  function reportManualError(
+      err: AnyError, additionalMessage: string,
+      callback: Callback): ErrorMessage;
+  function reportManualError(
+      err: AnyError, request: Request, additionalMessage: string,
+      callback: Callback): ErrorMessage;
+  function reportManualError(
+      err: AnyError, request?: Request|Callback|string,
+      additionalMessage?: Callback|string|{},
+      callback?: Callback|{}|string): ErrorMessage {
     let em;
     if (is.string(request)) {
       // no request given
