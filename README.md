@@ -118,7 +118,7 @@ has instructions for running the samples.
 
 ## Configuration
 
-The following code snippet lists all available configuration options.  All configuration options are optional.
+The following code snippet lists available configuration options.  All configuration options are optional.
 
 ```js
   // Node 6+
