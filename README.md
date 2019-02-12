@@ -113,27 +113,34 @@ has instructions for running the samples.
 The following code snippet lists all available configuration options.  All configuration options are optional.
 
 ```js
-const errors = require('@google-cloud/error-reporting')({
-  projectId: 'my-project-id',
-  keyFilename: '/path/to/keyfile.json',
-  credentials: require('./path/to/keyfile.json'),
-  // if true library will attempt to report errors to the service regardless
-  // of the value of NODE_ENV
-  // defaults to false
-  ignoreEnvironmentCheck: false,
-  // determines the logging level internal to the library; levels range 0-5
-  // where 0 indicates no logs should be reported and 5 indicates all logs
-  // should be reported
-  // defaults to 2 (warnings)
-  logLevel: 2,
-  // determines whether or not unhandled rejections are reported to the
-  // error-reporting console
-  reportUnhandledRejections: true,
-  serviceContext: {
-      service: 'my-service',
-      version: 'my-service-version'
-  }
-});
+  // Node 6+
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
+
+  // Using ES6 style imports via TypeScript or Babel
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
+
+  // Instantiates a client
+  const errors = new ErrorReporting({
+    projectId: 'my-project-id',
+    keyFilename: '/path/to/keyfile.json',
+    credentials: require('./path/to/keyfile.json'),
+    // if true library will attempt to report errors to the service regardless
+    // of the value of NODE_ENV
+    // defaults to false
+    ignoreEnvironmentCheck: false,
+    // determines the logging level internal to the library; levels range 0-5
+    // where 0 indicates no logs should be reported and 5 indicates all logs
+    // should be reported
+    // defaults to 2 (warnings)
+    logLevel: 2,
+    // determines whether or not unhandled rejections are reported to the
+    // error-reporting console
+    reportUnhandledRejections: true,
+    serviceContext: {
+        service: 'my-service',
+        version: 'my-service-version'
+    }
+  });
 ```
 
 ## Examples
@@ -141,19 +148,26 @@ const errors = require('@google-cloud/error-reporting')({
 ### Reporting Manually
 
 ```js
-const errors = require('@google-cloud/error-reporting')();
+  // Node 6+
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
 
-// Use the error message builder to customize all fields ...
-const errorEvt = errors.event()
-                     .setMessage('My error message')
-                     .setUser('root@nexus');
-errors.report(errorEvt, () => console.log('done!'));
+  // Using ES6 style imports via TypeScript or Babel
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
 
-// or just use a regular error ...
-errors.report(new Error('My error message'), () => console.log('done!'));
+  // Instantiates a client
+  const errors = new ErrorReporting();
 
-// or one can even just use a string.
-errors.report('My error message');
+  // Use the error message builder to customize all fields ...
+  const errorEvt = errors.event()
+                       .setMessage('My error message')
+                       .setUser('root@nexus');
+  errors.report(errorEvt, () => console.log('done!'));
+
+  // or just use a regular error ...
+  errors.report(new Error('My error message'), () => console.log('done!'));
+
+  // or one can even just use a string.
+  errors.report('My error message');
 ```
 
 The stack trace associated with an error can be viewed in the error reporting console.
@@ -164,89 +178,121 @@ The stack trace associated with an error can be viewed in the error reporting co
 ### Using Express
 
 ```js
-const express = require('express');
-const errors = require('@google-cloud/error-reporting')();
+  const express = require('express');
 
-const app = express();
+  // Node 6+
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
 
-app.get('/error', (req, res, next) => {
-  res.send('Something broke!');
-  next(new Error('Custom error message'));
-});
+  // Using ES6 style imports via TypeScript or Babel
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
 
-app.get('/exception', () => {
-  JSON.parse('{\"malformedJson\": true');
-});
+  // Instantiates a client
+  const errors = new ErrorReporting();
 
-// Note that express error handling middleware should be attached after all
-// the other routes and use() calls. See [express docs][express-error-docs].
-app.use(errors.express);
+  const app = express();
 
-app.listen(3000);
+  app.get('/error', (req, res, next) => {
+    res.send('Something broke!');
+    next(new Error('Custom error message'));
+  });
+
+  app.get('/exception', () => {
+    JSON.parse('{\"malformedJson\": true');
+  });
+
+  // Note that express error handling middleware should be attached after all
+  // the other routes and use() calls. See [express docs][express-error-docs].
+  app.use(errors.express);
+
+  app.listen(3000);
 ```
 
 ### Using Hapi
 
 ```js
-const hapi = require('hapi');
-const errors = require('@google-cloud/error-reporting')();
+  const hapi = require('hapi');
 
-const server = new hapi.Server();
-server.connection({ port: 3000 });
-server.start();
+  // Node 6+
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
 
-server.route({
-  method: 'GET',
-  path: '/error',
-  handler: (request, reply) => {
-    reply('Something broke!');
-    throw new Error('Custom error message');
-  }
-});
+  // Using ES6 style imports via TypeScript or Babel
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
 
-server.register(errors.hapi);
+  // Instantiates a client
+  const errors = new ErrorReporting();
+
+  const server = new hapi.Server();
+  server.connection({ port: 3000 });
+  server.start();
+
+  server.route({
+    method: 'GET',
+    path: '/error',
+    handler: (request, reply) => {
+      reply('Something broke!');
+      throw new Error('Custom error message');
+    }
+  });
+
+  server.register(errors.hapi);
 ```
 
 ### Using Koa
 
 ```js
-const Koa = require('koa');
-const errors = require('@google-cloud/error-reporting')();
+  const Koa = require('koa');
 
-const app = new Koa();
+  // Node 6+
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
 
-app.use(errors.koa);
+  // Using ES6 style imports via TypeScript or Babel
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
 
-app.use(function *(next) {
-  //This will set status and message
-  this.throw('Error Message', 500);
-});
+  // Instantiates a client
+  const errors = new ErrorReporting();
 
-// response
-app.use(function *(){
-  this.body = 'Hello World';
-});
+  const app = new Koa();
 
-app.listen(3000);
+  app.use(errors.koa);
+
+  app.use(function *(next) {
+    //This will set status and message
+    this.throw('Error Message', 500);
+  });
+
+  // response
+  app.use(function *(){
+    this.body = 'Hello World';
+  });
+
+  app.listen(3000);
 ```
 
 ### Using Restify
 
 ```js
-const restify = require('restify');
-const errors = require('@google-cloud/error-reporting')();
+  const restify = require('restify');
 
-function respond(req, res, next) {
-  next(new Error('this is a restify error'));
-}
+  // Node 6+
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
 
-const server = restify.createServer();
+  // Using ES6 style imports via TypeScript or Babel
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
 
-server.use(errors.restify(server));
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
+  // Instantiates a client
+  const errors = new ErrorReporting();
 
-server.listen(3000);
+  function respond(req, res, next) {
+    next(new Error('this is a restify error'));
+  }
+
+  const server = restify.createServer();
+
+  server.use(errors.restify(server));
+  server.get('/hello/:name', respond);
+  server.head('/hello/:name', respond);
+
+  server.listen(3000);
 ```
 
 ## Unhandled Rejections
@@ -262,18 +308,24 @@ Uncaught exceptions are not reported by default.  *It is recommended to process 
 Note that uncaught exceptions are not reported by default because to do so would require adding a listener to the `uncaughtException` event.  Adding such a listener without knowledge of other `uncaughtException` listeners can cause interference between the event handlers or prevent the process from terminating cleanly.  As such, it is necessary for `uncaughtException`s to be reported manually.
 
 ```js
-const errors = require('@google-cloud/error-reporting')();
-process.on('uncaughtException', (e) => {
-  // Write the error to stderr.
-  console.error(e);
-  // Report that same error the Stackdriver Error Service
-  errors.report(e);
-});
+  // Node 6+
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
+
+  // Using ES6 style imports via TypeScript or Babel
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
+
+  // Instantiates a client
+  const errors = new ErrorReporting();
+
+  process.on('uncaughtException', (e) => {
+    // Write the error to stderr.
+    console.error(e);
+    // Report that same error the Stackdriver Error Service
+    errors.report(e);
+  });
 ```
 
 More information about uncaught exception handling in Node.js and what it means for your application can be found [here](https://nodejs.org/api/process.html#process_event_uncaughtexception).
-
-
 
 ## Versioning
 
