@@ -31,10 +31,14 @@ Google APIs Client Libraries, in [Client Libraries Explained][explained].
 
 ## Overview
 
-This module provides Stackdriver Error Reporting support for Node.js applications.
+This module provides custom Stackdriver Error Reporting support for Node.js applications.
 [Stackdriver Error Reporting](https://cloud.google.com/error-reporting/) is a feature of
 Google Cloud Platform that allows in-depth monitoring and viewing of errors reported by
 applications running in almost any environment.
+
+However, note that [@google-cloud/logging-winston](https://github.com/googleapis/nodejs-logging-winston) and [@google-cloud/logging-bunyan](https://github.com/googleapis/nodejs-logging-bunyan) automatically integrate with the Error Reporting service for Error objects logged at severity `error` or higher, for applications running on Google Cloud Platform.
+
+Thus, if you are already using Winston or Bunyan in your application, and don't need custom error reporting capabilities, you do not need to use the `@google-cloud/error-reporting` library directly to report errors to the Error Reporting Console.
 
 ![Stackdriver Error Reporting overview](doc/images/errors-overview.png)
 
@@ -42,16 +46,20 @@ Here's an introductory video that provides some more details:
 
 [![Learn about Error Reporting in Stackdriver](https://img.youtube.com/vi/cVpWVD75Hs8/0.jpg)](https://www.youtube.com/watch?v=cVpWVD75Hs8)
 
-Note that [@google-cloud/logging-winston](https://github.com/googleapis/nodejs-logging-winston) and
-[@google-cloud/logging-bunyan](https://github.com/googleapis/nodejs-logging-bunyan) automatically integrate with the
-Error Reporting service for Error objects logged at severity `error` or higher,
-for applications running on Google Cloud Platform. If you are already using
-Winston or Bunyan in your application, and don't need direct access/control of
-error reporting, you may want to check those modules as well.
+# When Errors Are Reported
 
-**Note:** The module will only send errors when the `NODE_ENV` environment variable is
-set to `production` or the `ignoreEnvironmentCheck` property given in the
-runtime configuration object is set to `true`.  See the [Configuration](#configuration) section for more details.
+The `reportMode` configuration option is used to specify when errors are reported to the Error Reporting Console.  It can have one of three values:
+* `'production'` (default): Only report errors if the NODE_ENV environment variable is set to "production".
+* `'always'`: Always report errors regardless of the value of NODE_ENV.
+* `'never'`: Never report errors regardless of the value of NODE_ENV.
+
+The `reportMode` configuration option replaces the deprecated `ignoreEnvironmentCheck` configuration option.  If both the `reportMode` and `ignoreEnvironmentCheck` options are specified, the `reportMode` configuration option takes precedence.
+
+The `ignoreEnvironmentCheck` option should not be used.  However, if it is used, and the `reportMode` option is not specified, it can have the values:
+* `false` (default): Only report errors if the NODE_ENV environment variable is set to "production".
+* `true`: Always report errors regardless of the value of NODE_ENV.
+
+See the [Configuration](#configuration) section to learn how to specify configuration options.
 
 ## Quickstart
 
@@ -124,18 +132,15 @@ The following code snippet lists all available configuration options.  All confi
     projectId: 'my-project-id',
     keyFilename: '/path/to/keyfile.json',
     credentials: require('./path/to/keyfile.json'),
-    // if true library will attempt to report errors to the service regardless
-    // of the value of NODE_ENV
-    // defaults to false
-    ignoreEnvironmentCheck: false,
-    // determines the logging level internal to the library; levels range 0-5
+    // Specifies when errors are reported to the Error Reporting Console.
+    // See the "When Errors Are Reported" section for more information.
+    // Defaults to 'production'
+    reportMode: 'production',
+    // Determines the logging level internal to the library; levels range 0-5
     // where 0 indicates no logs should be reported and 5 indicates all logs
-    // should be reported
-    // defaults to 2 (warnings)
+    // should be reported.
+    // Defaults to 2 (warnings)
     logLevel: 2,
-    // determines whether or not unhandled rejections are reported to the
-    // error-reporting console
-    reportUnhandledRejections: true,
     serviceContext: {
         service: 'my-service',
         version: 'my-service-version'
