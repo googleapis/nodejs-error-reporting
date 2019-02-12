@@ -40,7 +40,7 @@ However, note that [@google-cloud/logging-winston](https://github.com/googleapis
 
 Thus, if you are already using Winston or Bunyan in your application, and don't need custom error reporting capabilities, you do not need to use the `@google-cloud/error-reporting` library directly to report errors to the Error Reporting Console.
 
-![Stackdriver Error Reporting overview](doc/images/errors-overview.png)
+![Stackdriver Error Reporting overview](https://raw.githubusercontent.com/googleapis/nodejs-error-reporting/master/doc/images/errors-overview.png)
 
 Here's an introductory video that provides some more details:
 
