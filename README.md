@@ -332,6 +332,31 @@ Note that uncaught exceptions are not reported by default because to do so would
 
 More information about uncaught exception handling in Node.js and what it means for your application can be found [here](https://nodejs.org/api/process.html#process_event_uncaughtexception).
 
+### Using an API Key
+
+You may use an API key in lieu of locally-stored credentials. Please see [this document](https://support.google.com/cloud/answer/6158862) on how to set up an API key if you do not already have one.
+
+Once you have obtained an API key, you may provide it as part of the Error Reporting instance configuration:
+
+```js
+// Node 6+
+  const {ErrorReporting} = require('@google-cloud/error-reporting');
+
+  // Using ES6 style imports via TypeScript or Babel
+  // import {ErrorReporting} from '@google-cloud/error-reporting';
+
+  // Instantiates a client
+  const errors = new ErrorReporting({
+    projectId: '{your project ID}',
+    key: '{your api key}'
+  });
+```
+
+If a key is provided, the module will not attempt to authenticate using the methods associated with locally-stored credentials.  We recommend using a file, environment variable, or another mechanism to store the API key rather than hard-coding it into your application's source.
+
+**Note:** The Error Reporting instance will check if the provided API key is invalid shortly after it is instantiated. If the key is invalid, an error-level message will be logged to stdout.
+
+
 ## Versioning
 
 This library follows [Semantic Versioning](http://semver.org/).
