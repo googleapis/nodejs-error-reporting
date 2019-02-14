@@ -93,8 +93,6 @@ See the [Configuration](#configuration) section to learn how to specify configur
 
 ```javascript
   // Imports the Google Cloud client library
-
-  // Node 6+
   const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Using ES6 style imports via TypeScript or Babel
@@ -152,7 +150,6 @@ The following code snippet lists available configuration options.  All configura
 ### Reporting Manually
 
 ```js
-  // Node 6+
   const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Using ES6 style imports via TypeScript or Babel
@@ -184,7 +181,6 @@ The stack trace associated with an error can be viewed in the error reporting co
 ```js
   const express = require('express');
 
-  // Node 6+
   const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Using ES6 style imports via TypeScript or Babel
@@ -215,8 +211,6 @@ The stack trace associated with an error can be viewed in the error reporting co
 
 ```js
   const hapi = require('hapi');
-
-  // Node 6+
   const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Using ES6 style imports via TypeScript or Babel
@@ -245,8 +239,6 @@ The stack trace associated with an error can be viewed in the error reporting co
 
 ```js
   const Koa = require('koa');
-
-  // Node 6+
   const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Using ES6 style imports via TypeScript or Babel
@@ -276,8 +268,6 @@ The stack trace associated with an error can be viewed in the error reporting co
 
 ```js
   const restify = require('restify');
-
-  // Node 6+
   const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Using ES6 style imports via TypeScript or Babel
@@ -312,7 +302,6 @@ Uncaught exceptions are not reported by default.  *It is recommended to process 
 Note that uncaught exceptions are not reported by default because to do so would require adding a listener to the `uncaughtException` event.  Adding such a listener without knowledge of other `uncaughtException` listeners can cause interference between the event handlers or prevent the process from terminating cleanly.  As such, it is necessary for `uncaughtException`s to be reported manually.
 
 ```js
-  // Node 6+
   const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Using ES6 style imports via TypeScript or Babel
@@ -338,7 +327,6 @@ You may use an API key in lieu of locally-stored credentials. Please see [this d
 Once you have obtained an API key, you may provide it as part of the Error Reporting instance configuration:
 
 ```js
-// Node 6+
   const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Using ES6 style imports via TypeScript or Babel
@@ -363,7 +351,6 @@ Before reporting an `Error` object using the `report` method of the `@google-clo
 
 The following code illustrates how to update an `Error`'s stack trace, to remove the default line of dashes added by `longjohn` to indicate an async jump, before reporting the error.
 ```js
-  // Node 6+
   const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Instantiates a client
