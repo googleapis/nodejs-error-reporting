@@ -121,7 +121,6 @@ has instructions for running the samples.
 The following code snippet lists available configuration options.  All configuration options are optional.
 
 ```js
-  // Node 6+
   const {ErrorReporting} = require('@google-cloud/error-reporting');
 
   // Using ES6 style imports via TypeScript or Babel
