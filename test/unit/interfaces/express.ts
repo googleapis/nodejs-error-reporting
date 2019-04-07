@@ -15,7 +15,6 @@
  */
 
 import * as assert from 'assert';
-import merge = require('lodash.merge');
 
 import {ErrorMessage} from '../../../src/classes/error-message';
 import {RequestHandler} from '../../../src/google-apis/auth-client';
@@ -62,7 +61,7 @@ describe('expressInterface', () => {
       const res = validBoundHandler(testError, null!, null!, null!);
       deepStrictEqual(
           res,
-          merge(
+          Object.assign(
               new ErrorMessage()
                   .setMessage(testError.stack!)
                   .setServiceContext(

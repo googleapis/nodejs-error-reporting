@@ -24,7 +24,7 @@
     "generate-scaffolding": "node node_modules/.bin/repo-tools generate all && node node_modules/.bin/repo-tools generate lib_samples_readme -l samples/ --config ../.cloud-repo-tools.json",
     "lint": "eslint samples/ && gts check && jsgl --local .",
     "presystem-test": "npm run compile",
-    "system-test": "nyc --exclude=\"error-message.js\" mocha  build/system-test/**/*.js",
+    "system-test": "mocha build/system-test/**/*.js --timeout 60000",
     "cover": "nyc --exclude=\"fuzzer.js\" --reporter=lcov mocha build/test/unit/*.js build/test/unit/**/*.js && nyc report",
     "presamples-test": "npm run compile",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
@@ -47,8 +47,7 @@
     "@google-cloud/common": "^0.32.0",
     "console-log-level": "^1.4.0",
     "is": "^3.2.1",
-    "lodash.has": "^4.5.2",
-    "teeny-request": "^3.6.0"
+    "lodash.has": "^4.5.2"
   },
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.7",
@@ -62,7 +61,6 @@
     "@types/koa": "^2.0.45",
     "@types/lodash.has": "^4.5.3",
     "@types/lodash.maxby": "^4.6.3",
-    "@types/lodash.merge": "^4.6.3",
     "@types/lodash.omit": "^4.5.3",
     "@types/lodash.omitby": "^4.6.3",
     "@types/lodash.pick": "^4.4.3",
@@ -71,14 +69,12 @@
     "@types/mocha": "^5.2.0",
     "@types/nock": "^9.1.3",
     "@types/node": "^10.1.1",
-    "@types/once": "^1.4.0",
     "@types/proxyquire": "^1.3.28",
     "@types/request": "^2.48.1",
     "@types/restify": "^7.2.0",
     "@types/uuid": "^3.4.4",
     "body-parser": "^1.18.3",
     "boom": "^7.2.0",
-    "broken-link-checker-local": "^0.2.0",
     "codecov": "^3.0.2",
     "cpy-cli": "^2.0.0",
     "delay": "^4.1.0",
@@ -87,14 +83,15 @@
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-prettier": "^3.0.0",
     "express": "^4.16.3",
+    "gaxios": "^1.8.3",
     "gts": "^0.9.0",
     "hapi": "^18.0.0",
     "intelli-espower-loader": "^1.0.1",
     "js-green-licenses": "^0.5.0",
     "json-stable-stringify": "^1.0.1",
     "koa": "^2.5.1",
+    "linkinator": "^1.1.2",
     "lodash.maxby": "^4.6.0",
-    "lodash.merge": "^4.6.1",
     "lodash.omit": "^4.5.0",
     "lodash.omitby": "^4.6.0",
     "lodash.pick": "^4.4.0",
@@ -111,7 +108,6 @@
     "restify": "^8.0.0",
     "source-map-support": "^0.5.9",
     "typescript": "~3.4.0",
-    "uuid": "^3.3.2",
-    "linkinator": "^1.1.2"
+    "uuid": "^3.3.2"
   }
 }

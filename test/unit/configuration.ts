@@ -16,11 +16,12 @@
 
 import * as assert from 'assert';
 import * as is from 'is';
-import merge = require('lodash.merge');
-import {FakeConfiguration as Configuration} from '../fixtures/configuration';
+
 import {ConfigurationOptions, Logger} from '../../src/configuration';
 import {Fuzzer} from '../../utils/fuzzer';
+import {FakeConfiguration as Configuration} from '../fixtures/configuration';
 import {deepStrictEqual} from '../util';
+
 const level = process.env.GCLOUD_ERRORS_LOGLEVEL;
 import {createLogger} from '../../src/logger';
 const logger = createLogger({
@@ -237,8 +238,8 @@ describe('Configuration class', () => {
          });
     });
     describe('with ignoreEnvironmentCheck', () => {
-      const conf =
-          merge({}, {projectId: 'some-id'}, {ignoreEnvironmentCheck: true});
+      const conf = Object.assign(
+          {}, {projectId: 'some-id'}, {ignoreEnvironmentCheck: true});
       const c = new Configuration(conf, logger);
       it('Should reportErrorsToAPI', () => {
         assert.strictEqual(c.getShouldReportErrorsToAPI(), true);
