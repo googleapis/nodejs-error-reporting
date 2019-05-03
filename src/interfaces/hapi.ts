@@ -114,8 +114,8 @@ export function makeHapiPlugin(client: RequestHandler, config: Configuration) {
         }
 
         if (is.function(server.ext)) {
+          // tslint:disable-next-line no-any
           server.ext('onPreResponse', (request: hapi.Request, reply: any) => {
-            // tslint:disable-line:no-any
             if (
               is.object(request) &&
               request.response &&
