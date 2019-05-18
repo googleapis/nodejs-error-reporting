@@ -32,7 +32,7 @@ import {
 
 import pick = require('lodash.pick');
 import omitBy = require('lodash.omitby');
-import * as request from 'request';
+import {teenyRequest} from 'teeny-request';
 import * as uuid from 'uuid';
 import * as util from 'util';
 import * as path from 'path';
@@ -462,8 +462,9 @@ describe('Error Reporting API', () => {
       this.timeout(60000);
       const API = 'https://clouderrorreporting.googleapis.com/v1beta1';
       const key = testCase.getKey();
-      request.post(
+      teenyRequest(
         {
+          method: 'POST',
           url: `${API}/projects/${env.projectId}/events:report?key=${key}`,
           json: {},
         },
