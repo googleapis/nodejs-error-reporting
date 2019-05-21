@@ -105,7 +105,6 @@
     "proxyquire": "^2.0.1",
     "restify": "^8.0.0",
     "source-map-support": "^0.5.9",
-    "teeny-request": "^3.6.0",
     "typescript": "~3.4.0",
     "uuid": "^3.3.2"
   }
