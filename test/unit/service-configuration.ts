@@ -347,4 +347,32 @@ describe('Testing service configuration', () => {
       deepStrictEqual(c.getServiceContext().version, '2.0');
     }
   );
+  it('A Configuration uses the K_SERVICE and K_REVISION env variables if set', () => {
+    setEnv({
+      gaeServiceName: null,
+      gaeServiceVersion: 'x',
+      gaeModuleName: null,
+      gaeModuleVersion: 'y',
+      functionName: null,
+      kService: 'custom-service',
+      kRevision: 'custom-revision',
+    });
+    const c = new Configuration({}, logger);
+    assert.strictEqual(c.getServiceContext().service, 'custom-service');
+    assert.strictEqual(c.getServiceContext().version, 'custom-revision');
+  });
+  it('A Configuration gives priority to K_SERVICE and K_REVISION env variables', () => {
+    setEnv({
+      gaeServiceName: 'gae-service-name',
+      gaeServiceVersion: 'gae-service-version',
+      gaeModuleName: 'gae-module-name',
+      gaeModuleVersion: 'gae-module-version',
+      functionName: 'function-name',
+      kService: 'k-service',
+      kRevision: 'k-revision',
+    });
+    const c = new Configuration({}, logger);
+    assert.strictEqual(c.getServiceContext().service, 'k-service');
+    assert.strictEqual(c.getServiceContext().version, 'k-revision');
+  });
 });
