@@ -228,7 +228,7 @@ describe('Request/Response lifecycle mocking', () => {
           process.env.GCLOUD_PROJECT
       )
         .persist()
-        .post('/events:report?');
+        .post('/events:report');
       fakeService.query({key}).reply(200, (uri: string) => {
         assert(uri.indexOf('key=' + key) > -1);
         return {};
