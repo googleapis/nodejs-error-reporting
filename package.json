@@ -74,8 +74,7 @@
     "express": "^4.17.1",
     "gts": "^1.0.0",
     "hapi": "^18.1.0",
-    "intelli-espower-loader": "^1.0.1",
-    "js-green-licenses": "^1.1.0",
+        "js-green-licenses": "^1.1.0",
     "json-stable-stringify": "^1.0.1",
     "koa": "^2.7.0",
     "linkinator": "^1.5.0",
@@ -89,11 +88,9 @@
     "mocha": "^7.0.0",
     "nock": "^11.3.2",
     "post-install-check": "0.0.1",
-    "power-assert": "^1.6.1",
     "prettier": "^1.18.2",
     "proxyquire": "^2.1.0",
     "restify": "^8.3.3",
-    "source-map-support": "^0.5.12",
     "typescript": "3.6.4",
     "uuid": "^3.3.2"
   }
