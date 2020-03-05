@@ -18,7 +18,7 @@
     "docs": "compodoc src/",
     "lint": "eslint '**/*.js' && gts check",
     "presystem-test": "npm run compile",
-    "system-test": "c8 mocha build/system-test",
+    "system-test": "MOCHA_THROW_DEPRECATION=false c8 mocha build/system-test",
     "presamples-test": "npm run compile",
     "samples-test": "cd samples/ && npm link ../ && npm test && cd ../",
     "test": "c8 mocha --recursive build/test/unit",

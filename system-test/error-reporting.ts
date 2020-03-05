@@ -779,13 +779,14 @@ describe('error-reporting', () => {
     this.timeout(TIMEOUT);
     reinitialize({reportUnhandledRejections: false});
     const rejectValue = buildName('do-not-report-promise-rejection');
-    async function expectedTopOfStack() {
+    function expectedTopOfStack() {
       // An Error is used for the rejection value so that it's stack
       // contains the stack trace at the point the rejection occured and is
       // rejected within a function named `expectedTopOfStack` so that the
       // test can verify that the collected stack is correct.
       Promise.reject(new Error(rejectValue));
     }
+    expectedTopOfStack();
     const rejectText = 'Error: ' + rejectValue;
     const expected =
       'UnhandledPromiseRejectionWarning: Unhandled ' +
@@ -793,8 +794,7 @@ describe('error-reporting', () => {
       rejectText +
       '.  This rejection has been reported to the ' +
       'Google Cloud Platform error-reporting console.';
-    await assert.rejects(expectedTopOfStack(), (err: Error) => {
-      assert.strictEqual(logOutput.indexOf(expected), -1);
-    });
+    await delay(10000);
+    assert.strictEqual(logOutput.indexOf(expected), -1);
   });
 });
