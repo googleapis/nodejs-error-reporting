@@ -4,7 +4,7 @@
       "git": {
         "name": ".",
         "remote": "https://github.com/googleapis/nodejs-error-reporting.git",
-        "sha": "23968b34b1415f4bcda9f2c099c2919f1832cf02"
+        "sha": "454f76b33abc5775af64289e41b83e460f6bc519"
       }
     },
     {
