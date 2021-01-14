@@ -59,8 +59,10 @@ export function handlerSetup(
    *  potential payload.
    * @param {Object} [request] - an object containing request information. This
    *  is expected to be an object similar to the Node/Express request object.
-   * @param {String} [customMessage] - a string containing error message
-   *  information to override the builtin message given by an Error/Exception
+   * @param {String} [customMessage] - an optional error message string that
+   *  overrides the default message & stack trace. Message format must comply
+   *  with message field requirements defined in the documentation:
+   *  https://cloud.google.com/error-reporting/reference/rest/v1beta1/projects.events/report#reportederrorevent
    * @param {Function} [callback] - a callback to be invoked once the message
    *  has been successfully submitted to the error reporting API or has failed
    *  after four attempts with the success or error response.
