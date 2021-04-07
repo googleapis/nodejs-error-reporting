@@ -463,7 +463,7 @@ describe('error-reporting', () => {
 
     const initConfiguration = Object.assign(
       {
-        reportMode: 'always' as 'always',
+        reportMode: 'always' as const,
         serviceContext: {
           service: SERVICE,
           version: VERSION,
