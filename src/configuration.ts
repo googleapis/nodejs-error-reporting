@@ -180,7 +180,8 @@ export class Configuration {
      * @type {Object|Null}
      * @defaultvalue null
      */
-    this._givenConfiguration = givenConfig?.toString() === '[object Object]' ? givenConfig! : {};
+    this._givenConfiguration =
+      givenConfig?.toString() === '[object Object]' ? givenConfig! : {};
     this._checkLocalServiceContext();
     this._gatherLocalConfiguration();
   }
@@ -242,17 +243,26 @@ export class Configuration {
       version = env.GAE_MODULE_VERSION;
     }
 
-    this._serviceContext.service = (typeof service === 'string' ? service : 'node')!;
-    this._serviceContext.version = typeof version === 'string' ? version : undefined;
+    this._serviceContext.service = (typeof service === 'string'
+      ? service
+      : 'node')!;
+    this._serviceContext.version =
+      typeof version === 'string' ? version : undefined;
 
-    if (this._givenConfiguration.serviceContext?.toString() === '[object Object]') {
-      if (typeof this._givenConfiguration.serviceContext!.service === 'string') {
+    if (
+      this._givenConfiguration.serviceContext?.toString() === '[object Object]'
+    ) {
+      if (
+        typeof this._givenConfiguration.serviceContext!.service === 'string'
+      ) {
         this._serviceContext.service = this._givenConfiguration.serviceContext!.service!;
       } else if (has(this._givenConfiguration.serviceContext, 'service')) {
         throw new Error('config.serviceContext.service must be a string');
       }
 
-      if (typeof this._givenConfiguration.serviceContext!.version === 'string') {
+      if (
+        typeof this._givenConfiguration.serviceContext!.version === 'string'
+      ) {
         this._serviceContext.version = this._givenConfiguration.serviceContext!.version;
       } else if (has(this._givenConfiguration.serviceContext, 'version')) {
         throw new Error('config.serviceContext.version must be a string');
@@ -347,12 +357,16 @@ export class Configuration {
     } else if (has(this._givenConfiguration, 'keyFilename')) {
       throw new Error('config.keyFilename must be a string');
     }
-    if (this._givenConfiguration.credentials?.toString() === '[object Object]') {
+    if (
+      this._givenConfiguration.credentials?.toString() === '[object Object]'
+    ) {
       this.credentials = this._givenConfiguration.credentials!;
     } else if (has(this._givenConfiguration, 'credentials')) {
       throw new Error('config.credentials must be a valid credentials object');
     }
-    if (typeof this._givenConfiguration.reportUnhandledRejections === 'boolean') {
+    if (
+      typeof this._givenConfiguration.reportUnhandledRejections === 'boolean'
+    ) {
       this._reportUnhandledRejections = this._givenConfiguration.reportUnhandledRejections!;
     } else if (has(this._givenConfiguration, 'reportUnhandledRejections')) {
       throw new Error('config.reportUnhandledRejections must be a boolean');
