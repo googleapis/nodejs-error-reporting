@@ -100,8 +100,12 @@ export class Fuzzer {
       this.types().indexOf(ofOneType!) > -1
         ? [ofOneType]
         : this.types())!;
-      let currentDepthChecked = (typeof currentDepth === 'number' ? currentDepth : 0)!;
-      const allowedDepthChecked = (typeof allowedDepth === 'number' ? allowedDepth : 3)!;
+      let currentDepthChecked = (typeof currentDepth === 'number'
+        ? currentDepth
+        : 0)!;
+      const allowedDepthChecked = (typeof allowedDepth === 'number'
+        ? allowedDepth
+        : 3)!;
       const arr: Array<{}> = [];
       let currentTypeBeingGenerated: string | undefined = '';
       currentDepthChecked += 1;
@@ -150,8 +154,12 @@ export class Fuzzer {
       const numPropertiesChecked = (typeof numProperties === 'number'
         ? numProperties
         : random(1, 10))!;
-      let currentDepthChecked = (typeof currentDepth === 'number' ? currentDepth : 0)!;
-      const allowedDepthChecked = (typeof allowedDepth === 'number' ? allowedDepth : 3)!;
+      let currentDepthChecked = (typeof currentDepth === 'number'
+        ? currentDepth
+        : 0)!;
+      const allowedDepthChecked = (typeof allowedDepth === 'number'
+        ? allowedDepth
+        : 3)!;
       const obj: {[key: string]: {}} = {};
       currentDepthChecked += 1;
 

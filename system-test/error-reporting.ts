@@ -57,7 +57,10 @@ class InstancedEnv {
   }
 
   _captureProcessProperties() {
-    return omitBy(pick(process.env, envKeys), value => typeof value !== 'string');
+    return omitBy(
+      pick(process.env, envKeys),
+      value => typeof value !== 'string'
+    );
   }
 
   sterilizeProcess() {
@@ -267,7 +270,10 @@ describe('Client creation', () => {
           (err, response, body) => {
             assert.strictEqual(err, null);
             assert.strictEqual(response!.statusCode, 200);
-            assert(body?.toString() === '[object Object]' && Object.keys(body).length === 0);
+            assert(
+              body?.toString() === '[object Object]' &&
+                Object.keys(body).length === 0
+            );
             done();
           }
         );
@@ -289,7 +295,10 @@ describe('Client creation', () => {
           (err, response, body) => {
             assert.strictEqual(err, null);
             assert.strictEqual(response!.statusCode, 200);
-            assert(body?.toString() === '[object Object]' && Object.keys(body).length === 0);
+            assert(
+              body?.toString() === '[object Object]' &&
+                Object.keys(body).length === 0
+            );
             done();
           }
         );
@@ -317,7 +326,10 @@ describe('Client creation', () => {
           (err, response, body) => {
             assert.strictEqual(err, null);
             assert.strictEqual(response!.statusCode, 200);
-            assert(body?.toString() === '[object Object]' && Object.keys(body).length === 0);
+            assert(
+              body?.toString() === '[object Object]' &&
+                Object.keys(body).length === 0
+            );
             done();
           }
         );
@@ -339,7 +351,10 @@ describe('Client creation', () => {
           (err, response, body) => {
             assert.strictEqual(err, null);
             assert.strictEqual(response!.statusCode, 200);
-            assert(body?.toString() === '[object Object]' && Object.keys(body).length === 0);
+            assert(
+              body?.toString() === '[object Object]' &&
+                Object.keys(body).length === 0
+            );
             done();
           }
         );
