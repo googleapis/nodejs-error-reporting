@@ -75,7 +75,10 @@ function populateFromError(
     errorMessage.setUser(err.user!);
   }
 
-  if (has(err, 'serviceContext') && err.serviceContext?.toString() === '[object Object]') {
+  if (
+    has(err, 'serviceContext') &&
+    err.serviceContext?.toString() === '[object Object]'
+  ) {
     errorMessage.setServiceContext(
       err.serviceContext!.service!,
       err.serviceContext!.version
@@ -130,7 +133,10 @@ function populateFromObject(ob: PopulatedObject, errorMessage: ErrorMessage) {
     errorMessage.setFunctionName(ob.functionName!);
   }
 
-  if (has(ob, 'serviceContext') && ob.serviceContext?.toString() === '[object Object]') {
+  if (
+    has(ob, 'serviceContext') &&
+    ob.serviceContext?.toString() === '[object Object]'
+  ) {
     errorMessage.setServiceContext(
       ob.serviceContext!.service!,
       ob.serviceContext!.version

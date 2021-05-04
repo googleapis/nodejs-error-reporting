@@ -33,7 +33,10 @@ function attemptToExtractStatusCode(req: hapi.Request) {
   if (has(req, 'response') && req.response?.toString() === '[object Object]') {
     if (has(req.response, 'statusCode')) {
       return (req.response as hapi.ResponseObject).statusCode;
-    } else if ((((req.response as unknown) as boom).output)?.toString() === '[object Object]') {
+    } else if (
+      ((req.response as unknown) as boom).output?.toString() ===
+      '[object Object]'
+    ) {
       return ((req.response as unknown) as boom).output.statusCode;
     }
   }

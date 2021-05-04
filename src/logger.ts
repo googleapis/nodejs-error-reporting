@@ -65,7 +65,10 @@ export function createLogger(config?: ConfigurationOptions): Logger {
   if (has(process.env, 'GCLOUD_ERRORS_LOGLEVEL')) {
     // Cast env string as integer
     level = ~~process.env.GCLOUD_ERRORS_LOGLEVEL! || DEFAULT_LEVEL;
-  } else if (config?.toString() === '[object Object]' && has(config, 'logLevel')) {
+  } else if (
+    config?.toString() === '[object Object]' &&
+    has(config, 'logLevel')
+  ) {
     if (typeof config!.logLevel === 'string') {
       // Cast string as integer
       level = ~~config!.logLevel! || DEFAULT_LEVEL;
