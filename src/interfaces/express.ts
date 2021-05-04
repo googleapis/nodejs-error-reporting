@@ -64,7 +64,10 @@ export function makeExpressHandler(
 
     populateErrorMessage(err, em);
 
-    if (client?.toString() === '[object Object]' && typeof client.sendError === 'function') {
+    if (
+      client?.toString() === '[object Object]' &&
+      typeof client.sendError === 'function'
+    ) {
       client.sendError(em);
     }
 
