@@ -45,7 +45,11 @@ export interface Request {
 export function manualRequestInformationExtractor(req: Request) {
   const returnObject = new RequestInformationContainer();
 
-  if (req?.toString() !== '[object Object]' || Array.isArray(req) || typeof req === 'function') {
+  if (
+    req?.toString() !== '[object Object]' ||
+    Array.isArray(req) ||
+    typeof req === 'function'
+  ) {
     return returnObject;
   }
 
