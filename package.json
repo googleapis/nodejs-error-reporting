@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@google-cloud/common": "^3.0.0",
-    "console-log-level": "^1.4.1",
+    "console-log-level": "^1.4.1"
   },
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.10",
