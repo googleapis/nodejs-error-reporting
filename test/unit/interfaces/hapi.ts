@@ -64,7 +64,7 @@ describe('Hapi interface', () => {
       assert(typeof plugin?.register === 'function');
     });
     it("the plugin's register property should have an attributes property", () => {
-      assert(plugin.register!.attributes !== undefined);
+      assert(typeof plugin.register!.attributes === 'object');
     });
     it("the plugin's attribute property should have a name property", () => {
       assert.strictEqual(
