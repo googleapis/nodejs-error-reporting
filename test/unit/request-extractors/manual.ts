@@ -57,7 +57,7 @@ describe('manualRequestInformationExtractor', () => {
           'the output of the request extraction',
         ].join(' ')
       );
-      const { method, ...sansMethod } = FULL_VALID_INPUT;
+      const {method, ...sansMethod} = FULL_VALID_INPUT;
       deepStrictEqual(
         manualRequestInformationExtractor(sansMethod),
         Object.assign({}, FULL_VALID_INPUT, {method: ''}),
@@ -66,7 +66,7 @@ describe('manualRequestInformationExtractor', () => {
           'should be reflected by the output of the request extraction',
         ].join(' ')
       );
-      const { url, ...sansUrl } = FULL_VALID_INPUT;
+      const {url, ...sansUrl} = FULL_VALID_INPUT;
       deepStrictEqual(
         manualRequestInformationExtractor(sansUrl),
         Object.assign({}, FULL_VALID_INPUT, {url: ''}),
@@ -75,7 +75,7 @@ describe('manualRequestInformationExtractor', () => {
           'reflected by the output of the request extraction',
         ].join('')
       );
-      const { userAgent, ...sansUserAgent } = FULL_VALID_INPUT;
+      const {userAgent, ...sansUserAgent} = FULL_VALID_INPUT;
       deepStrictEqual(
         manualRequestInformationExtractor(sansUserAgent),
         Object.assign({}, FULL_VALID_INPUT, {userAgent: ''}),
@@ -84,7 +84,7 @@ describe('manualRequestInformationExtractor', () => {
           'should be reflected by the output of the request extraction',
         ].join('')
       );
-      const { referrer, ...sansReferrer } = FULL_VALID_INPUT;
+      const {referrer, ...sansReferrer} = FULL_VALID_INPUT;
       deepStrictEqual(
         manualRequestInformationExtractor(sansReferrer),
         Object.assign({}, FULL_VALID_INPUT, {referrer: ''}),
@@ -93,7 +93,7 @@ describe('manualRequestInformationExtractor', () => {
           'should be reflected by the output of the request extraction',
         ].join('')
       );
-      const { statusCode, ...sansStatusCode } = FULL_VALID_INPUT;
+      const {statusCode, ...sansStatusCode} = FULL_VALID_INPUT;
       deepStrictEqual(
         manualRequestInformationExtractor(sansStatusCode),
         Object.assign({}, FULL_VALID_INPUT, {statusCode: 0}),
@@ -102,7 +102,7 @@ describe('manualRequestInformationExtractor', () => {
           'should be reflected by the output of the request extraction',
         ].join('')
       );
-      const { remoteAddress, ...sansRemoteAddress } = FULL_VALID_INPUT;
+      const {remoteAddress, ...sansRemoteAddress} = FULL_VALID_INPUT;
       deepStrictEqual(
         manualRequestInformationExtractor(sansRemoteAddress),
         Object.assign({}, FULL_VALID_INPUT, {remoteAddress: ''}),
