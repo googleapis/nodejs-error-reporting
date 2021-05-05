@@ -202,8 +202,8 @@ export class Fuzzer {
   };
 
   _maxBy(arr: Array<Array<{}>>) {
-    const max = Math.max(...arr.map(o => o.length))
-    return arr.find(item => item.length === max)
+    const max = Math.max(...arr.map(o => o.length));
+    return arr.find(item => item.length === max);
   }
 
   _backFillUnevenTypesArrays(argsTypesArray: Array<Array<{}>>) {
