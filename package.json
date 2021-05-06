@@ -37,8 +37,7 @@
   },
   "dependencies": {
     "@google-cloud/common": "^3.0.0",
-    "console-log-level": "^1.4.1",
-    "lodash.has": "^4.5.2"
+    "console-log-level": "^1.4.1"
   },
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.10",
@@ -46,11 +45,8 @@
     "@types/console-log-level": "^1.4.0",
     "@types/express": "^4.17.0",
     "@types/hapi__hapi": "^20.0.5",
-    "@types/is": "0.0.21",
     "@types/json-stable-stringify": "^1.0.32",
     "@types/koa": "^2.0.48",
-    "@types/lodash.has": "^4.5.6",
-    "@types/lodash.merge": "^4.6.6",
     "@types/lodash.omit": "^4.5.6",
     "@types/lodash.omitby": "^4.6.6",
     "@types/lodash.pick": "^4.4.6",
@@ -65,7 +61,6 @@
     "body-parser": "^1.19.0",
     "boom": "^7.3.0",
     "c8": "^7.0.0",
-    "chai": "^4.2.0",
     "codecov": "^3.5.0",
     "delay": "^5.0.0",
     "express": "^4.17.1",
@@ -75,7 +70,6 @@
     "json-stable-stringify": "^1.0.1",
     "koa": "^2.7.0",
     "linkinator": "^2.0.0",
-    "lodash.merge": "^4.6.2",
     "lodash.omit": "^4.5.0",
     "lodash.omitby": "^4.6.0",
     "lodash.pick": "^4.4.0",
