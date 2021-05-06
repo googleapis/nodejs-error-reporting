@@ -15,7 +15,7 @@
 function _random(a: number, b: number) {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
-  return Math.floor(lower + Math.random() * (upper - lower + 1))
+  return Math.floor(lower + Math.random() * (upper - lower + 1));
 }
 
 export class Fuzzer {
@@ -114,7 +114,9 @@ export class Fuzzer {
 
       // Deny the ability to nest more objects
       if (currentDepthChecked >= allowedDepthChecked) {
-        availableTypes = this.types().filter(i => i !== 'object' && i !== 'array' );
+        availableTypes = this.types().filter(
+          i => i !== 'object' && i !== 'array'
+        );
       }
 
       for (let i = 0; i < lenChecked; i++) {
@@ -169,7 +171,9 @@ export class Fuzzer {
 
       // Deny the ability to nest more objects
       if (currentDepth! >= allowedDepth!) {
-        availableTypes = availableTypes.filter(i => i !== 'object' && i !== 'array' );
+        availableTypes = availableTypes.filter(
+          i => i !== 'object' && i !== 'array'
+        );
       }
 
       let currentTypeBeingGenerated: string | number = 0;
@@ -249,7 +253,9 @@ export class Fuzzer {
 
     for (let i = 0; i < expectsArgTypes.length; i++) {
       if (!Array.isArray(expectsArgTypes[i])) {
-        argsTypesArray.push(this.generate.types().filter(item => item !== expectsArgTypes[i]));
+        argsTypesArray.push(
+          this.generate.types().filter(item => item !== expectsArgTypes[i])
+        );
       } else {
         for (let j = 0; j < expectsArgTypes[i].length; j++) {
           tmpArray = tmpArray.filter(arg => arg !== expectsArgTypes[i][j]);
