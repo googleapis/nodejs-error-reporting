@@ -81,7 +81,7 @@ Thus, if you are already using Winston or Bunyan in your application, and don't 
 
 Here's an introductory video that provides some more details:
 
-[![Learn about Error Reporting in cloud](https://img.youtube.com/vi/cVpWVD75Hs8/0.jpg)](https://www.youtube.com/watch?v=cVpWVD75Hs8)
+[![Learn about Error Reporting in Google Cloud](https://img.youtube.com/vi/cVpWVD75Hs8/0.jpg)](https://www.youtube.com/watch?v=cVpWVD75Hs8)
 
 # When Errors Are Reported
 
