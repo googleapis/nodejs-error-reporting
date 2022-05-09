@@ -15,12 +15,12 @@
     "test": "mocha --timeout=600000"
   },
   "dependencies": {
-    "@google-cloud/error-reporting": "^2.0.4",
+    "@google-cloud/error-reporting": "^2.0.5",
     "express": "^4.16.3"
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "gaxios": "^4.0.0",
+    "gaxios": "^5.0.0",
     "mocha": "^8.0.0"
   }
 }
