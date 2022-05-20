@@ -56,7 +56,7 @@
     "c8": "^7.0.0",
     "codecov": "^3.5.0",
     "express": "^4.17.1",
-    "gts": "^2.0.0",
+    "gts": "^3.1.0",
     "js-green-licenses": "^3.0.0",
     "json-stable-stringify": "^1.0.1",
     "koa": "^2.7.0",
