@@ -110,12 +110,25 @@ describe('RequestHandler', () => {
     );
   });
 
-  it('should not issue a warning if disabled and can communicate with the API', done => {
-    process.env.NODE_ENV = 'production';
+  it('should not request OAuth2 token if error reporting is disabled', function (done) {
     verifyReportedMessage(
       {reportMode: 'never'},
       null, // no access token error
-      {}, // no expected logs
+      {
+        info: 'Not configured to send errors to the API; skipping Google Cloud API Authentication.',
+      },
+      done
+    );
+  });
+
+  it('should not issue a warning if disabled and can communicate with the API', done => {
+    process.env.NODE_ENV = 'production';
+    verifyReportedMessage(
+      {key: 'key', reportMode: 'never'},
+      null, // no access token error
+      {
+        info: 'Not configured to send errors to the API; skipping Google Cloud API Authentication.',
+      },
       done
     );
   });
@@ -123,9 +136,11 @@ describe('RequestHandler', () => {
   it('should not issue a warning if disabled and cannot communicate with the API', done => {
     process.env.NODE_ENV = 'dev';
     verifyReportedMessage(
-      {reportMode: 'never'},
+      {key: 'key', reportMode: 'never'},
       null, // no access token error
-      {}, // no expected logs
+      {
+        info: 'Not configured to send errors to the API; skipping Google Cloud API Authentication.',
+      },
       done
     );
   });
@@ -166,6 +181,7 @@ describe('RequestHandler', () => {
       {reportMode: 'production'},
       null, // no access token error
       {
+        info: 'Not configured to send errors to the API; skipping Google Cloud API Authentication.',
         warn:
           'The error reporting client is configured to report ' +
           'errors if and only if the NODE_ENV environment variable is set to ' +
@@ -183,6 +199,7 @@ describe('RequestHandler', () => {
       {},
       null, // no access token error
       {
+        info: 'Not configured to send errors to the API; skipping Google Cloud API Authentication.',
         warn:
           'The error reporting client is configured to report ' +
           'errors if and only if the NODE_ENV environment variable is set to ' +
