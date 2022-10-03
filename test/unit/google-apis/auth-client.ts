@@ -124,7 +124,7 @@ describe('RequestHandler', () => {
   it('should not issue a warning if disabled and can communicate with the API', done => {
     process.env.NODE_ENV = 'production';
     verifyReportedMessage(
-      {key: 'key', reportMode: 'never'},
+      {reportMode: 'never'},
       null, // no access token error
       {
         info: 'Not configured to send errors to the API; skipping Google Cloud API Authentication.',
@@ -136,7 +136,7 @@ describe('RequestHandler', () => {
   it('should not issue a warning if disabled and cannot communicate with the API', done => {
     process.env.NODE_ENV = 'dev';
     verifyReportedMessage(
-      {key: 'key', reportMode: 'never'},
+      {reportMode: 'never'},
       null, // no access token error
       {
         info: 'Not configured to send errors to the API; skipping Google Cloud API Authentication.',
