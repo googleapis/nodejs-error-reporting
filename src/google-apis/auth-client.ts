@@ -111,7 +111,9 @@ export class RequestHandler extends Service {
     this._logger = logger;
 
     if (!this._config.getShouldReportErrorsToAPI()) {
-      this._logger.info('Not configured to send errors to the API; skipping Google Cloud API Authentication.');
+      this._logger.info(
+        'Not configured to send errors to the API; skipping Google Cloud API Authentication.'
+      );
     } else if (tryAuthenticate) {
       this.authClient.getAccessToken().then(
         () => {},

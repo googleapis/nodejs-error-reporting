@@ -110,7 +110,7 @@ describe('RequestHandler', () => {
     );
   });
 
-  it('should not request OAuth2 token if error reporting is disabled', function (done) {
+  it('should not request OAuth2 token if error reporting is disabled', done => {
     verifyReportedMessage(
       {reportMode: 'never'},
       null, // no access token error
