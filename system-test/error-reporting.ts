@@ -396,10 +396,11 @@ describe('Expected Behavior', () => {
     );
 
     client.sendError({} as ErrorMessage, (err, response) => {
+      assert.strictEqual(scope.isDone(), false);
+      nock.cleanAll();
       assert(err instanceof Error);
       assert.strictEqual(err!.message, ERROR_STRING);
       assert.strictEqual(response, null);
-      assert.strictEqual(scope.isDone(), false);
       done();
     });
   });
