@@ -4,6 +4,17 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/error-reporting?activeTab=versions
 
+## [4.0.0](https://github.com/googleapis/nodejs-error-reporting/compare/v3.0.5...v4.0.0) (2024-06-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade to Node 14 ([#715](https://github.com/googleapis/nodejs-error-reporting/issues/715))
+
+### Miscellaneous Chores
+
+* Upgrade to Node 14 ([#715](https://github.com/googleapis/nodejs-error-reporting/issues/715)) ([3b76387](https://github.com/googleapis/nodejs-error-reporting/commit/3b763879091d5844dc5f46831680f202a7e79f14))
+
 ## [3.0.5](https://github.com/googleapis/nodejs-error-reporting/compare/v3.0.4...v3.0.5) (2022-12-02)
 
 
