@@ -35,7 +35,7 @@
     "console-log-level": "^1.4.1"
   },
   "devDependencies": {
-    "@compodoc/compodoc": "1.1.23",
+    "@compodoc/compodoc": "1.1.19",
     "@hapi/hapi": "^21.0.0",
     "@types/boom": "^7.2.1",
     "@types/console-log-level": "^1.4.0",
@@ -57,7 +57,7 @@
     "js-green-licenses": "^4.0.0",
     "json-stable-stringify": "^1.0.1",
     "koa": "^2.7.0",
-    "linkinator": "^4.0.0",
+    "linkinator": "^3.0.0",
     "mocha": "^9.2.2",
     "nock": "^13.0.0",
     "post-install-check": "0.0.1",
