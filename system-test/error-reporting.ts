@@ -107,7 +107,7 @@ class InstancedEnv {
   }
 }
 
-// eslint-disable-next-line node/no-missing-require
+// eslint-disable-next-line n/no-missing-require
 const env = new InstancedEnv({
   projectId: process.env.GCLOUD_TESTS_PROJECT_ID,
   keyFilename: process.env.GCLOUD_TESTS_KEY,
