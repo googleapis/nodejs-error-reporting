@@ -107,7 +107,7 @@ class InstancedEnv {
   }
 }
 
-// eslint-disable-next-line node/no-missing-require
+// eslint-disable-next-line n/no-missing-require
 const env = new InstancedEnv({
   projectId: process.env.GCLOUD_TESTS_PROJECT_ID,
   keyFilename: process.env.GCLOUD_TESTS_KEY,
@@ -146,7 +146,7 @@ function delay(ms: number) {
 
 if (!shouldRun()) {
   console.log('Skipping error-reporting system tests');
-  // eslint-disable-next-line no-process-exit
+  // eslint-disable-next-line n/no-process-exit
   process.exit(1);
 }
 
