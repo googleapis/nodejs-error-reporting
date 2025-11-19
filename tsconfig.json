@@ -5,6 +5,7 @@
     "rootDir": ".",
     "outDir": "build",
     "baseUrl": ".",
+    "skipLibCheck": true,
     "paths": {
       "@hapi/podium": [
         "node_modules/@types/hapi__podium"
