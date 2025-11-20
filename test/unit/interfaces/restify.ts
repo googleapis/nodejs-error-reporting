@@ -40,7 +40,7 @@ describe('restifyInterface', () => {
       assert.strictEqual(
         ee.listenerCount(UNCAUGHT_EVENT),
         0,
-        'Listeners on event should be zero'
+        'Listeners on event should be zero',
       );
       // return the bound function which the user will actually interface with
       const errorHandlerInstance = restifyInterface(null!, null!);
@@ -49,7 +49,7 @@ describe('restifyInterface', () => {
       assert.strictEqual(
         ee.listenerCount(UNCAUGHT_EVENT),
         1,
-        'Listeners on event should now be one'
+        'Listeners on event should now be one',
       );
     });
   });
@@ -77,7 +77,7 @@ describe('restifyInterface', () => {
           requestHandlerInstance(
             req as restify.Request,
             res as restify.Response,
-            noOp
+            noOp,
           );
         });
       });
@@ -114,7 +114,7 @@ describe('restifyInterface', () => {
       } as {} as Configuration;
       const errorHandlerInstance = restifyInterface(
         client as {} as RequestHandler,
-        config
+        config,
       );
       const requestHandlerInstance = errorHandlerInstance(ee as restify.Server);
       const req = new EventEmitter();
@@ -128,7 +128,7 @@ describe('restifyInterface', () => {
           requestHandlerInstance(
             req as restify.Request,
             res as restify.Response,
-            noOp
+            noOp,
           );
         });
       });

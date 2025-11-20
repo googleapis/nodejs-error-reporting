@@ -55,12 +55,11 @@ class InstancedEnv {
 
   _captureProcessProperties() {
     const envVars = {...process.env};
-    Object.entries(envVars).forEach(
-      ([key, value]) =>
-        envKeys.includes(key) &&
-        typeof value !== 'string' &&
-        delete envVars[key]
-    );
+    Object.entries(envVars).forEach(([key, value]) => {
+      if (envKeys.includes(key) && typeof value !== 'string') {
+        delete envVars[key];
+      }
+    });
     return envVars;
   }
 
@@ -161,14 +160,14 @@ describe('Request/Response lifecycle mocking', () => {
     env.setProjectId().setKeyFilename().setProduction();
     fakeService = nock(
       'https://clouderrorreporting.googleapis.com/v1beta1/projects/' +
-        process.env.GCLOUD_PROJECT
+        process.env.GCLOUD_PROJECT,
     )
       .persist()
       .post('/events:report?');
     logger = createLogger({logLevel: 5});
     client = new RequestHandler(
       new Configuration({reportMode: 'always'}, logger),
-      logger
+      logger,
     );
   });
 
@@ -187,7 +186,7 @@ describe('Request/Response lifecycle mocking', () => {
       assert(err instanceof Error);
       assert.strictEqual(
         err!.message.toLowerCase(),
-        'message cannot be empty.'
+        'message cannot be empty.',
       );
       assert(response?.toString() === '[object Object]');
       assert.strictEqual(response!.statusCode, 400);
@@ -219,11 +218,11 @@ describe('Request/Response lifecycle mocking', () => {
       const logger = createLogger({logLevel: 5});
       const client = new RequestHandler(
         new Configuration({key, reportMode: 'always'}, logger),
-        logger
+        logger,
       );
       const fakeService = nock(
         'https://clouderrorreporting.googleapis.com/v1beta1/projects/' +
-          process.env.GCLOUD_PROJECT
+          process.env.GCLOUD_PROJECT,
       )
         .persist()
         .post('/events:report');
@@ -234,7 +233,7 @@ describe('Request/Response lifecycle mocking', () => {
       client.sendError(errorMessage, () => {
         done();
       });
-    }
+    },
   );
 
   it('Should still execute the request with a callback-less invocation', done => {
@@ -263,7 +262,7 @@ describe('Client creation', () => {
           projectId: env.injected().projectId,
           reportMode: 'always',
         },
-        logger
+        logger,
       );
       this.timeout(10000);
       assert.doesNotThrow(() => {
@@ -274,13 +273,13 @@ describe('Client creation', () => {
             assert.strictEqual(response!.statusCode, 200);
             assert(
               body?.toString() === '[object Object]' &&
-                Object.keys(body).length === 0
+                Object.keys(body).length === 0,
             );
             done();
-          }
+          },
         );
       });
-    }
+    },
   );
 
   it(
@@ -299,13 +298,13 @@ describe('Client creation', () => {
             assert.strictEqual(response!.statusCode, 200);
             assert(
               body?.toString() === '[object Object]' &&
-                Object.keys(body).length === 0
+                Object.keys(body).length === 0,
             );
             done();
-          }
+          },
         );
       });
-    }
+    },
   );
 
   it(
@@ -319,7 +318,7 @@ describe('Client creation', () => {
           projectId: '' + Number(env.injected().projectNumber),
           reportMode: 'always',
         },
-        logger
+        logger,
       );
       this.timeout(10000);
       assert.doesNotThrow(() => {
@@ -330,13 +329,13 @@ describe('Client creation', () => {
             assert.strictEqual(response!.statusCode, 200);
             assert(
               body?.toString() === '[object Object]' &&
-                Object.keys(body).length === 0
+                Object.keys(body).length === 0,
             );
             done();
-          }
+          },
         );
       });
-    }
+    },
   );
 
   it(
@@ -355,13 +354,13 @@ describe('Client creation', () => {
             assert.strictEqual(response!.statusCode, 200);
             assert(
               body?.toString() === '[object Object]' &&
-                Object.keys(body).length === 0
+                Object.keys(body).length === 0,
             );
             done();
-          }
+          },
         );
       });
-    }
+    },
   );
 });
 
@@ -389,7 +388,7 @@ describe('Expected Behavior', () => {
     const logger = createLogger({logLevel: 5, reportMode: 'production'});
     const client = new RequestHandler(
       new Configuration(undefined, logger),
-      logger
+      logger,
     );
 
     client.sendError({} as ErrorMessage, (err, response) => {
@@ -410,7 +409,7 @@ describe('Expected Behavior', () => {
         projectId: env.injected().projectId,
         reportMode: 'always',
       },
-      logger
+      logger,
     );
     const client = new RequestHandler(cfg, logger);
 
@@ -431,7 +430,7 @@ describe('Expected Behavior', () => {
         projectId: '' + Number(env.injected().projectNumber),
         reportMode: 'always',
       },
-      logger
+      logger,
     );
     const client = new RequestHandler(cfg, logger);
     client.sendError(em, (err, response, body) => {
@@ -494,7 +493,7 @@ describe('error-reporting', () => {
         projectId: env.projectId,
         keyFilename: process.env.GCLOUD_TESTS_KEY,
       },
-      extraConfig || {}
+      extraConfig || {},
     );
     errors = new ErrorReporting(initConfiguration);
     const logger = createLogger(initConfiguration);
@@ -509,7 +508,7 @@ describe('error-reporting', () => {
   async function verifyAllGroups(
     messageTest: (message: string) => void,
     maxCount: number,
-    timeout: number
+    timeout: number,
   ) {
     const start = Date.now();
     let groups: ErrorGroupStats[] = [];
@@ -523,13 +522,13 @@ describe('error-reporting', () => {
           SERVICE,
           VERSION,
           PAGE_SIZE,
-          prevPageToken
+          prevPageToken,
         );
         prevPageToken = response.nextPageToken;
         allGroups = response.errorGroupStats || [];
         assert.ok(
           allGroups,
-          'Failed to get groups from the Error Reporting API'
+          'Failed to get groups from the Error Reporting API',
         );
 
         const filteredGroups = allGroups!.filter(errItem => {
@@ -553,7 +552,7 @@ describe('error-reporting', () => {
   async function verifyServerResponse(
     messageTest: (message: string) => void,
     maxCount: number,
-    timeout: number
+    timeout: number,
   ) {
     const matchedErrors = await verifyAllGroups(messageTest, maxCount, timeout);
     assert.strictEqual(
@@ -561,12 +560,12 @@ describe('error-reporting', () => {
       maxCount,
       `Expected to find ${maxCount} error items but found ${
         matchedErrors.length
-      }: ${JSON.stringify(matchedErrors, null, 2)}`
+      }: ${JSON.stringify(matchedErrors, null, 2)}`,
     );
     const errItem = matchedErrors[0];
     assert.ok(
       errItem,
-      'Retrieved an error item from the Error Reporting API but it is falsy.'
+      'Retrieved an error item from the Error Reporting API but it is falsy.',
     );
     const rep = errItem.representative;
     assert.ok(rep, 'Expected the error item to have representative');
@@ -575,7 +574,7 @@ describe('error-reporting', () => {
     assert.strictEqual(
       rep.message.indexOf(SRC_ROOT),
       -1,
-      `Expected the error item's representative's message to start with ${SRC_ROOT} but found '${rep.message}'`
+      `Expected the error item's representative's message to start with ${SRC_ROOT} but found '${rep.message}'`,
     );
     // Ensure the stack trace in the mssage contains the frame corresponding
     // to the 'expectedTopOfStack' function because that is the name of
@@ -587,12 +586,12 @@ describe('error-reporting', () => {
     assert.notStrictEqual(
       rep.message.indexOf(expectedTopOfStack),
       -1,
-      `Expected the error item's representative's message to not contain ${expectedTopOfStack} but found '${rep.message}'`
+      `Expected the error item's representative's message to not contain ${expectedTopOfStack} but found '${rep.message}'`,
     );
     const context = rep.serviceContext;
     assert.ok(
       context,
-      "Expected the error item's representative to have a context"
+      "Expected the error item's representative to have a context",
     );
     assert.strictEqual(context.service, SERVICE);
     assert.strictEqual(context.version, VERSION);
@@ -604,7 +603,7 @@ describe('error-reporting', () => {
     errOb: any,
     messageTest: (message: string) => void,
     maxCount: number,
-    timeout: number
+    timeout: number,
   ) {
     function expectedTopOfStack() {
       return new Promise<void>((resolve, reject) => {
@@ -622,7 +621,7 @@ describe('error-reporting', () => {
             } catch (e) {
               reject(e);
             }
-          }
+          },
         );
       });
     }
@@ -648,7 +647,7 @@ describe('error-reporting', () => {
         return message.startsWith('Error: ' + errorId + '\n');
       },
       1,
-      TIMEOUT
+      TIMEOUT,
     );
   });
 
@@ -661,7 +660,7 @@ describe('error-reporting', () => {
         return message.startsWith(errorId + '\n');
       },
       1,
-      TIMEOUT
+      TIMEOUT,
     );
   });
 
@@ -673,7 +672,7 @@ describe('error-reporting', () => {
         return message.startsWith('undefined\n');
       },
       1,
-      TIMEOUT
+      TIMEOUT,
     );
   });
 
@@ -685,7 +684,7 @@ describe('error-reporting', () => {
         return message.startsWith('null\n');
       },
       1,
-      TIMEOUT
+      TIMEOUT,
     );
   });
 
@@ -697,7 +696,7 @@ describe('error-reporting', () => {
         return message.startsWith("{ someKey: 'someValue' }\n");
       },
       1,
-      TIMEOUT
+      TIMEOUT,
     );
   });
 
@@ -710,7 +709,7 @@ describe('error-reporting', () => {
         return message.startsWith('' + num + '\n');
       },
       1,
-      TIMEOUT
+      TIMEOUT,
     );
   });
 
@@ -723,7 +722,7 @@ describe('error-reporting', () => {
         return message.startsWith('true\n');
       },
       1,
-      TIMEOUT
+      TIMEOUT,
     );
   });
 
@@ -757,7 +756,7 @@ describe('error-reporting', () => {
           );
         },
         1,
-        TIMEOUT
+        TIMEOUT,
       );
     }
     await callingSiteFunction();
@@ -772,7 +771,7 @@ describe('error-reporting', () => {
       // contains the stack trace at the point the rejection occured and is
       // rejected within a function named `expectedTopOfStack` so that the
       // test can verify that the collected stack is correct.
-      Promise.reject(new Error(rejectValue));
+      void Promise.reject(new Error(rejectValue));
     }
     expectedTopOfStack();
     const rejectText = 'Error: ' + rejectValue;
@@ -795,7 +794,7 @@ describe('error-reporting', () => {
       // contains the stack trace at the point the rejection occured and is
       // rejected within a function named `expectedTopOfStack` so that the
       // test can verify that the collected stack is correct.
-      Promise.reject(new Error(rejectValue));
+      void Promise.reject(new Error(rejectValue));
     }
     expectedTopOfStack();
     const rejectText = 'Error: ' + rejectValue;
