@@ -65,5 +65,8 @@
     "restify": "^11.0.0",
     "typescript": "^5.1.6",
     "uuid": "^10.0.0"
+  },
+  "overrides": {
+    "undici": "5.28.4"
   }
 }
