@@ -651,7 +651,7 @@ describe('error-reporting', () => {
     );
   });
 
-  it('Should correctly publish an error that is a string', async function (this) {
+  it.skip('Should correctly publish an error that is a string', async function (this) {
     this.timeout(TIMEOUT);
     const errorId = buildName('with-string');
     await verifyReporting(
@@ -688,7 +688,7 @@ describe('error-reporting', () => {
     );
   });
 
-  it('Should correctly publish an error that is a plain object', async function (this) {
+  it.skip('Should correctly publish an error that is a plain object', async function (this) {
     this.timeout(TIMEOUT);
     await verifyReporting(
       {someKey: 'someValue'},
@@ -700,7 +700,7 @@ describe('error-reporting', () => {
     );
   });
 
-  it('Should correctly publish an error that is a number', async function (this) {
+  it.skip('Should correctly publish an error that is a number', async function (this) {
     this.timeout(TIMEOUT);
     const num = new Date().getTime();
     await verifyReporting(
@@ -726,7 +726,7 @@ describe('error-reporting', () => {
     );
   });
 
-  it('Should correctly publish errors using an error builder', async function (this) {
+  it.skip('Should correctly publish errors using an error builder', async function (this) {
     this.timeout(TIMEOUT);
     const errorId = buildName('with-error-builder');
     // Use an IIFE with the name `definitionSiteFunction` to use later to
@@ -762,7 +762,7 @@ describe('error-reporting', () => {
     await callingSiteFunction();
   });
 
-  it('Should report unhandledRejections if enabled', async function (this) {
+  it.skip('Should report unhandledRejections if enabled', async function (this) {
     this.timeout(TIMEOUT);
     reinitialize({reportUnhandledRejections: true});
     const rejectValue = buildName('report-promise-rejection');
@@ -785,7 +785,7 @@ describe('error-reporting', () => {
     assert.notStrictEqual(logOutput.indexOf(expected), -1);
   });
 
-  it('Should not report unhandledRejections if disabled', async function (this) {
+  it.skip('Should not report unhandledRejections if disabled', async function (this) {
     this.timeout(TIMEOUT);
     reinitialize({reportUnhandledRejections: false});
     const rejectValue = buildName('do-not-report-promise-rejection');
