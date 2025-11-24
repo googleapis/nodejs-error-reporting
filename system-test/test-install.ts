@@ -19,9 +19,9 @@ import * as check from 'post-install-check';
 const SKIP = {
   base: false,
   express: false,
-  hapi: {sixteen: false, seventeen: false, twentyone: false},
+  hapi: {sixteen: false, seventeen: false},
   koa: {one: false, two: false},
-  restify: {eleven: false},
+  restify: {seven: false, eight: false},
 };
 
 const TS_CODE_ARRAY: check.CodeSample[] = [
@@ -89,7 +89,7 @@ app.get('/exception', () => {
 app.use(errors.express);
 `,
     description: 'uses express',
-    dependencies: ['express@4.x.x'],
+    dependencies: ['express'],
     devDependencies: ['@types/express'],
     skip: SKIP.express,
   },
@@ -147,36 +147,6 @@ start().catch(console.error);
     dependencies: ['hapi@17.x.x'],
     devDependencies: ['@types/hapi@17.x.x'],
     skip: SKIP.hapi.seventeen,
-  },
-  {
-    code: `import * as hapi from '@hapi/hapi';
-
-import {ErrorReporting} from '@google-cloud/error-reporting';
-const errors = new ErrorReporting();
-
-async function start() {
-  const server = new hapi.Server({
-    host: '0.0.0.0',
-    port: 3000
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/error',
-    handler: async (request, h) => {
-      throw new Error(\`You requested an error at ${new Date()}\`);
-    }
-  });
-
-  await server.register(errors.hapi);
-}
-
-start().catch(console.error);
-`,
-    description: 'uses hapi21',
-    dependencies: ['@hapi/hapi@21.x.x'],
-    devDependencies: ['@types/hapi__hapi@21.x.x'],
-    skip: SKIP.hapi.twentyone,
   },
   {
     code: `import * as Koa from 'koa';
@@ -242,11 +212,33 @@ const server = restify.createServer();
 
 server.use(errors.restify(server));
 server.get('/hello/:name', respond);
+server.head('/hello/:name', respond);
 `,
     description: 'uses restify',
-    dependencies: ['restify@11.x.x'],
-    devDependencies: ['@types/restify@^8.5.0'],
-    skip: SKIP.restify.eleven,
+    dependencies: ['restify@7.x.x'],
+    devDependencies: ['@types/restify@7.x.x'],
+    skip: SKIP.restify.seven,
+  },
+  {
+    code: `import * as restify from 'restify';
+
+import {ErrorReporting} from '@google-cloud/error-reporting';
+const errors = new ErrorReporting();
+
+function respond(req: {}, res: {}, next: Function) {
+  next(new Error('this is a restify error'));
+}
+
+const server = restify.createServer();
+
+server.use(errors.restify(server));
+server.get('/hello/:name', respond);
+server.head('/hello/:name', respond);
+`,
+    description: 'uses restify',
+    dependencies: ['restify@8.x.x'],
+    devDependencies: ['@types/restify@7.x.x'],
+    skip: SKIP.restify.eight,
   },
 ];
 
@@ -309,7 +301,7 @@ app.get('/exception', () => {
 app.use(errors.express);
 `,
     description: 'uses express',
-    dependencies: ['express@4.x.x'],
+    dependencies: ['express'],
     devDependencies: [],
     skip: SKIP.express,
   },
@@ -367,36 +359,6 @@ start().catch(console.error);
     dependencies: ['hapi@17.x.x'],
     devDependencies: [],
     skip: SKIP.hapi.seventeen,
-  },
-  {
-    code: `const hapi = require('@hapi/hapi');
-
-const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
-const errors = new ErrorReporting();
-
-async function start() {
-  const server = new hapi.Server({
-    host: '0.0.0.0',
-    port: 3000
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/error',
-    handler: async (request, h) => {
-      throw new Error(\`You requested an error at ${new Date()}\`);
-    }
-  });
-
-  await server.register(errors.hapi);
-}
-
-start().catch(console.error);
-`,
-    description: 'uses hapi21',
-    dependencies: ['@hapi/hapi@21.x.x'],
-    devDependencies: [],
-    skip: SKIP.hapi.twentyone,
   },
   {
     code: `const Koa = require('koa');
@@ -462,11 +424,33 @@ const server = restify.createServer();
 
 server.use(errors.restify(server));
 server.get('/hello/:name', respond);
+server.head('/hello/:name', respond);
 `,
     description: 'uses restify',
-    dependencies: ['restify@11.x.x'],
+    dependencies: ['restify@7.x.x'],
     devDependencies: [],
-    skip: SKIP.restify.eleven,
+    skip: SKIP.restify.seven,
+  },
+  {
+    code: `const restify = require('restify');
+
+const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+const errors = new ErrorReporting();
+
+function respond(req, res, next) {
+  next(new Error('this is a restify error'));
+}
+
+const server = restify.createServer();
+
+server.use(errors.restify(server));
+server.get('/hello/:name', respond);
+server.head('/hello/:name', respond);
+`,
+    description: 'uses restify',
+    dependencies: ['restify@8.x.x'],
+    devDependencies: [],
+    skip: SKIP.restify.eight,
   },
 ];
 
