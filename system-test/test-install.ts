@@ -19,7 +19,7 @@ import * as check from 'post-install-check';
 const SKIP = {
   base: false,
   express: false,
-  hapi: {sixteen: false, seventeen: false},
+  hapi: {sixteen: false, seventeen: false, twentyone: false},
   koa: {one: false, two: false},
   restify: {eleven: false},
 };
@@ -147,6 +147,36 @@ start().catch(console.error);
     dependencies: ['hapi@17.x.x'],
     devDependencies: ['@types/hapi@17.x.x'],
     skip: SKIP.hapi.seventeen,
+  },
+  {
+    code: `import * as hapi from '@hapi/hapi';
+
+import {ErrorReporting} from '@google-cloud/error-reporting';
+const errors = new ErrorReporting();
+
+async function start() {
+  const server = new hapi.Server({
+    host: '0.0.0.0',
+    port: 3000
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/error',
+    handler: async (request, h) => {
+      throw new Error(\`You requested an error at ${new Date()}\`);
+    }
+  });
+
+  await server.register(errors.hapi);
+}
+
+start().catch(console.error);
+`,
+    description: 'uses hapi21',
+    dependencies: ['@hapi/hapi@21.x.x'],
+    devDependencies: ['@types/hapi__hapi@21.x.x'],
+    skip: SKIP.hapi.twentyone,
   },
   {
     code: `import * as Koa from 'koa';
@@ -337,6 +367,36 @@ start().catch(console.error);
     dependencies: ['hapi@17.x.x'],
     devDependencies: [],
     skip: SKIP.hapi.seventeen,
+  },
+  {
+    code: `const hapi = require('@hapi/hapi');
+
+const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+const errors = new ErrorReporting();
+
+async function start() {
+  const server = new hapi.Server({
+    host: '0.0.0.0',
+    port: 3000
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/error',
+    handler: async (request, h) => {
+      throw new Error(\`You requested an error at ${new Date()}\`);
+    }
+  });
+
+  await server.register(errors.hapi);
+}
+
+start().catch(console.error);
+`,
+    description: 'uses hapi21',
+    dependencies: ['@hapi/hapi@21.x.x'],
+    devDependencies: [],
+    skip: SKIP.hapi.twentyone,
   },
   {
     code: `const Koa = require('koa');
