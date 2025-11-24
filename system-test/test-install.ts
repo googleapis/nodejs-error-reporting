@@ -21,7 +21,7 @@ const SKIP = {
   express: false,
   hapi: {sixteen: false, seventeen: false},
   koa: {one: false, two: false},
-  restify: {seven: false, eight: false},
+  restify: {eleven: false},
 };
 
 const TS_CODE_ARRAY: check.CodeSample[] = [
@@ -89,7 +89,7 @@ app.get('/exception', () => {
 app.use(errors.express);
 `,
     description: 'uses express',
-    dependencies: ['express'],
+    dependencies: ['express@4.x.x'],
     devDependencies: ['@types/express'],
     skip: SKIP.express,
   },
@@ -212,33 +212,11 @@ const server = restify.createServer();
 
 server.use(errors.restify(server));
 server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
 `,
     description: 'uses restify',
-    dependencies: ['restify@7.x.x'],
-    devDependencies: ['@types/restify@7.x.x'],
-    skip: SKIP.restify.seven,
-  },
-  {
-    code: `import * as restify from 'restify';
-
-import {ErrorReporting} from '@google-cloud/error-reporting';
-const errors = new ErrorReporting();
-
-function respond(req: {}, res: {}, next: Function) {
-  next(new Error('this is a restify error'));
-}
-
-const server = restify.createServer();
-
-server.use(errors.restify(server));
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
-`,
-    description: 'uses restify',
-    dependencies: ['restify@8.x.x'],
-    devDependencies: ['@types/restify@7.x.x'],
-    skip: SKIP.restify.eight,
+    dependencies: ['restify@11.x.x'],
+    devDependencies: ['@types/restify@^8.5.0'],
+    skip: SKIP.restify.eleven,
   },
 ];
 
@@ -301,7 +279,7 @@ app.get('/exception', () => {
 app.use(errors.express);
 `,
     description: 'uses express',
-    dependencies: ['express'],
+    dependencies: ['express@4.x.x'],
     devDependencies: [],
     skip: SKIP.express,
   },
@@ -424,33 +402,11 @@ const server = restify.createServer();
 
 server.use(errors.restify(server));
 server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
 `,
     description: 'uses restify',
-    dependencies: ['restify@7.x.x'],
+    dependencies: ['restify@11.x.x'],
     devDependencies: [],
-    skip: SKIP.restify.seven,
-  },
-  {
-    code: `const restify = require('restify');
-
-const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
-const errors = new ErrorReporting();
-
-function respond(req, res, next) {
-  next(new Error('this is a restify error'));
-}
-
-const server = restify.createServer();
-
-server.use(errors.restify(server));
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
-`,
-    description: 'uses restify',
-    dependencies: ['restify@8.x.x'],
-    devDependencies: [],
-    skip: SKIP.restify.eight,
+    skip: SKIP.restify.eleven,
   },
 ];
 
