@@ -12,50 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as check from 'post-install-check';
+import {pnpd} from 'pack-n-play';
+import {describe, it} from 'mocha';
 
-// Used to easily debug specific tests if necessary.
-// Otherwise, no tests should be skipped.
-const SKIP = {
-  base: false,
-  express: false,
-  hapi: {sixteen: false, seventeen: false},
-  koa: {one: false, two: false},
-  restify: {seven: false, eight: false},
-};
-
-const TS_CODE_ARRAY: check.CodeSample[] = [
-  {
-    code: `import * as errorReporting from '@google-cloud/error-reporting';
+describe('pack-n-play tests', () => {
+  it('imports the module using * syntax', async () => {
+    await pnpd({
+      code: `import * as errorReporting from '@google-cloud/error-reporting';
 new errorReporting.ErrorReporting();`,
-    description: 'imports the module using * syntax',
-    dependencies: [],
-    devDependencies: [],
-    skip: SKIP.base,
-  },
-  {
-    code: `import {ErrorReporting} from '@google-cloud/error-reporting';
+    });
+  });
+
+  it('imports the module with {} syntax', async () => {
+    await pnpd({
+      code: `import {ErrorReporting} from '@google-cloud/error-reporting';
 new ErrorReporting();`,
-    description: 'imports the module with {} syntax',
-    dependencies: [],
-    devDependencies: [],
-    skip: SKIP.base,
-  },
-  {
-    code: `import {ErrorReporting} from '@google-cloud/error-reporting';
+    });
+  });
+
+  it('imports the module and starts with a partial `serviceContext`', async () => {
+    await pnpd({
+      code: `import {ErrorReporting} from '@google-cloud/error-reporting';
 new ErrorReporting({
   serviceContext: {
     service: 'some service'
   }
 });`,
-    description:
-      'imports the module and starts with a partial `serviceContext`',
-    dependencies: [],
-    devDependencies: [],
-    skip: SKIP.base,
-  },
-  {
-    code: `import {ErrorReporting} from '@google-cloud/error-reporting';
+    });
+  });
+
+  it('imports the module and starts with a complete `serviceContext`', async () => {
+    await pnpd({
+      code: `import {ErrorReporting} from '@google-cloud/error-reporting';
 new ErrorReporting({
   projectId: 'some-project',
   serviceContext: {
@@ -63,14 +51,12 @@ new ErrorReporting({
     version: 'Some version'
   }
 });`,
-    description:
-      'imports the module and starts with a complete `serviceContext`',
-    dependencies: [],
-    devDependencies: [],
-    skip: SKIP.base,
-  },
-  {
-    code: `import * as express from 'express';
+    });
+  });
+
+  it('uses express', async () => {
+    await pnpd({
+      code: `import * as express from 'express';
 
 import {ErrorReporting} from '@google-cloud/error-reporting';
 const errors = new ErrorReporting();
@@ -88,13 +74,16 @@ app.get('/exception', () => {
 
 app.use(errors.express);
 `,
-    description: 'uses express',
-    dependencies: ['express'],
-    devDependencies: ['@types/express'],
-    skip: SKIP.express,
-  },
-  {
-    code: `import * as hapi from 'hapi';
+      dependencies: {
+        express: '4.x.x',
+        '@types/express': '4.x.x',
+      },
+    });
+  });
+
+  it('uses hapi16', async () => {
+    await pnpd({
+      code: `import * as hapi from 'hapi';
 
 import {ErrorReporting} from '@google-cloud/error-reporting';
 const errors = new ErrorReporting();
@@ -113,13 +102,16 @@ server.route({
 
 server.register(errors.hapi);
 `,
-    description: 'uses hapi16',
-    dependencies: ['hapi@16.x.x'],
-    devDependencies: ['@types/hapi@16.x.x'],
-    skip: SKIP.hapi.sixteen,
-  },
-  {
-    code: `import * as hapi from 'hapi';
+      dependencies: {
+        hapi: '16.x.x',
+        '@types/hapi': '16.x.x',
+      },
+    });
+  });
+
+  it('uses hapi17', async () => {
+    await pnpd({
+      code: `import * as hapi from 'hapi';
 
 import {ErrorReporting} from '@google-cloud/error-reporting';
 const errors = new ErrorReporting();
@@ -143,13 +135,16 @@ async function start() {
 
 start().catch(console.error);
 `,
-    description: 'uses hapi17',
-    dependencies: ['hapi@17.x.x'],
-    devDependencies: ['@types/hapi@17.x.x'],
-    skip: SKIP.hapi.seventeen,
-  },
-  {
-    code: `import * as Koa from 'koa';
+      dependencies: {
+        hapi: '17.x.x',
+        '@types/hapi': '17.x.x',
+      },
+    });
+  });
+
+  it('uses koa1', async () => {
+    await pnpd({
+      code: `import * as Koa from 'koa';
 
 import {ErrorReporting} from '@google-cloud/error-reporting';
 const errors = new ErrorReporting();
@@ -168,13 +163,16 @@ app.use(function *(this: any): IterableIterator<any> {
   this.body = 'Hello World';
 });
 `,
-    description: 'uses koa1',
-    dependencies: ['koa@1.x.x'],
-    devDependencies: ['@types/koa'],
-    skip: SKIP.koa.one,
-  },
-  {
-    code: `import * as Koa from 'koa';
+      dependencies: {
+        koa: '1.x.x',
+        '@types/koa': '1.x.x',
+      },
+    });
+  });
+
+  it('uses koa2', async () => {
+    await pnpd({
+      code: `import * as Koa from 'koa';
 
 import {ErrorReporting} from '@google-cloud/error-reporting';
 const errors = new ErrorReporting();
@@ -193,13 +191,16 @@ app.use(async (ctx: Koa.Context, next: {}): Promise<void> => {
   ctx.body = 'Hello World';
 });
 `,
-    description: 'uses koa2',
-    dependencies: ['koa@2.x.x'],
-    devDependencies: ['@types/koa@2.x.x'],
-    skip: SKIP.koa.two,
-  },
-  {
-    code: `import * as restify from 'restify';
+      dependencies: {
+        koa: '2.x.x',
+        '@types/koa': '2.x.x',
+      },
+    });
+  });
+
+  it('uses restify', async () => {
+    await pnpd({
+      code: `import * as restify from 'restify';
 
 import {ErrorReporting} from '@google-cloud/error-reporting';
 const errors = new ErrorReporting();
@@ -214,58 +215,34 @@ server.use(errors.restify(server));
 server.get('/hello/:name', respond);
 server.head('/hello/:name', respond);
 `,
-    description: 'uses restify',
-    dependencies: ['restify@7.x.x'],
-    devDependencies: ['@types/restify@7.x.x'],
-    skip: SKIP.restify.seven,
-  },
-  {
-    code: `import * as restify from 'restify';
+      dependencies: {
+        restify: '11.x.x',
+        '@types/restify': '^8.5.0',
+      },
+    });
+  });
 
-import {ErrorReporting} from '@google-cloud/error-reporting';
-const errors = new ErrorReporting();
-
-function respond(req: {}, res: {}, next: Function) {
-  next(new Error('this is a restify error'));
-}
-
-const server = restify.createServer();
-
-server.use(errors.restify(server));
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
-`,
-    description: 'uses restify',
-    dependencies: ['restify@8.x.x'],
-    devDependencies: ['@types/restify@7.x.x'],
-    skip: SKIP.restify.eight,
-  },
-];
-
-const JS_CODE_ARRAY: check.CodeSample[] = [
-  {
-    code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+  it('requires the module using Node 4+ syntax', async () => {
+    await pnpd({
+      code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting();`,
-    description: 'requires the module using Node 4+ syntax',
-    dependencies: [],
-    devDependencies: [],
-    skip: SKIP.base,
-  },
-  {
-    code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+    });
+  });
+
+  it('requires the module and starts with a partial `serviceContext`', async () => {
+    await pnpd({
+      code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting({
   serviceContext: {
     service: 'some service'
   }
 });`,
-    description:
-      'requires the module and starts with a partial `serviceContext`',
-    dependencies: [],
-    devDependencies: [],
-    skip: SKIP.base,
-  },
-  {
-    code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
+    });
+  });
+
+  it('requires the module and starts with a complete `serviceContext`', async () => {
+    await pnpd({
+      code: `const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 new ErrorReporting({
   projectId: 'some-project',
   serviceContext: {
@@ -273,14 +250,12 @@ new ErrorReporting({
     version: 'Some version'
   }
 });`,
-    description:
-      'requires the module and starts with a complete `serviceContext`',
-    dependencies: [],
-    devDependencies: [],
-    skip: SKIP.base,
-  },
-  {
-    code: `const express = require('express');
+    });
+  });
+
+  it('uses express with require', async () => {
+    await pnpd({
+      code: `const express = require('express');
 
 const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 const errors = new ErrorReporting();
@@ -300,13 +275,15 @@ app.get('/exception', () => {
 // the other routes and use() calls. See [express docs][express-error-docs].
 app.use(errors.express);
 `,
-    description: 'uses express',
-    dependencies: ['express'],
-    devDependencies: [],
-    skip: SKIP.express,
-  },
-  {
-    code: `const hapi = require('hapi');
+      dependencies: {
+        express: '4.x.x',
+      },
+    });
+  });
+
+  it('uses hapi16 with require', async () => {
+    await pnpd({
+      code: `const hapi = require('hapi');
 
 const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 const errors = new ErrorReporting();
@@ -325,13 +302,15 @@ server.route({
 
 server.register(errors.hapi);
 `,
-    description: 'uses hapi16',
-    dependencies: ['hapi@16.x.x'],
-    devDependencies: [],
-    skip: SKIP.hapi.sixteen,
-  },
-  {
-    code: `const hapi = require('hapi');
+      dependencies: {
+        hapi: '16.x.x',
+      },
+    });
+  });
+
+  it('uses hapi17 with require', async () => {
+    await pnpd({
+      code: `const hapi = require('hapi');
 
 const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 const errors = new ErrorReporting();
@@ -355,13 +334,15 @@ async function start() {
 
 start().catch(console.error);
 `,
-    description: 'uses hapi17',
-    dependencies: ['hapi@17.x.x'],
-    devDependencies: [],
-    skip: SKIP.hapi.seventeen,
-  },
-  {
-    code: `const Koa = require('koa');
+      dependencies: {
+        hapi: '17.x.x',
+      },
+    });
+  });
+
+  it('uses koa1 with require', async () => {
+    await pnpd({
+      code: `const Koa = require('koa');
 
 const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 const errors = new ErrorReporting();
@@ -380,13 +361,15 @@ app.use(function *(){
   this.body = 'Hello World';
 });
 `,
-    description: 'uses koa1',
-    dependencies: ['koa@1.x.x'],
-    devDependencies: [],
-    skip: SKIP.koa.one,
-  },
-  {
-    code: `const Koa = require('koa');
+      dependencies: {
+        koa: '1.x.x',
+      },
+    });
+  });
+
+  it('uses koa2 with require', async () => {
+    await pnpd({
+      code: `const Koa = require('koa');
 
 const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 const errors = new ErrorReporting();
@@ -405,13 +388,15 @@ app.use(async (ctx, next) => {
   ctx.body = 'Hello World';
 });
 `,
-    description: 'uses koa2',
-    dependencies: ['koa@2.x.x'],
-    devDependencies: [],
-    skip: SKIP.koa.two,
-  },
-  {
-    code: `const restify = require('restify');
+      dependencies: {
+        koa: '2.x.x',
+      },
+    });
+  });
+
+  it('uses restify with require', async () => {
+    await pnpd({
+      code: `const restify = require('restify');
 
 const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
 const errors = new ErrorReporting();
@@ -426,32 +411,9 @@ server.use(errors.restify(server));
 server.get('/hello/:name', respond);
 server.head('/hello/:name', respond);
 `,
-    description: 'uses restify',
-    dependencies: ['restify@7.x.x'],
-    devDependencies: [],
-    skip: SKIP.restify.seven,
-  },
-  {
-    code: `const restify = require('restify');
-
-const ErrorReporting = require('@google-cloud/error-reporting').ErrorReporting;
-const errors = new ErrorReporting();
-
-function respond(req, res, next) {
-  next(new Error('this is a restify error'));
-}
-
-const server = restify.createServer();
-
-server.use(errors.restify(server));
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
-`,
-    description: 'uses restify',
-    dependencies: ['restify@8.x.x'],
-    devDependencies: [],
-    skip: SKIP.restify.eight,
-  },
-];
-
-check.testInstallation(TS_CODE_ARRAY, JS_CODE_ARRAY, {timeout: 2 * 60 * 1000});
+      dependencies: {
+        restify: '11.x.x',
+      },
+    });
+  });
+});
