@@ -1,2 +1,4 @@
-assign_issues: []
-assign_prs: []
+assign_issues:
+  - googleapis/yoshi-nodejs
+assign_prs:
+  - googleapis/yoshi-nodejs
