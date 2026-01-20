@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 24
       - run: npm install
       - run: npm test
         env:
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 24
       - run: npm install
       - run: npm run lint
 # TODO(https://github.com/googleapis/nodejs-error-reporting/issues/777): enable docs
